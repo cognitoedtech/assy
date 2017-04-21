@@ -1,0 +1,34 @@
+This script returns an array of responses generated after successful completion of all the requests. like :
+
+Array
+(
+    [0] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [1] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [2] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [3] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [4] => connected3;connected4;connected5;connected6;connected7;connected8;connected9;
+    [5] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [6] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [7] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [8] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [9] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [10] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [11] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [12] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [13] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [14] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [15] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [16] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [17] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [18] => connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;
+    [19] => 
+)
+
+Here total number of requests are 20, so we got 20 responses.
+
+Here "connected1;connected2;connected3;connected4;connected5;connected6;connected7;connected8;connected9;connected10;" means all 10 connections are created successfully. 
+
+Here "connected3;connected4;connected5;connected6;connected7;connected8;connected9;" in response [4] means only 7 out of 10 connections created for this request, connections1,2,10
+could not be created.
+
+In response [19] no connection was created.

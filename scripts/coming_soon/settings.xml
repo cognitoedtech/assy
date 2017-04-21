@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings
+
+nameText="MIpCAT.com"
+taglineText="Assessment + Analytics + Selection"
+mainText="Upgrading for Awesomeness !"
+
+useOwnLogo="false"
+logoFilePath=""
+
+nameColor="0xffffff"
+taglineColor="0xffffff"
+mainColor="0xffffff"
+linkColor="0xffffff"
+linkRollOverColor="0xff4400"
+linkRollOverBlurAmount="5"
+
+backgroundColor="0x000000"
+backgroundGradientColor1="0xff4400"
+backgroundGradientColor2="0x000000"
+backgroundGradientAlphaPercent="40"
+
+borderColor="0xffffff"
+borderThickness="10"
+
+ownLogoXOffset="3"
+taglineXOffset="2"
+taglineYOffset="-9"
+mainXOffset="-2"
+linkXOffset="2"
+
+introBlurAmount="20"
+siteRotation="0"
+
+>
+
+<link text="support@mipcat.com" url="mailto:support@mipcat.com" />
+<link text="VISIT US ON FACEBOOK" url="http://www.facebook.com/mipcat" target="_blank" />
+	
+</settings>

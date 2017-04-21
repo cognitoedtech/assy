@@ -1,0 +1,1 @@
+Documentation: https://github.com/rstaib/jquery-steps/wiki

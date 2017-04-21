@@ -1,0 +1,16 @@
+# Original
+# If you modify this file then change the above line to: # Modified
+<IfModule mod_rewrite.c>
+   RewriteEngine On
+   # Certain hosts may require the following line.
+   # RewriteBase /
+   RewriteCond %{REQUEST_FILENAME} !-d
+   RewriteRule ^([a-zA-Z0-9-]*)$ index.php?ln=$1 [QSA,NC]
+   RewriteRule ^reg-email/([0-9]*)$ login/otfa-reg-form.php?tschd_id=$1 [QSA,NC]
+   RewriteRule ^reg-tpin/([0-9]*)$ login/otfa-reg-form.php?tschd_id=$1 [QSA,NC]
+   RewriteRule ^reg-email/otfa-reg-form-exec.php$ login/otfa-reg-form-exec.php [QSA,NC]
+   RewriteRule ^reg-tpin/otfa-reg-form-exec.php$ login/otfa-reg-form-exec.php [QSA,NC]
+</IfModule>
+<IfModule mod_headers.c>
+   Header add Access-Control-Allow-Origin: "http://free.ezeeassess.com"
+</IfModule>
