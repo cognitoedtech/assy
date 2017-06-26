@@ -78,7 +78,7 @@
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		// Official Email-IDs
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		const OEI_FINANCE		= "finance@ezeeassess.com";
+		const OEI_FINANCE		= "support@ezeeassess.com";
 		const OEI_SALES			= "sales@ezeeassess.com";
 		const OEI_SUPPORT		= "support@ezeeassess.com";
 		const OEI_BUSI_ASSOC	= "business_associate@ezeeassess.com";

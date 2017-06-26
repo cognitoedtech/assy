@@ -57,6 +57,7 @@ class MAIL5 {
 	public $Result = null;
 
 	public function __construct() {
+		$this->Context = stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true )));
 		$this->_result(array(0 => 'initialize class'));
 	}
 

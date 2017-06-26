@@ -47,7 +47,6 @@
 			$this->objMail->addto($to);
 			$this->objMail->subject($subject);
 			$this->objMail->html($msg);
-			
 			$retVal = $this->objMail->send($this->objConnection);
 			$this->objMail->delto();
 			return $retVal;
@@ -147,21 +146,20 @@
 		public function PrepAndSendTestScheduleMail($test_name, $candidate_email, $candidate_name, $organization_name, $user_email, $user_name, $date, $hours, $minutes,$expire_on, $expire_hours, $expire_minutes, $time_zone_name)
 		{
 			//echo "EmailTo: ".$candidate_email."<br/>";
+			$retVal = null;
 			
 			$sub_for_candidate = "[".CConfig::SNC_SITE_NAME."] ".$candidate_name." - ".$organization_name." scheduled a test for you." ;
 			if(!empty($expire_on))
 			{	
 				$msg_for_candidate = "Dear <b>".$candidate_name."</b>,<br/><br/>Test administrator <b>".$user_name."</b> ( ".$user_email." ) has scheduled an assessment test <b>".$test_name."</b> for you <b> dated on ".$date.", [".$hours.":".$minutes."], and will expire on ".$expire_on.", [".$expire_hours.":".$expire_minutes."], (".$time_zone_name.")</b>. Please login to your account on said date to attempt the test.<br/><br/>Regards,<br/>".CConfig::SNC_SITE_NAME." Technical Support<br/><a href='http://www.".strtolower(CConfig::SNC_SITE_NAME).".com'>www.".strtolower(CConfig::SNC_SITE_NAME).".com</a><br/><b>".CConfig::SNC_PUNCH_LINE."</b><br/><br/><br/>This is an auto generated Email. Please don't reply to this mail." ;
-				$this->Send($candidate_email, $sub_for_candidate, $msg_for_candidate) ;
-				
+				$retVal = $this->Send($candidate_email, $sub_for_candidate, $msg_for_candidate) ;
 			}
 			else 
-			{	
+			{
 				$msg_for_candidate = "Dear <b>".$candidate_name."</b>,<br/><br/>Test administrator <b>".$user_name."</b> ( ".$user_email." ) has scheduled an assessment test <b>".$test_name."</b> for you <b>dated on ".$date.", [".$hours.":".$minutes."], (".$time_zone_name.")</b>. Please login to your account on said date to attempt the test.<br/><br/>Regards,<br/>".CConfig::SNC_SITE_NAME." Technical Support<br/><a href='http://www.".strtolower(CConfig::SNC_SITE_NAME).".com'>www.".strtolower(CConfig::SNC_SITE_NAME).".com</a><br/><b>".CConfig::SNC_PUNCH_LINE."</b><br/><br/><br/>This is an auto generated Email. Please don't reply to this mail." ;
-				$this->Send($candidate_email, $sub_for_candidate, $msg_for_candidate);
-				
+				$retVal = $this->Send($candidate_email, $sub_for_candidate, $msg_for_candidate);
 			}
-			
+			return $retVal;
 		}
 		
 		/*
