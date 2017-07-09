@@ -1733,7 +1733,7 @@
 				$isHidden = ($row['is_published'] == 0)?"style=display:none;":"";
 				$keywords  = !empty($row['keywords'])?$row['keywords']:"";
 				$description  = !empty($row['description'])?$row['description']:"";
-				echo "<td style='text-align: center;'><input type='checkbox' made_publish='0' id='".$row['test_id']."_checkbox' class='publish' test_id='".$row['test_id']."' test_name='".$row['test_name']."' onclick='OnPublish(this);' ".$isChecked."><br /><br /><input type='button' test_name='".$row['test_name']."' data-clipboard-text='".CSiteConfig::FREE_ROOT_URL."/".$row['test_id']."-".date("d")."-".substr($owner_id, 0, 2)."' class='btn btn-sm btn-success' id='".$row['test_id']."_copy' value='Copy Test Link' ".$isHidden."/><div style='display:none;'><span id='".$row['test_id']."_keywords'>".$keywords."</span><span id='".$row['test_id']."_description'>".$description."</span></div></td>";
+				echo "<td style='text-align: center;'><input type='checkbox' made_publish='0' id='".$row['test_id']."_checkbox' class='publish' test_id='".$row['test_id']."' test_name='".$row['test_name']."' onclick='OnPublish(this);' ".$isChecked."><br /><br /><input type='button' test_name='".$row['test_name']."' data-clipboard-text='".CSiteConfig::FREE_ROOT_URL."/".$row['test_id']."-".date("d")."-".substr($owner_id, 0, 2)."' class='btn btn-sm btn-success btn-copy-link' id='".$row['test_id']."_copy' value='Copy Test Link' ".$isHidden."/><div style='display:none;'><span id='".$row['test_id']."_keywords'>".$keywords."</span><span id='".$row['test_id']."_description'>".$description."</span></div></td>";
 				echo "</tr>";
 			}
 			//date_default_timezone_set($reset);

@@ -44,7 +44,7 @@ $objIncludeJsCSS->IncludeDatatablesBootstrapJS("../../");
 $objIncludeJsCSS->IncludeDatatablesResponsiveJS("../../");
 $objIncludeJsCSS->IncludeJqueryFormJS("../../");
 $objIncludeJsCSS->IncludeJqueryValidateMinJS("../../");
-$objIncludeJsCSS->IncludeZeroClipboardJS("../../");
+$objIncludeJsCSS->IncludeClipboardJS ( "../../" );
 $objIncludeJsCSS->IncludeMetroNotificationJS(CSiteConfig::ROOT_URL."/");
 ?>
 <style type="text/css">
@@ -449,23 +449,15 @@ $objIncludeJsCSS->IncludeMetroNotificationJS(CSiteConfig::ROOT_URL."/");
 
 		
 
-		$(".btn-success").each(function(){
-			var test_name = $(this).attr("test_name");
-			var client = new ZeroClipboard( document.getElementById($(this).attr("id")) );
-	
-			client.on( "ready", function( readyEvent ) {
-			  // alert( "ZeroClipboard SWF is ready!" );
-	
-			  client.on( "aftercopy", function( event ) {
-				  $.Notify({
-						 caption: "Test Link Copied",
-						 content: "<b>"+test_name+"</b> URL <b>"+event.data["text/plain"]+"</b> is copied to clipboard!",
-						 style: {background: 'green', color: '#fff'}, 
-						 timeout: 5000
-						 });
-			  } );
-			} );
-			
+		var clipboard = new Clipboard('.btn-copy-link');
+
+		clipboard.on('success', function(e) {
+			$.Notify({
+				 caption: "Test Link Copied",
+				 content: "<b>"+$(e.trigger).attr("test_name")+"</b> URL <b>"+e.text+"</b> is copied to clipboard!",
+				 style: {background: 'green', color: '#fff'}, 
+				 timeout: 5000
+				 });
 		});
 	</script>
 </body>
