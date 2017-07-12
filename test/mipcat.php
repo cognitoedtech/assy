@@ -387,6 +387,7 @@
 		</style>
 		<?php 
 			$objIncludeJsCSS->IncludeMetroBootstrapCSS("../");
+			$objIncludeJsCSS->IncludeMathJAXJS( "../" );
 			//$objIncludeJsCSS->IncludeIconFontCSS("../");
 		?>
 		<link rel="stylesheet" type="text/css" href="../css/mipcat.css" />
@@ -1197,6 +1198,11 @@
 		<?php 
 		}
 		?>
+		</script>
+		<script type="text/x-mathjax-config">
+  			MathJax.Hub.Config({
+    			tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+ 			});
 		</script>
 	</body>
 </html>

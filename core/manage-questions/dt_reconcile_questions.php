@@ -63,6 +63,7 @@ $objIncludeJsCSS->IncludeJqueryValidateMinJS("../../");
 $objIncludeJsCSS->IncludeJquerySnippetJS("../../");
 $objIncludeJsCSS->IncludeBootStrapFileUploadMinJS("../../");
 $objIncludeJsCSS->IncludeUtilsJS("../../");
+$objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 ?>
 <style type="text/css">
 	.modal, .modal.fade.in {
@@ -751,6 +752,11 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 				$(".modal1").hide();
 			});
 		}
+	</script>
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({
+    		tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+ 		});
 	</script>
 </body>
 </html>
