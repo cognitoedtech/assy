@@ -115,7 +115,7 @@ $objIncludeJsCSS->IncludeMetroNotificationJS(CSiteConfig::ROOT_URL."/");
 							<th data-hide="phone,tablet"><font color="#000000">Last Modified</font></th>
 							<th data-hide="phone,tablet"><font color="#000000">Preview Test (free)</font></th>
 							<th data-hide="phone,tablet"><font color="#000000">View Details</font></th>
-							<th data-hide="phone,tablet"><font color="#000000">Publish Test</font></th>
+							<!-- <th data-hide="phone,tablet"><font color="#000000">Publish Test</font></th> -->
 						</tr>
 					</thead>
 					<?php
@@ -131,7 +131,7 @@ $objIncludeJsCSS->IncludeMetroNotificationJS(CSiteConfig::ROOT_URL."/");
 							<th data-hide="phone,tablet"><font color="#000000">Last Modified</font></th>
 							<th data-hide="phone,tablet"><font color="#000000">Preview Test (free)</font></th>
 							<th data-hide="phone,tablet"><font color="#000000">View Details</font></th>
-							<th data-hide="phone,tablet"><font color="#000000">Publish Test</font></th>
+							<!-- <th data-hide="phone,tablet"><font color="#000000">Publish Test</font></th> -->
 						</tr>
 					</tfoot>
 		        </table>
@@ -162,40 +162,6 @@ $objIncludeJsCSS->IncludeMetroNotificationJS(CSiteConfig::ROOT_URL."/");
 			      		</div>
 			    	</div>
 			  	</div>
-			</div>
-			
-			<div id="publish_test_box" class="modal">
-				<div class="modal-dialog">
-			    	<div class="modal-content">
-						<form class='form-horizontal' id="publish_test" name="form_publish_test">
-							<div class="modal-header">
-								<button type="button" class="close"  id="cancel" data-dismiss="modal" aria-hidden="true">&times;</button>
-								<h3 id="header_test_name"> </h3>
-							</div>
-							<div class="modal-body" id="request_modal_body">
-								<div id="publish_test_form_content">
-									<div class="form-group">
-									    <label for="publish_keywords" class="col-lg-4 control-label">Keywords :</label>
-									    <div class="col-lg-6">
-									    	<input class="form-control" id="publish_keywords" name="publish_keywords" type="text" />
-										</div>
-									</div>
-									<div class="form-group">
-									    <label for="publish_test_desc" class="col-lg-4 control-label">Description :</label>
-									    <div class="col-lg-6">
-									    	<textarea class="form-control" rows="3" id="publish_test_desc" name="publish_test_desc"></textarea>
-									    	<input type="hidden" id="publish_test_id" name="pub_test_id">
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button class="btn btn-default" id="cancel1" data-dismiss="modal" aria-hidden="true">Close</button>
-								<button type="submit" class="btn btn-primary" id="btn_publish">Publish</button>
-							</div>
-						</form>
-					</div>
-				</div>
 			</div>
 			<?php
 			include_once (dirname ( __FILE__ ) . "/../../lib/footer.php");
@@ -287,51 +253,6 @@ $objIncludeJsCSS->IncludeMetroNotificationJS(CSiteConfig::ROOT_URL."/");
 			            } );
 			        }
 			    });
-
-			    jQuery.validator.addMethod("ValidateKeyword", function(value, element) {
-					if(/^,.*,$/.test(value) || value.trim() == "," || /^.*,$/.test(value) || /^,.*/.test(value))
-					{
-		    			return false;
-					}
-					else
-					{
-		    			return true;
-					}
-				}, "<span style='color:red;'>* Comma is not allowed in starting and ending!</style>");
-				
-				$("#publish_test").validate({
-	        		rules: {
-	        			publish_keywords: {
-	                		required:true,
-	           		 		'ValidateKeyword':true
-	            		},
-	            		publish_test_desc: {
-	                		required:true,
-	                		maxlength: 160
-	                	}
-	        		},
-	        		messages: {
-	        			publish_keywords: {	
-	        				required:	"<span style='color:red'>* Please Enter Keywords!</span>",
-	        				
-	            		},
-	            		publish_test_desc:{
-	        				required:	"<span style='color:red'>* Please Provide test Description</span>",
-	        				maxlength:	"<span style='color:red'>* Maximum Length of Description Should be 150</span>"
-	    				}
-	    	    	},
-	    	    	submitHandler: function(form) {
-	    				//$('#publish_test_box').modal('modal');
-	    	    		$(".modal1").show();
-	    				$('#publish_test').ajaxSubmit(options);
-	    				$("#"+check_box_id).attr("made_publish", "1");
-	    				var test_id = $("#"+check_box_id).attr('test_id');
-	    				$("#"+test_id+"_keywords").html($("#publish_keywords").val());
-	    				$("#"+test_id+"_description").html($("#publish_test_desc").val());
-	    				$("#"+test_id+"_copy").show();
-	    				$('#publish_test_box').modal('hide');
-	    			}
-	    		});
 		});
 
 		function DeleteTest()
@@ -392,73 +313,6 @@ $objIncludeJsCSS->IncludeMetroNotificationJS(CSiteConfig::ROOT_URL."/");
 		{
 			$(".modal1").hide();
 		}
-
-		var options = { 
-	       	 	//target:        '',   // target element(s) to be updated with server response 
-	       		// beforeSubmit:  showRequest,  // pre-submit callback 
-	      	 	success:       showResponse,  // post-submit callback 
-	 			
-	        	// other available options: 
-	        	url:      'ajax/ajax_publish_test.php',        // override for form's 'action' attribute
-	        	
-	        	type:      'POST',       // 'get' or 'post', override for form's 'method' attribute 
-
-	        	data: {publish : '1'},
-	        	//dataType:  null        // 'xml', 'script', or 'json' (expected server response type) 
-	        	clearForm: true        // clear all form fields after successful submit 
-	        	//resetForm: true        // reset the form after successful submit 
-	 
-	        	// $.ajax options can be used here too, for example: 
-	        	//timeout:   3000 
-	    	};
-
-		var check_box_id = "";
-		function OnPublish(obj)
-		{
-			if ($(obj).is(':checked',true)){
-				var test_id = $(obj).attr('test_id');
-				$("#publish_test").validate().resetForm();
-				$("#publish_test_id").val($(obj).attr('test_id')+'');
-				$("#header_test_name").text('Publish '+$(obj).attr('test_name')+'');
-				$("#publish_keywords").val($("#"+test_id+"_keywords").html()+'');
-				$("#publish_test_desc").val($("#"+test_id+"_description").html()+'');
-				$('#publish_test_box').modal('show'); 		
-			}
-			else{
-
-					$("#publish_test_id").val($(obj).attr('test_id')+'');
-					var test_id= $("#publish_test_id").val();
-
-					$(".modal1").show();
-					$.post("ajax/ajax_publish_test.php",{'unpublish':0,'test_id':test_id},function(data){
-						$(".modal1").hide();
-						$("#"+check_box_id).attr("made_publish", "0");
-						$("#"+test_id+"_copy").hide();
-					});
-				}
-			check_box_id = $(obj).attr("id");
-		}
-
-		$('#publish_test_box').on('hidden.bs.modal', function () {
-			 if($("#"+check_box_id).attr("made_publish") == "0")
-			 {
-			 	$("#"+check_box_id).prop("checked", false);
-			 }
-			 check_box_id ="";
-		});
-
-		
-
-		var clipboard = new Clipboard('.btn-copy-link');
-
-		clipboard.on('success', function(e) {
-			$.Notify({
-				 caption: "Test Link Copied",
-				 content: "<b>"+$(e.trigger).attr("test_name")+"</b> URL <b>"+e.text+"</b> is copied to clipboard!",
-				 style: {background: 'green', color: '#fff'}, 
-				 timeout: 5000
-				 });
-		});
 	</script>
 </body>
 </html>

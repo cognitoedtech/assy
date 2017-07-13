@@ -1729,11 +1729,13 @@
 				//echo(($row['is_static'] == CConfig::TEST_NATURE_STATIC)?"<td>".date("F d, Y [H:i:s]", strtotime($test_static_ary['last_edited']))."</td>":"<td>".date("F d, Y [H:i:s]", strtotime($test_dynamic_ary['last_edited']))."</td>");
 				printf("<td><a href='javascript:' onclick=\"ShowOverlay('%s/test/test.php?test_id=%d&tschd_id=-100','st_x');\">Preview Test</a></td>", CSiteConfig::ROOT_URL, $row['test_id']);
 				echo "<td><input type='button' class='btn btn-sm btn-primary' onclick='OnTestDetails(".$row['test_id'].");' value='Test Details'/></td>";
+				/*
 				$isChecked = ($row['is_published'] == 1)?"checked='checked'":"";
 				$isHidden = ($row['is_published'] == 0)?"style=display:none;":"";
 				$keywords  = !empty($row['keywords'])?$row['keywords']:"";
 				$description  = !empty($row['description'])?$row['description']:"";
 				echo "<td style='text-align: center;'><input type='checkbox' made_publish='0' id='".$row['test_id']."_checkbox' class='publish' test_id='".$row['test_id']."' test_name='".$row['test_name']."' onclick='OnPublish(this);' ".$isChecked."><br /><br /><input type='button' test_name='".$row['test_name']."' data-clipboard-text='".CSiteConfig::FREE_ROOT_URL."/".$row['test_id']."-".date("d")."-".substr($owner_id, 0, 2)."' class='btn btn-sm btn-success btn-copy-link' id='".$row['test_id']."_copy' value='Copy Test Link' ".$isHidden."/><div style='display:none;'><span id='".$row['test_id']."_keywords'>".$keywords."</span><span id='".$row['test_id']."_description'>".$description."</span></div></td>";
+				*/
 				echo "</tr>";
 			}
 			//date_default_timezone_set($reset);
