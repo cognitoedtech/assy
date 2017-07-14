@@ -317,8 +317,8 @@ $objIncludeJsCSS->IncludeJqueryFormJS("../../");
 			<?php	
 			}
 			?>
-	        
-			$(window).load(function(){
+
+			$(window).on('load', function(){
 				$(".modal1").show();
 				$.ajax({
 		            type: 'GET',
