@@ -39,8 +39,11 @@ $objIncludeJsCSS->IncludeJquerySnippetCSS("../../");
 $objIncludeJsCSS->IncludeMipcatCSS("../../");
 $objIncludeJsCSS->IncludeIconFontCSS ( "../../" );
 $objIncludeJsCSS->IncludeFuelUXCSS ( "../../" );
+
 $objIncludeJsCSS->CommonIncludeJS("../../");
 $objIncludeJsCSS->IncludeJquerySnippetJS("../../");
+$objIncludeJsCSS->IncludeMetroNotificationJS ( "../../" );
+$objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 ?>
 <style type="text/css">
 	.modal1 {
@@ -154,6 +157,33 @@ $objIncludeJsCSS->IncludeJquerySnippetJS("../../");
 		</div>
 	</div>
 	<script type="text/javascript">
+		$(document).ready(function () {
+			//Disable cut copy paste
+		    $('body').bind('cut copy paste', function (e) {
+		        e.preventDefault();
+		        $.Notify({
+					 caption: "<b>Cut / Copy / Paste is not allowed !",
+					 content: "Cut / Copy / Paste operations are not allowed on this page.",
+					 style: {background: 'green', color: '#fff'}, 
+					 timeout: 5000
+					 });
+		    });
+		   
+		    //Disable mouse right click
+		    /*
+		    $("body").on("contextmenu",function(e){
+		    	$.Notify({
+					 caption: "<b>Right click is not allowed !",
+					 content: "Right click is not allowed on this page.",
+					 style: {background: 'green', color: '#fff'}, 
+					 timeout: 5000
+					 });
+				 
+		        return false;
+		    });
+		    */
+		});
+		
 		$('#ri_test_id').change(function() {
 			var test_id = $('#ri_test_id').val();
 			
@@ -443,6 +473,11 @@ $objIncludeJsCSS->IncludeJquerySnippetJS("../../");
 				});
 			}
 		});
+	</script>
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({
+    		tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+ 		});
 	</script>
 </body>
 </html>

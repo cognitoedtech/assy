@@ -488,7 +488,7 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 	</div>
 
 	<script type="text/javascript">
-		$(window).load(function(){
+		$(window).on('load', function(){
 			$('#cust_instruction').wysihtml5();
 			
 			$(".mip-help").tooltip();

@@ -386,9 +386,13 @@
 			}
 		</style>
 		<?php 
-			$objIncludeJsCSS->IncludeMetroBootstrapCSS("../");
+			$objIncludeJsCSS->CommonIncludeCSS ( "../" );
+			$objIncludeJsCSS->IncludeJquerySnippetCSS( "../" );
+			
+			$objIncludeJsCSS->CommonIncludeJS ( "../" );
+			$objIncludeJsCSS->IncludeJquerySnippetJS( "../" );
 			$objIncludeJsCSS->IncludeMathJAXJS( "../" );
-			//$objIncludeJsCSS->IncludeIconFontCSS("../");
+			$objIncludeJsCSS->IncludeJqueryUI_1_12_1_JS("../");
 		?>
 		<link rel="stylesheet" type="text/css" href="../css/mipcat.css" />
 		<link rel="stylesheet" type="text/css" href="../3rd_party/bootstrap/css/bootstrap.css" />
@@ -495,8 +499,8 @@
 				<button class="info" style="margin-top: 5px;">Current</button>
 				<button class="success" style="margin-top: 5px;">Attempted</button>
 				<button class="warning" style="margin-top: 5px;">Flagged</button>
-				<button style="margin-top: 5px;"><i class='icon-align-justify on-left'></i>&nbsp;Reading Comprehension Group</button>
-				<button style="margin-top: 5px;"><i class='icon-arrow-right on-left'></i>&nbsp;Direction Group</button>
+				<button style="margin-top: 5px;"><i class='fa fa-align-justify on-left'></i>&nbsp;Reading Comprehension Group</button>
+				<button style="margin-top: 5px;"><i class='fa fa-arrow-right on-left'></i>&nbsp;Direction Group</button>
 			</span>
 			<span class="timer"><input type="text" class="input-medium search-query" size="8" id="timer" style="text-align:center;color:#009900;font-weight: bold;width: 180px;height: 30px; margin-top: 5px;"></span>
 		</div><br />
@@ -1057,7 +1061,7 @@
 			$qtAry		= array(CConfig::QT_READ_COMP  => "RC", CConfig::QT_DIRECTIONS => "DR");
 			$color		= $colorAry[0];
 			$index = 0;
-			$icon_ary = array(CConfig::QT_READ_COMP  => "<i class='icon-align-justify'></i>", CConfig::QT_DIRECTIONS => "<i class='icon-arrow-right'></i>");
+			$icon_ary = array(CConfig::QT_READ_COMP  => "<i class='fa fa-align-justify'></i>", CConfig::QT_DIRECTIONS => "<i class='fa fa-arrow-right'></i>");
 			$class_ary = array("default", "danger");
 			
 			foreach($objAnsAry as $secIndex => $ansSection)

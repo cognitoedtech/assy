@@ -91,7 +91,7 @@
 				}
 			}
 			
-			$query = sprintf("insert into test_session (tsession_id, tschd_id, test_id, user_id, ques_map, cur_chronological_time, attempts_remaining) values ('%s','%s','%s','%s','%s','%s','%s')", $sSessionID, $tschd_id, $test_id, $user_id, json_encode($ques_map), $cur_chronological_time, $attempts_remaining);
+			$query = sprintf("insert into test_session (tsession_id, tschd_id, test_id, user_id, ques_map, cur_chronological_time, attempts_remaining) values ('%s','%s','%s','%s','%s','%s','%s')", $sSessionID, $tschd_id, $test_id, $user_id, json_encode($ques_map), ($cur_chronological_time=='')?0:$cur_chronological_time, $attempts_remaining);
 			
 			$result = mysql_query($query, $this->objDBLink) or die('Create Test Session error : ' . mysql_error());
 			
