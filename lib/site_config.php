@@ -6,7 +6,7 @@
 		/*----------------------------------------------*/
 		//const ROOT_URL = "http://www.ezeeassess.com" ;
 		//const ROOT_URL = "http://mcat.mastishka.com" ;
-		const ROOT_URL = "http://localhost/assy" ;
+		const ROOT_URL = "http://localhost/mipcat" ;
 		//const ROOT_URL = "http://localhost:8080/revamp-mip" ;
 
 		const HIGHCHART_SERVER_URL = "http://127.0.0.1:3003";
