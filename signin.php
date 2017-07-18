@@ -83,6 +83,7 @@
 		<!-- Header -->
 		<?php
 			include("lib/header.php");
+			$bShowCKEditor = FALSE;
 		?>
 		<br />
 		<br />

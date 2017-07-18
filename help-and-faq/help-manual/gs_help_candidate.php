@@ -69,6 +69,7 @@ $objIncludeJsCSS = new IncludeJSCSS ();
 	<!--  <header class="subhead" style="margin-bottom: 0px;">-->
 <?php
 	include_once (dirname ( __FILE__ ) . "/../../lib/header.php");
+	$bShowCKEditor = FALSE;
 ?>
 		
 	<div class="fuelux modal1">

@@ -28,6 +28,7 @@
 		<!-- Header -->
 		<?php
 			include(dirname(__FILE__)."/../../lib/header.php");
+			$bShowCKEditor = FALSE;
 		?>
 		
 		<div style="margin:10px">

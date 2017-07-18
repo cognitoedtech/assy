@@ -33,6 +33,7 @@ $objIncludeJsCSS->CommonIncludeJS("");
 <body>
 	<?php 
 	include_once(dirname(__FILE__)."/lib/header.php");
+	$bShowCKEditor = FALSE;
 	?>
 	<!-- ********************************** -->
 	<div class="container">

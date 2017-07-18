@@ -373,9 +373,6 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 		<style type="text/css">
-			@import "../core/media/css/ui-lightness/jquery-ui-1.8.21.custom.css";
-			.horiz { float: left; padding: 0 90px; }
-			.right{position:absolute;right:0px;width:300px;}
 			div.mipcat_code_ques
 			{
 				font-family: "Courier New", monospace;
@@ -394,9 +391,6 @@
 			$objIncludeJsCSS->IncludeMathJAXJS( "../" );
 			$objIncludeJsCSS->IncludeJqueryUI_1_12_1_JS("../");
 		?>
-		<link rel="stylesheet" type="text/css" href="../css/mipcat.css" />
-		<link rel="stylesheet" type="text/css" href="../3rd_party/bootstrap/css/bootstrap.css" />
-		<link rel="stylesheet" type="text/css" href="../core/media/css/jquery.snippet.css" />
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
 		  _gaq.push(['_setAccount', 'UA-2246912-13']);
@@ -408,14 +402,7 @@
 		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		  })();
 		</script>
-		<script type="text/javascript" src="../3rd_party/wizard/js/jquery.min.js"></script>
-		<script type="text/javascript" charset="utf-8" src="../core/media/js/jquery-ui-1.8.21.custom.min.js"></script>
-		<script type="text/javascript" src="../core/media/js/jquery.snippet.js"></script>
-		<script type="text/javascript" src="../3rd_party/bootstrap/js/bootstrap.js"></script>
 		<script type="text/javascript" src="../js/mipcat/utils.js"></script>
-		<?php 
-			$objIncludeJsCSS->IncludeMetroMinJS("../");
-		?>
 		<style type="text/css">
 		
 		.selected_sec_name {
@@ -486,10 +473,15 @@
 		 }
 		</style>
 	</head>
-	<body style="margin: 5px;">
-		
+	<body>
+		<div class="container">
 		<div style="color:white;font-weight:bold;background-color:CornflowerBlue;padding:10px 10px;" id="header">
-			<input type="button" id="btn_end_exam" class="btn btn-mini btn-danger" value="End Exam (X)" style="font-weight:bold;float: right;"/><span>Test: <?php echo $test_name; ?></span>
+		<span>Test: <?php echo $test_name; ?></span>
+		<span class="pull-right" style="margin-top: -5px">
+			<button id="btn_end_exam" class="btn btn-sm btn-danger">
+				End Exam <i class="fa fa-window-close" aria-hidden="true"></i>
+			</button>
+		</span>
 		</div>
 		
 		<div class="container-fluid">
@@ -499,8 +491,8 @@
 				<button class="info" style="margin-top: 5px;">Current</button>
 				<button class="success" style="margin-top: 5px;">Attempted</button>
 				<button class="warning" style="margin-top: 5px;">Flagged</button>
-				<button style="margin-top: 5px;"><i class='fa fa-align-justify on-left'></i>&nbsp;Reading Comprehension Group</button>
-				<button style="margin-top: 5px;"><i class='fa fa-arrow-right on-left'></i>&nbsp;Direction Group</button>
+				<button style="margin-top: 5px;"><i class="fa fa-align-justify on-left" aria-hidden="true"></i>&nbsp;Reading Comprehension Group</button>
+				<button style="margin-top: 5px;"><i class='fa fa-arrow-right on-left' aria-hidden="true"></i>&nbsp;Direction Group</button>
 			</span>
 			<span class="timer"><input type="text" class="input-medium search-query" size="8" id="timer" style="text-align:center;color:#009900;font-weight: bold;width: 180px;height: 30px; margin-top: 5px;"></span>
 		</div><br />
@@ -735,38 +727,57 @@
 			?>
 		</form>
 		
-		<div class="modal hide fade in" id="dlg_test_end_confirm" role="dialog" tabindex="-1">
-		   	<div class="modal-header">
-		   		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		  		<h3>End Exam Confirmation</h3>
+		<div class="modal fade" id="dlg_test_end_confirm" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">End Exam Confirmation</h4>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure to end the exam? After confirmation your test
+							progress will be submited for result and you will no longer be
+							able to attempt this test again.</p>
+						<p style="color: #666">To cancel, click the No button or hit the
+							ESC key.</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+						<button type="button" onclick="OnEndExam()" class="btn btn-primary">Yes</button>
+					</div>
+				</div>
 			</div>
-		   	<div class="modal-body">
-		   		<p>Are you sure to end the exam? After confirmation your test progress will be submited for result and you will no longer be able to attempt this test again.</p>
-		   	</div>
-		   	<div class="modal-footer">
-		   		<a href="#" class="btn btn-success" onclick="OnEndExam()">Yes</a>
-		   		<a href="#" class="btn" data-dismiss="modal">No</a>
-		   	</div>
 		</div>
 		
-		<div id="MessageModal" role="dialog" tabindex="-1" class="modal hide fade in">
-		  <div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		    <h3><?php echo(CConfig::SNC_SITE_NAME);?> - Closing Test</h3>
-		  </div>
-		  <div id="ModalMsgStr" class="modal-body">
-		  	
-		  </div>
-		  <div class="modal-footer">
-		    <a href="#" onclick="HideOL(); $('#MessageModal').modal('hide');" class="btn">Close</a>
-		  </div>
+		<div class="modal fade" id="MessageModal" tabindex="-1"
+			role="dialog" aria-labelledby="MessageModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="MessageModalLabel"><?php echo(CConfig::SNC_SITE_NAME);?> - Closing Test</h4>
+					</div>
+					<div id="ModalMsgStr" class="modal-body">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
 		</div>
 		</div>
 		<script  language="JavaScript" type="text/javascript">
 		//parent.ShowLeftMenu();
 		OnTransChoiceChange();
-		
-		window.onload = function() {
+
+		$(document).ready(function() {
 			TestTimer();
 			HeartBeat();
 			$("div.mipcat_code_ques").snippet("c",{style:"vim"});
@@ -787,7 +798,7 @@
 			?>
 
 			ToggleSections();
-		}
+		});
 
 		$("#btn_end_exam").click(function(){
 			if(OnEndExam.bExamEnded == false)
@@ -1208,5 +1219,6 @@
     			tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
  			});
 		</script>
+		</div>
 	</body>
 </html>

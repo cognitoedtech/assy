@@ -517,6 +517,23 @@
 			return $objRet;
 		}
 		
+		public function GetMarksFromPNR($test_pnr)
+		{
+			$objRet = null;
+			$query = sprintf("select marks from result where test_pnr='%s'", $test_pnr);
+				
+			$result = mysql_query($query, $this->objDBLink) or die('Get Marks From PNR error : ' . mysql_error());
+				
+			if(mysql_num_rows($result) > 0)
+			{
+				$row = mysql_fetch_array($result);
+		
+				$objRet = $row['marks'];
+			}
+				
+			return $objRet;
+		}
+		
 		public function GetUnpreparedResultFromPNR($test_pnr)
 		{
 			$objRet = null;

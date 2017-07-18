@@ -28,6 +28,7 @@
 		<!-- Header -->
 		<?php
 			include(dirname(__FILE__)."/../../lib/header.php");
+			$bShowCKEditor = FALSE;
 		?>
 		
 		<div style="margin-left:40px;margin-right:40px;font: 120% 'Trebuchet MS', sans-serif;">

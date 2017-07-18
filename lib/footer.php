@@ -1,5 +1,5 @@
 <?php
-if (1) {//($user_type != CConfig::UT_INDIVIDAL && $bShowCKEditor == TRUE) {
+if ($user_type != CConfig::UT_INDIVIDAL && $bShowCKEditor == TRUE) {
 ?>
 <div class="modal hide" id="ckeditor_modal_wrapper" tabindex="-1" role="dialog" aria-labelledby="ckeditor_modal_label">
 	<div class="modal-dialog modal-lg" role="document" id="ckeditor_modal">
@@ -53,7 +53,7 @@ if (1) {//($user_type != CConfig::UT_INDIVIDAL && $bShowCKEditor == TRUE) {
 	</div>
 </div>
 <?php
-if (1) { //($user_type != CConfig::UT_INDIVIDAL && $bShowCKEditor == TRUE) {
+if ($user_type != CConfig::UT_INDIVIDAL && $bShowCKEditor == TRUE) {
 ?>
 <script type="text/javascript">
 	$(document).ready(function() {

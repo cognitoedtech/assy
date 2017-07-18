@@ -25,6 +25,7 @@
 		<!-- Header -->
 			<?php
 				include_once (dirname ( __FILE__ ) . "/../../lib/header.php");
+				$bShowCKEditor = FALSE;
 			?><br />	
 		<div style="margin:40px; margin-right:40px;font: 90% 'Trebuchet MS', sans-serif">
 			<h3 style="text-align:center;color:steelblue;">Institute : Frequently Asked Questions</h3><br/>

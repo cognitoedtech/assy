@@ -8,7 +8,13 @@
 	
 	$login_name = CSessionManager::Get(CSessionManager::STR_LOGIN_NAME);
 	
-	$logged_in = false;
+	// -----------------------------------------------------------------------------
+	// By default show CKEditor, on pages it's not required make this variable FALSE
+	// -----------------------------------------------------------------------------
+	$bShowCKEditor = TRUE;
+	// -----------------------------------------------------------------------------
+	
+	$logged_in = FALSE;
 	$logo_name  = CConfig::SNC_SITE_NAME;
 	
 	$punch_line = CConfig::SNC_PUNCH_LINE;

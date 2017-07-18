@@ -75,8 +75,9 @@ $objIncludeJsCSS = new IncludeJSCSS ();
 	<!-- Header -->
 	<!--  <header class="subhead" style="margin-bottom: 0px;">-->
   		<?php
-				include_once (dirname ( __FILE__ ) . "/../../lib/header.php");
-				?>
+			include_once (dirname ( __FILE__ ) . "/../../lib/header.php");
+			$bShowCKEditor = FALSE;
+		?>
 		
 		<div class="fuelux modal1">
 		<div class="preloader">
@@ -1207,7 +1208,7 @@ $objIncludeJsCSS = new IncludeJSCSS ();
 				<br/>
 				
 				<h4 style="color:black">Copy Test Link</h4>
-				<p>Once test is published, you can copy it’s link using Copy Test Link button. Once clicked,  url will be copied to clipboard and you can paste that link on email, facebook post or any other place where you want. Note that button is enabled for published test only.  You can’t copy private test link. </p>
+				<p>Once test is published, you can copy itâ€™s link using Copy Test Link button. Once clicked,  url will be copied to clipboard and you can paste that link on email, facebook post or any other place where you want. Note that button is enabled for published test only.  You canâ€™t copy private test link. </p>
 				
 				<div class="well text-center">
 									<a href="images/manage_test_publish4.jpg" target="_blank"><img
@@ -1227,14 +1228,14 @@ $objIncludeJsCSS = new IncludeJSCSS ();
 				<h4 style="color: black">Introduction</h4>
 				<br />
 				<p>
-					EZeeAssess's Candidate’s Batch Management enables Test Admin to segregate candidates based on various criteria like location, batch time, course type etc. and put them in batches. Batches help in locating candidates and scheduling tests specific for batches.
-					With “Manage Batch” you can create a new batch, add (optional) description, edit the name ⁄ description later and even delete them. Deleting batches don't mean deleting candidates registered, upon deleting batch - candidate entry will be moved to Default Batch.
+					EZeeAssess's Candidateâ€™s Batch Management enables Test Admin to segregate candidates based on various criteria like location, batch time, course type etc. and put them in batches. Batches help in locating candidates and scheduling tests specific for batches.
+					With â€œManage Batchâ€� you can create a new batch, add (optional) description, edit the name â�„ description later and even delete them. Deleting batches don't mean deleting candidates registered, upon deleting batch - candidate entry will be moved to Default Batch.
 				</p>
 				
 				<h4 style="color: black">Create a Batch</h4>
 				<br />
 				<p>
-				You can create a batch by clicking on “New” button on Manage Batch page. It needs Batch name and a short description about that batch.
+				You can create a batch by clicking on â€œNewâ€� button on Manage Batch page. It needs Batch name and a short description about that batch.
 				</p>
 				<div class="well text-center">
 					<a href="images/add_batch.jpg"
@@ -1267,7 +1268,7 @@ $objIncludeJsCSS = new IncludeJSCSS ();
 				<h4 style="color: black">Change Batch</h4>
 				<br />
 				<p>
-				Change batch feature provide you option to move any candidates from one batch to another batch. You can select “From batch” from which you want to move candidate to another batch. You can select one or more candidate from left pan and add them to right pan. By Clicking “Change” you can move all selected candidates to desired batch.
+				Change batch feature provide you option to move any candidates from one batch to another batch. You can select â€œFrom batchâ€� from which you want to move candidate to another batch. You can select one or more candidate from left pan and add them to right pan. By Clicking â€œChangeâ€� you can move all selected candidates to desired batch.
 				</p>
 				<div class="well text-center">
 					<a href="images/add_batch.jpg"

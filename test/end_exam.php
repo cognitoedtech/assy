@@ -386,12 +386,20 @@
    	 	$("#captcha_img").attr("src","../3rd_party/captcha/captcha.php?r=" + Math.random());
 	}
 
+	function handleError(xhr, status, ex)
+	{
+		$(".modal1").hide();
+		$("#response_div").html("<span style='color:red;'>Request Error: "+ex.toString()+"</span>");
+		//alert(xhr.responseText);
+	}
+
     var time_zone = get_time_zone_offset( );
     var options = { 
     	    data: {'test_id': '<?php echo($nTestID);?>', 'test_pnr' : '<?php echo($test_pnr);?>', 'time_zone' : time_zone},
        	 	//target:        '',   // target element(s) to be updated with server response 
        		// beforeSubmit:  showRequest,  // pre-submit callback 
       	 	 success:       showResponse,  // post-submit callback 
+			 error:         handleError,
  
         	// other available options: 
         	url:      'ajax/ajax_free_user_result.php',         // override for form's 'action' attribute 

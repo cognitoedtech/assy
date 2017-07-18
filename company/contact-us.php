@@ -23,6 +23,7 @@
 		<!-- Header -->
 		<?php
 			include(dirname(__FILE__)."/../lib/header.php");
+			$bShowCKEditor = FALSE;
 		?>
 		<div class="container">
 			<h3 style="text-align:center;color:steelblue;">Contact Us</h3><br/>

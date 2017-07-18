@@ -27,6 +27,7 @@ $objIncludeJsCSS->CommonIncludeJS ( "../" );
 	<!-- Header -->
 		<?php
 		include (dirname ( __FILE__ ) . "/../lib/header.php");
+		$bShowCKEditor = FALSE;
 		?>
 		<br />
 	<br />
