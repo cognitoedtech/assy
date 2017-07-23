@@ -167,8 +167,15 @@
 										{
 										?>
 										<li <?php echo($pages_class_ary[CSiteConfig::UAP_PRODUCE_CUSTOM_RESULT]);?>><a href="<?php echo(CSiteConfig::ROOT_URL);?>/core/result-analytics/dt_custom_result.php"><i class="icon-arrow-right-4"></i>Produce Custom Results</a></li>
+										<?php 
+										}
+										?>
 										<li <?php echo($pages_class_ary[CSiteConfig::UAP_TEST_DNA_ANALYSIS]);?>><a href="<?php echo(CSiteConfig::ROOT_URL);?>/core/result-analytics/detailed_result_analytics.php"><i class="icon-arrow-right-4"></i>Test DNA Analysis</a></li>
 										<li <?php echo($pages_class_ary[CSiteConfig::UAP_RESULT_INSPECTION]);?>><a href="<?php echo(CSiteConfig::ROOT_URL);?>/core/result-analytics/inspection_result_analytics.php"><i class="icon-arrow-right-4"></i>Result Inspection</a></li>
+										<?php
+										if($user_type != CConfig::UT_INDIVIDAL )
+										{
+										?>
 										<li <?php echo($pages_class_ary[CSiteConfig::UAP_FREE_USER_RESULTS]);?>><a href="<?php echo(CSiteConfig::ROOT_URL);?>/core/result-analytics/dt_free_user_results.php"><i class="icon-arrow-right-4"></i>Free User Results</a></li>
 										<li <?php echo($pages_class_ary[CSiteConfig::UAP_IMPORT_OFFLINE_RESULTS]);?>><a href="<?php echo(CSiteConfig::ROOT_URL);?>/core/result-analytics/import_offline_results.php"><i class="icon-arrow-right-4"></i>Import Offline Results</a></li>
 										<?php 

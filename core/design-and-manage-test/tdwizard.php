@@ -221,7 +221,7 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 						<div class="row fluid">
 							<div class="col-sm-6 col-md-6 col-lg-6">
 								<label>Question Source :</label>
-								<input type="radio" onchange="PopulateLanguageSet('mipcat');" name="ques_source" value="mipcat" <?php echo((($plan_type == CConfig::SPT_BASIC || $plan_type == CConfig::SPT_PPU) && $user_type != CConfig::UT_SUPER_ADMIN)?"disabled='disabled'":"checked='checked'");?>/> <span style="color: blue"><?php echo(CConfig::SNC_SITE_NAME);?></span>
+								<input type="radio" onchange="PopulateLanguageSet('mipcat');" name="ques_source" value="mipcat" <?php echo((($plan_type == CConfig::SPT_BASIC || $plan_type == CConfig::SPT_PPU) && $user_type != CConfig::UT_SUPER_ADMIN)?"":"checked='checked'");?>/> <span style="color: blue"><?php echo(CConfig::SNC_SITE_NAME);?></span>
 								<i class="icon-help mip-help" data-toggle="tooltip" trigger="click hover focus" data-placement="right" title="Questions will be pulled from <?php echo(CConfig::SNC_SITE_NAME);?> knowledge-base and cost per candidate per test will be chared accordingly."></i>
 								
 								<input type="radio" onchange="PopulateLanguageSet('personal');" name="ques_source" value="personal" <?php echo((($plan_type == CConfig::SPT_BASIC || $plan_type == CConfig::SPT_PPU) && $user_type != CConfig::UT_SUPER_ADMIN)?"checked='checked'":"");?>/> <span style="color: blue">Personal</span>
@@ -248,7 +248,7 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 										and unanswered questions.">
 									</i> 
 									
-									<input <?php echo ($user_type == CConfig::UT_CONTRIBUTOR?"checked":""); ?> type="radio" name="visibility" value="2" <?php echo(($plan_type == CConfig::SPT_BASIC && $user_type != CConfig::UT_SUPER_ADMIN)?"disabled='disabled'":"");?>> Detailed</input>
+									<input <?php echo ($user_type == CConfig::UT_CONTRIBUTOR?"checked":""); ?> type="radio" name="visibility" value="2"> Detailed</input>
 									<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span style='color: red'>Detailed</span> After exam
 										completion - candidate will be able to see detailed performance
 										analysis in result analytics section.">
