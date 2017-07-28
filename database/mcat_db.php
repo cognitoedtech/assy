@@ -1974,7 +1974,7 @@
 									$attempts, $mcq_type, $pref_lang, $allow_trans, $test_nature, $tag_id, $test_type = CConfig::TT_DEFAULT)
 		{
 			$nRet = FALSE;
-			$query = sprintf("insert into test (owner_id, test_name, mcpa_flash_ques, mcpa_lock_ques, expire_hrs, attempts, tag_id, is_static,  mcq_type,  pref_lang, allow_trans, test_type) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s','%s', '%s')",$user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, ($test_expiration==-1)?-1:($test_expiration*24), $attempts, $tag_id, ($test_nature=='')?0:$test_nature, $mcq_type, $pref_lang, $allow_trans, $test_type);
+			$query = sprintf("insert into test (owner_id, test_name, mcpa_flash_ques, mcpa_lock_ques, expire_hrs, attempts, tag_id, is_static,  mcq_type,  pref_lang, allow_trans, test_type) values ('%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s','%s', '%s')",$user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, ($test_expiration==-1)?-1:($test_expiration*24), $attempts, $tag_id, ($test_nature=='')?0:$test_nature, $mcq_type, $pref_lang, $allow_trans, $test_type);
 			
 			//echo $query."<br />";
 			$result = mysql_query($query, $this->db_link) or die('Insert into test error : ' . mysql_error());

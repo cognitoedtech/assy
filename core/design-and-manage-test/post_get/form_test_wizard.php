@@ -100,7 +100,10 @@
     $TopicId						= $_POST['TopicId'];
     $TagId							= $_POST['tag'];
     
-    //echo $mcq_type;
+    /*echo "<pre>";
+    print_r($_POST);
+    echo "</pre>";*/
+    
     $test_id = $objDB->InsertIntoTest($user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, $test_expiration, $attempts, $mcq_type, $pref_lang, $allow_trans, $test_nature, $TagId);
     
     if($test_id !== FALSE)
