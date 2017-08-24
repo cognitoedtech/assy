@@ -71,7 +71,7 @@
 	$question		= clean($_POST['QUESTION']);	
 	$security_answer	= clean($_POST['ANSWER']);
 	$phone			= clean($_POST['PHONE']);
-	$dob			= sprintf("");
+	$dob			= "1980-01-01";
 	//$dob			= sprintf("%s-%s-%s",$year,$month,$day);
 	$showcast_public	= 0;
 	$app_plan 		= $_POST['PLAN_TYPE'];
