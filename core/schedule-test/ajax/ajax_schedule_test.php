@@ -42,7 +42,17 @@
 	$objDB = new CMcatDB();
 	
 	// Sanitize the POST values
-	$test_id 		= $_POST['test_id'];
+	
+	$test_id =  $_POST['test_id'];
+	if(isset( $_POST['test_type']))
+	{
+		if( $_POST['test_type'] == 'ezeeassess')
+		{
+			$test_id =  $_POST['ea_test_id'];			
+		}		
+	}
+	
+	//$test_id 		= $_POST['test_id'];
 	$schd_type		= $_POST['schd_type'];
 	$scheduled_on 	= $_POST['scheduled_on'];
 	$hours		 	= $_POST['hours'];

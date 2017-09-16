@@ -544,7 +544,7 @@ if(false)
 					<li><a href="#tab1">Register Business Associate</a></li>
 				</ul>
 				<div id="tab1">
-					<form id="LOGINFORM" name="LOGINFORM" method="POST" action="register-ba-exec.php">
+					<form id="LOGINFORM" name="LOGINFORM" method="post" action="register-ba-exec.php">
 						<table width="800px" border="0" cellpadding="2" cellspacing="0" style="!important;">
 							<tr>
 								<td><span class="boldfont">First Name :</span><BR/><BR/></td>

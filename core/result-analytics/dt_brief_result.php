@@ -18,6 +18,7 @@
 	$time_zone = CSessionManager::Get(CSessionManager::FLOAT_TIME_ZONE);
 	
 	$TNameAry = $objTR->GetCompletedTestNames($user_id, $nUserType);
+	
 	$TestInfoAry = $objTR->GetCompletedTestInfo($user_id, $time_zone);
 	
 	$ResultAry = $objTR->PopulateBriefResultList($user_id, $nUserType, $time_zone);

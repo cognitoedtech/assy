@@ -31,6 +31,9 @@
 	$select_combo_mins = date("i", strtotime($select_combo_date));
 	date_default_timezone_set($reset);
 	
+	$assigned_test_count = $objDB->GetAssignedTestCount($user_id);
+	
+	
 	$sTestName = "";
 	if($qry[0] == "test_name" && !empty($qry[1]))
 	{
@@ -166,9 +169,18 @@ $objIncludeJsCSS->IncludeMetroDatepickerJS("../../");
 										</select>
 									</div>
 								</div><br />
-								<div class="row">
+								
+								<div class="row"  id="div_testype">
+								<div class="col-lg-7 col-md-7 col-sm-7">
+										<label for="test_id"><b>Test Type :&nbsp;&nbsp;</b></label>
+								<input checked type="radio" name="test_type" value="personal" onChange="OnTestTypeChange();" />Personal 
+								<input type="radio" name="test_type" value="ezeeassess" onChange="OnTestTypeChange();" />EzeeAssess
+								</div>
+								</div>
+								<br/>								
+								<div class="row" id="div_personaltest">
 									<div class="col-lg-7 col-md-7 col-sm-7">
-										<label for="test_id"><b>Select Test:</b></label>
+										<label for="test_id"><b>Select Your Test:</b></label>
 										<select class="form-control input-sm" id="test_id" name="test_id" onchange="SetBatchName();" onkeyup="SetBatchName();" onkeydown="SetBatchName();">
 											<?php
 												$objDB->PrepareTestCombo($user_id);
@@ -179,6 +191,21 @@ $objIncludeJsCSS->IncludeMetroDatepickerJS("../../");
 										<a href="javascript:" style="position:relative;top: 25px;" onclick="OnTestDetails()"><img style="position:relative;" src="../../images/question_mark_small.png" width="18px" height="18px"/>Test Details</a>
 									</div><br /><br /><br /><br />
 								</div>
+								
+								<div class="row" id="div_ezeeassesstest">
+									<div class="col-lg-7 col-md-7 col-sm-7">
+										<label for="test_id"><b>Select EzeeAssess Test:</b></label>
+										<select class="form-control input-sm" id="ea_test_id" name="ea_test_id" onchange="SetBatchName();" onkeyup="SetBatchName();" onkeydown="SetBatchName();">
+											<?php
+												$objDB->PrepareAssignedTestCombo($user_id);
+											?>
+										</select>&nbsp;
+									</div>
+									<div class="col-lg-5 col-md-5 col-sm-5" style="padding-left: 0px;">
+										<a href="javascript:" style="position:relative;top: 25px;" onclick="OnEATestDetails()"><img style="position:relative;" src="../../images/question_mark_small.png" width="18px" height="18px"/>Test Details</a>
+									</div><br /><br /><br /><br />
+								</div>
+								
 								<div class="row" id="test_schedule_date_div">
 									<div class="col-lg-5 col-md-5 col-sm-5">
 										<label for="datepicker1_val"><b>Schedule On (Date):</b></label>
@@ -940,7 +967,21 @@ $objIncludeJsCSS->IncludeMetroDatepickerJS("../../");
 			$("#time_zone").val(-current_date.getTimezoneOffset()/60);
 			
 			var TestRate = null;
+			
 			var test_id = $("#test_id option:selected").val();
+			var test_type = $('input[name="test_type"]:checked').val();
+
+			if(test_type == "personal")
+			{
+				test_id = $("#test_id option:selected").val();
+			}
+			else if(test_type == "ezeeassess")
+			{
+				test_id = $("#ea_test_id option:selected").val();
+			}
+
+			
+			
 			//alert("ajax/ajax_get_ques_source.php?test_id="+test_id);
 
 			$(".modal1").show();
@@ -993,6 +1034,18 @@ $objIncludeJsCSS->IncludeMetroDatepickerJS("../../");
 			});
 		}
 
+
+		function OnEATestDetails()
+		{
+			$(".modal1").show();
+			
+			$("#test_details_modal_body").load("../ajax/ajax_test_details.php?test_id="+$("#ea_test_id").val(), function(){
+				$("#test_details_modal").modal("show");
+				$(".modal1").hide();
+			});
+		}
+		
+
 		function printTime(offset) 
 		{
 			workDate = new Date();
@@ -1004,6 +1057,11 @@ $objIncludeJsCSS->IncludeMetroDatepickerJS("../../");
 		}
 
 		$(document).ready(function () {
+
+			<?php if($assigned_test_count == 0){ ?>
+			$("#div_testype").hide();			
+			<?php }?>
+			
 			<?php 
 			if(CSessionManager::IsError())
 			{
@@ -1032,6 +1090,7 @@ $objIncludeJsCSS->IncludeMetroDatepickerJS("../../");
 
 			OnSchdTypeChange();
 			SetBatchName();
+			OnTestTypeChange();
 			<?php 
 			if($plan_type == CConfig::SPT_ENTERPRISE || $user_type == CConfig::UT_SUPER_ADMIN)
 			{
@@ -1313,6 +1372,33 @@ $objIncludeJsCSS->IncludeMetroDatepickerJS("../../");
 			$("#form_schedule").data("validator").settings.ignore = "";
 			$(".mip-help").tooltip();
 		});
+
+
+
+		function OnTestTypeChange()
+		{
+			var test_type = $('input[name="test_type"]:checked').val();
+
+			if(test_type == "personal")
+			{
+				$("#div_personaltest").show();
+				$("#div_ezeeassesstest").hide();
+				$('#test_id').removeAttr("readonly");
+				$('#ea_test_id').attr("readonly", "readonly");
+				
+				
+				
+			}
+			else if(test_type == "ezeeassess")
+			{
+			
+				$("#div_personaltest").hide();
+				$("#div_ezeeassesstest").show();
+				$('#ea_test_id').removeAttr("readonly");
+				$('#test_id').attr("readonly", "readonly");
+				
+			}
+		}
 	</script>
 </body>
 </html>

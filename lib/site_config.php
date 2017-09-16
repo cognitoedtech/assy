@@ -7,7 +7,7 @@
 		//const ROOT_URL = "http://www.ezeeassess.com" ;
 		//const ROOT_URL = "http://mcat.mastishka.com" ;
 
-		const ROOT_URL = "http://localhost/mipcat" ;
+		const ROOT_URL = "http://localhost/ezeeassess-integration" ;
 
 		const HIGHCHART_SERVER_URL = "http://127.0.0.1:3003";
 
@@ -94,5 +94,6 @@
 		const UAP_RESULT_INSPECTION					= 41;
 		const UAP_FREE_USER_RESULTS					= 42;
 		const UAP_IMPORT_OFFLINE_RESULTS			= 43;
+		const UAP_ALLOCATE_TESTS					= 43;
 	}
 ?>

@@ -1688,7 +1688,7 @@
 		
 		public function PopulateTests($owner_id, $time_zone)
 		 {
-			$query = sprintf("select * from test where owner_id='%s' and deleted is null", $owner_id);
+			$query = sprintf("select test.*,ta.allocation_id from test left join test_allocation ta on ta.test_id = test.test_id  where owner_id='%s' and deleted is null or (ta.suspended = 0 and ta.assignee_id = '%s')", $owner_id,$owner_id);
 				
 			$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
 			
@@ -1697,11 +1697,14 @@
 			//date_default_timezone_set($this->tzOffsetToName($time_zone));
 			while($row = mysql_fetch_array($result))
 			{
+				$ea_test = $row['allocation_id']==null?"":"  <i class='fa fa-external-link' aria-hidden='true'></i>";
+				
+				
 				$test_static_ary = NULL;
 				$test_dynamic_ary = NULL;
 				$last_edited      = NULL;
 				echo "<tr id='".$row['test_id']."'>";
-				echo "<td>".$row['test_name']."</td>";
+				echo "<td>".$row['test_name']. $ea_test."</td>";
 				if($row['is_static'] == CConfig::TEST_NATURE_STATIC)
 				{
 					$test_static_ary = $this->GetStaticTest($row['test_id']);
@@ -1810,6 +1813,11 @@
 				echo "<option value=''>No Test Available</option>";
 			}
 		}
+		
+		
+		
+		
+		
 		
 		public function GetAssignedPackageName($package_id)
 		{
@@ -2586,20 +2594,22 @@
 			$query = "";
 			if($user_id == null)
 			{
-				$query = sprintf("select test_schedule.*, test.test_name, test.owner_id from test_schedule, test where test.test_id=test_schedule.test_id and test.deleted is null");
+				$query = sprintf("select test_schedule.*, test.test_name, test.owner_id,ta.allocation_id from test_schedule inner join test on test_schedule.test_id = test.test_id left joion test_allocation ta on ta.test_id = test.test_id where test.deleted is null");
 			}
 			else 
 			{
-				$query = sprintf("select test_schedule.*, test.test_name from test_schedule join test on test.test_id = test_schedule.test_id left join assigned_packages on test.test_id=assigned_packages.test_id where (test.owner_id='%s' or (test.public = 1 AND assigned_packages.user_id = '%s')) AND test_schedule.scheduler_id='%s' and test.deleted is null", $user_id, $user_id, $user_id);
+				$query = sprintf("select test_schedule.*, test.test_name,ta.allocation_id from test_schedule join test on test.test_id = test_schedule.test_id left join assigned_packages on test.test_id=assigned_packages.test_id left join test_allocation ta on test.test_id=ta.test_id where (test.owner_id='%s' or (test.public = 1 AND assigned_packages.user_id = '%s') or (ta.assignee_id = '%s')) AND test_schedule.scheduler_id='%s' and test.deleted is null", $user_id, $user_id, $user_id,$user_id);
 			}
 			
 			$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
 			
 			while($row = mysql_fetch_array($result))
 			{
+				$ea_test = $row['allocation_id']==null?"":"  <i class='fa fa-external-link' aria-hidden='true'></i>";
+				
 				echo "<tr id='".$row['test_id']."'>";
 				echo "<td>".$row['schd_id']."_mip</td>";
-				echo "<td>".$row['test_name']."</td>";
+				echo "<td>".$row['test_name'].$ea_test."</td>";
 				if($user_id == null)
 				{
 					echo "<td>".$this->GetUserName($row['owner_id'])."</td>";
@@ -3801,21 +3811,24 @@
         
         public function PrepareScheduledTestCombo($owner_id, $test_id = 0)
         {
-            $query = sprintf("select DISTINCT ts.test_id, test.test_name from test_schedule ts join test on ts.test_id = test.test_id left join assigned_packages on assigned_packages.test_id = test.test_id where ((test.owner_id='%s' and ts.scheduler_id ='%s') or (ts.scheduler_id ='%s' and assigned_packages.user_id='%s')) and test.submitted=0 and test.deleted is null and ts.scheduled_on is not null", $owner_id, $owner_id, $owner_id, $owner_id);
-       
+            $query = sprintf("select DISTINCT ts.test_id, test.test_name,ta.allocation_id from test_schedule ts join test on ts.test_id = test.test_id left join assigned_packages on assigned_packages.test_id = test.test_id left join test_allocation ta on test.test_id = ta.test_id where ((test.owner_id='%s' and ts.scheduler_id ='%s') or (ts.scheduler_id ='%s' and assigned_packages.user_id='%s') or  (ts.scheduler_id ='%s' and ta.assignee_id ='%s')) and test.submitted=0 and test.deleted is null and ts.scheduled_on is not null", $owner_id, $owner_id, $owner_id, $owner_id , $owner_id,$owner_id);
+       		
+            
             $result = mysql_query($query, $this->db_link) or die('Prepare scheduled test combo error : ' . mysql_error());
            
             if(mysql_num_rows($result) > 0)
             {
                 while($row = mysql_fetch_array($result))
                 {
+                	$ea_test = $row['allocation_id']==null?"":"(EzeeAssess)";
+                	
                     if($test_id != 0)
                     {
-                        echo (($test_id == $row['test_id'])?"<option value='".$row['test_id']."' selected>".$row['test_name']."</option>":"<option value='".$row['test_id']."'>".$row['test_name']."</option>");
+                        echo (($test_id == $row['test_id'])?"<option value='".$row['test_id']."' selected>".$row['test_name'].$ea_test."</option>":"<option value='".$row['test_id']."'>".$row['test_name'].$ea_test."</option>");
                     }
                     else
                     {
-                        echo "<option value='".$row['test_id']."'>".$row['test_name']."</option>";
+                        echo "<option value='".$row['test_id']."'>".$row['test_name'].$ea_test."</option>";
                     }
                 }
             }
@@ -5012,5 +5025,125 @@
         
         	$result = mysql_query($query, $this->db_link) or die('Update Test Schedule User List error : ' . mysql_error());
         }
+        
+        public function FetchUsersTest($owner_id)
+        {
+        	$query = sprintf("select * from test where owner_id='%s' and deleted is null", $owner_id);
+        	
+        	$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
+        	
+        	while($row = mysql_fetch_array($result))
+        	{
+        		        	        		
+        		$retAry[$row['test_id']] = "<option style='color:darkblue;' value='".$row['test_id']."'>".$row['test_name']."</option>";
+        		
+        	}        	
+        	return $retAry;
+        	
+        }
+        
+        public function allocate_test($assigner_id, $assignee_id,$test_id)
+        {
+        	
+        	
+        	$query = sprintf("select * from test_allocation where assigner_id = '%s' and assignee_id = '%s' and test_id = '%s'", $assigner_id,$assignee_id,$test_id);
+        	//  
+        	$allocation_id = -1;
+        	
+        	$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
+        	$activity = ""; 
+        	$activity_array = array();
+        	$activity_array[0]["status"] = "active"; //
+        	$activity_array[0]["update_time"] = date("Y-m-d H:i:s");
+        	$existing_activity = "";
+        	while($row = mysql_fetch_array($result))
+        	{
+        	 $allocation_id =	$row["allocation_id"];  
+        	 $existing_activity = $row["activity"];
+        	}
+        	
+        	if($allocation_id == -1)
+        	{         		
+        		  
+        		$activity = json_encode($activity_array);  
+        		      		
+        		$query = sprintf("insert into test_allocation(assigner_id ,assignee_id, test_id,activity) VALUES ('%s', '%s', '%s','%s')", $assigner_id, $assignee_id, $test_id,$activity);        	
+        		$result = mysql_query($query, $this->db_link) or die("Insert Test Allocation Error: ".mysql_error($this->db_link));
+        	}
+        	else // existing row update the suspended and activity array
+        	{
+        		$existing_activity_array = json_decode($existing_activity,TRUE);        		
+        		$final_array = array_merge($existing_activity_array, $activity_array);        		
+        		$query = sprintf("update test_allocation set suspended = 0, activity = '%s' where allocation_id= '%s'", json_encode($final_array), $allocation_id);
+        		$result = mysql_query($query, $this->db_link) or die("Update Test Allocation Error: ".mysql_error($this->db_link));
+        	}        	
+        }
+        
+        
+        
+        
+        
+        public function PrepareAssignedTestCombo($owner_id)
+        {
+        	//$query = "select test.*, test_dynamic.ques_source from test, test_dynamic where test_dynamic.test_id = test.test_id and test.owner_id='".$owner_id."' and test.submitted=0 and test.deleted is null";
+        
+        	$query = sprintf("select test.*, test_dynamic.ques_source, assigned_packages.package_id from test join test_dynamic  on test.test_id=test_dynamic.test_id inner join test_allocation ta on test.test_id= ta.test_id
+        			left join assigned_packages on test.test_id = assigned_packages.test_id where  test.submitted=0 and test.deleted is null and ta.suspended = 0 and ta.assignee_id = '%s'", $owner_id);
+        
+        	$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
+        
+        	$package_name_ary = array();
+        	if(mysql_num_rows($result) > 0)
+        	{
+        		while($row = mysql_fetch_array($result))
+        		{
+        			$class = "personal_ques_source";
+        			$ques_source = "Personal";
+        			if($row['ques_source'] == "mipcat")
+        			{
+        				$class = "mipcat_ques_source";
+        				$ques_source = CConfig::SNC_SITE_NAME;
+        			}
+        			if($row['public'] == 1 && $owner_id != $row['owner_id'])
+        			{
+        				if(!isset($package_name_ary[$row['package_id']]))
+        				{
+        					$package_name_ary[$row['package_id']] = $this->GetAssignedPackageName($row['package_id']);
+        				}
+        				echo "<option value='".$row['test_id']."' class='".$class."'>".$row['test_name']." (Package : ".$package_name_ary[$row['package_id']].")</option>";
+        			}
+        			else
+        			{
+        				echo "<option value='".$row['test_id']."' class='".$class."'>".$row['test_name']."</option>";
+        			}
+        		}
+        	}
+        	else
+        	{
+        		echo "<option value=''>No Test Available</option>";
+        	}
+        }
+        
+        public function GetAssignedTestCount($owner_id)
+        {
+        	//$query = "select test.*, test_dynamic.ques_source from test, test_dynamic where test_dynamic.test_id = test.test_id and test.owner_id='".$owner_id."' and test.submitted=0 and test.deleted is null";
+        
+        	$query = sprintf("select count(*) as count from test join test_dynamic  on test.test_id=test_dynamic.test_id inner join test_allocation ta on test.test_id= ta.test_id
+        			left join assigned_packages on test.test_id = assigned_packages.test_id where  test.submitted=0 and test.deleted is null and ta.assignee_id = '%s'", $owner_id);
+        
+        	$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
+        
+        	$retVal = 0;
+        	
+        	if(mysql_num_rows($result) > 0)
+        	{
+        		$row = mysql_fetch_array($result);
+        		$retVal = $row['count'];
+        	}
+        
+        	return $retVal;
+        }
+        
+        
 	}
 ?>

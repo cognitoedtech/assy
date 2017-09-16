@@ -394,17 +394,30 @@
         	return $retVal;
         }
         
-		public function GetScheduledTestInfo($owner_id)
+		public function GetScheduledTestInfo($owner_id,$bincludeResult= false)
 		{
 			$RetAry = array();
 			
-			$query = sprintf("select * from test join test_schedule on test.test_id = test_schedule.test_id where test.owner_id='%s' and test_schedule.scheduler_id = '%s' and test_schedule.scheduled_on is not null and test.deleted is null",$owner_id,$owner_id);
+			//$query = sprintf("select * from test join test_schedule on test.test_id = test_schedule.test_id where test.owner_id='%s' and test_schedule.scheduler_id = '%s' and test_schedule.scheduled_on is not null and test.deleted is null",$owner_id,$owner_id);
+			
+			$query = "";
+			if($bincludeResult)
+			{
+				$query = sprintf("select test.*,test_schedule.*,ta.allocation_id from test join test_schedule on test.test_id = test_schedule.test_id inner join result on test.test_id = result.test_id and test_schedule.schd_id = result.tschd_id  left join test_allocation ta on ta.test_id = test.test_id where (test.owner_id='%s' or ta.assignee_id ='%s') and test_schedule.scheduler_id = '%s' and test_schedule.scheduled_on is not null and test.deleted is null",$owner_id,$owner_id,$owner_id);
+			}
+			else
+			{
+			$query = sprintf("select test.*,test_schedule.* ,ta.allocation_id from test join test_schedule on test.test_id = test_schedule.test_id left join test_allocation ta on ta.test_id = test.test_id where (test.owner_id='%s' or ta.assignee_id ='%s') and test_schedule.scheduler_id = '%s' and test_schedule.scheduled_on is not null and test.deleted is null",$owner_id,$owner_id,$owner_id);
+			}
+			//echo $query;
 			
 			$result = mysql_query($query, $this->objDBLink) or die('Get Scheduled Test Info error : ' . mysql_error());
 			
 			while($row = mysql_fetch_array($result))
 			{
-				$RetAry[$row['test_id']]['test_name'] = $row['test_name'];
+				
+				$ea_test = $row['allocation_id']==null?"":" (EzeeAssess)";
+				$RetAry[$row['test_id']]['test_name'] = $row['test_name'] .$ea_test;
 				
 				if(!isset($RetAry[$row['test_id']]['scheduled_on']))
 				{
@@ -656,29 +669,36 @@
 			
 			if($user_type != CConfig::UT_INDIVIDAL)
 			{
-				$query = sprintf("select test.test_id, test.owner_id, test_name, result.tschd_id from result, test, test_schedule where test.test_id = result.test_id and (test.owner_id='%s' %s) and test.deleted is null and result.tschd_id != '%s'", $owner_id, $includePackageCond, CConfig::FEUC_TEST_SCHEDULE_ID);
+				//$query = sprintf("select test.test_id, test.owner_id, test_name, result.tschd_id from result, test, test_schedule where test.test_id = result.test_id and (test.owner_id='%s' %s) and test.deleted is null and result.tschd_id != '%s'", $owner_id, $includePackageCond, CConfig::FEUC_TEST_SCHEDULE_ID);
+				$query = sprintf("select test.test_id, test.owner_id, test_name, ta.allocation_id, result.tschd_id from result inner join test on test.test_id = result.test_id inner JOIN test_schedule  on test.test_id = test_schedule.test_id and test_schedule.schd_id = result.tschd_id  left join test_allocation ta on result.test_id = ta.test_id where (test.owner_id='%s' or ta.assignee_id ='%s' %s) and test.deleted is null and result.tschd_id != '%s'  ", $owner_id,$owner_id, $includePackageCond, CConfig::FEUC_TEST_SCHEDULE_ID);
+				
 			}
 			else 
 			{
-				$query = sprintf("select test.test_id, test_name, test.owner_id, result.tschd_id, result.visibility from result, test where test.test_id = result.test_id and result.user_id='%s' and test.deleted is null", $owner_id);
+				$query = sprintf("select test.test_id, test_name, test.owner_id, result.tschd_id, result.visibility from result inner join test on test.test_id = result.test_id left join test_allocation ta on result.test_id = ta.test_id where result.user_id='%s' and test.deleted is null or ta.assignee_id= '%s'", $owner_id,$owner_id);
 			}
 			
 			//echo $query."<br/>";
 			$result = mysql_query($query, $this->objDBLink) or die('Get Completed Test Names error : ' . mysql_error());
 			
+			
 			while($row = mysql_fetch_array($result))
 			{
 				$schdld_test_ary = $this->GetScheduledTest($row['tschd_id']);
+				
 				
 				/*$isTestFromAssignedTestPackage  = false;
 				if(!empty($schdld_test_ary))
 				{
 					$isTestFromAssignedTestPackage = $this->IsTestFromAssignedTestPackage($row['test_id'], $schdld_test_ary['scheduler_id']);
 				}*/
-				
-				if(($user_type == CConfig::UT_INDIVIDAL && $row['visibility'] == 2 && $schdld_test_ary['scheduler_id'] == $row['owner_id']) || ($user_type != CConfig::UT_INDIVIDAL && $schdld_test_ary['scheduler_id'] == $owner_id || empty($schdld_test_ary)) || ($user_type == CConfig::UT_INDIVIDAL && $row['visibility'] == 2 && $bIncludePackageTest))
+				//print_r($row);
+				// && $schdld_test_ary['scheduler_id'] == $row['owner_id'] removed from first condition but need to cross verify with Shashank or Manish
+				if(($user_type == CConfig::UT_INDIVIDAL && $row['visibility'] == 2) || ($user_type != CConfig::UT_INDIVIDAL && $schdld_test_ary['scheduler_id'] == $owner_id || empty($schdld_test_ary)) || ($user_type == CConfig::UT_INDIVIDAL && $row['visibility'] == 2 && $bIncludePackageTest))
 				{
-					$ResultAry[$row['test_id']] = $row['test_name'];
+					
+					$ea_test = $row['allocation_id']==null?"":" (EzeeAssess)";
+					$ResultAry[$row['test_id']] = $row['test_name'] .$ea_test;
 				}
 			}
 			
@@ -853,7 +873,9 @@
 		{
 			$RetAry = array();
 			
-			$query = sprintf("select result.test_id, result.test_date, result.tschd_id from result,test where test.owner_id='%s' and test.test_id=result.test_id and test.deleted is null and result.tschd_id != '%s'", $owner_id, CConfig::FEUC_TEST_SCHEDULE_ID);
+			//$query = sprintf("select result.test_id, result.test_date, result.tschd_id from result,test where test.owner_id='%s' and test.test_id=result.test_id and test.deleted is null and result.tschd_id != '%s'", $owner_id, CConfig::FEUC_TEST_SCHEDULE_ID);
+			
+			$query = sprintf("select result.test_id, result.test_date, result.tschd_id from result inner join test on result.test_id = test.test_id left join test_allocation ta on test.test_id = ta.test_id where  (test.owner_id='%s' or ta.assignee_id = '%s') and test.deleted is null and result.tschd_id != '%s'", $owner_id, $owner_id, CConfig::FEUC_TEST_SCHEDULE_ID);
 			
 			//echo $query;
 			$result = mysql_query($query, $this->objDBLink) or die('Get Completed Test Info error : ' . mysql_error());
@@ -901,11 +923,15 @@
            
             if($user_type != CConfig::UT_INDIVIDAL)
             {
-                $query = sprintf("select DISTINCT result.*, test.*, test_dynamic.marks_for_correct, test_dynamic.max_question, test_dynamic.cutoff_min, test_dynamic.cutoff_max from result, test, test_dynamic where test.test_id = result.test_id and test.test_id = test_dynamic.test_id and test.owner_id='%s' and test.deleted is null and result.tschd_id != '%s'", $owner_id, CConfig::FEUC_TEST_SCHEDULE_ID);
+                //$query = sprintf("select DISTINCT result.*, test.*, test_dynamic.marks_for_correct, test_dynamic.max_question, test_dynamic.cutoff_min, test_dynamic.cutoff_max from result, test, test_dynamic where test.test_id = result.test_id and test.test_id = test_dynamic.test_id and test.owner_id='%s' and test.deleted is null and result.tschd_id != '%s'", $owner_id, CConfig::FEUC_TEST_SCHEDULE_ID);
+                
+            	$query = sprintf("select DISTINCT result.*, test.*, test_dynamic.marks_for_correct, test_dynamic.max_question, test_dynamic.cutoff_min, test_dynamic.cutoff_max from result inner join test on test.test_id = result.test_id inner join test_dynamic on test.test_id = test_dynamic.test_id left join 
+				test_allocation ta on test.test_id = ta.test_id where (test.owner_id='%s' or ta.assignee_id = '%s') and test.deleted is null and result.tschd_id != '%s'", $owner_id,$owner_id, CConfig::FEUC_TEST_SCHEDULE_ID);                
             }
             else
             {
-                $query = sprintf("select DISTINCT test.*, result.*, test_dynamic.marks_for_correct, test_dynamic.max_question, test_dynamic.cutoff_min, test_dynamic.cutoff_max, test_schedule.scheduler_id from result, test, test_dynamic, test_schedule where test.test_id = result.test_id and test.test_id=test_dynamic.test_id and test.test_id=test_schedule.test_id and result.user_id='%s' and result.visibility != %d and test.deleted is null", $owner_id, CConfig::RV_NONE);
+                $query = sprintf("select DISTINCT test.*, result.*, test_dynamic.marks_for_correct, test_dynamic.max_question, test_dynamic.cutoff_min, test_dynamic.cutoff_max, test_schedule.scheduler_id from result, test, test_dynamic, test_schedule where test.test_id = result.test_id and test.test_id=test_dynamic.test_id and test.test_id=test_schedule.test_id and result.user_id='%s' and result.visibility != %d and test.deleted is null", $owner_id, CConfig::RV_NONE);               
+            
             }
            
             //echo $query."<br/>";

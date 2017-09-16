@@ -126,6 +126,8 @@ $objIncludeJsCSS->IncludeJqueryValidateMinJS("../../");
 			
 			foreach ($test_info['schd_id'] as $key => $tschd_id) 
 			{
+				
+				
 				printf("aryTestInfo[%d][%d] = \"<option value='%s'>%s (xID: %s)</option>\";", $test_id, $index, $tschd_id, $test_info['scheduled_on'][$key], $tschd_id);
 				
 				$index++;

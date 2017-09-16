@@ -20,11 +20,11 @@
 	
 	$TNameAry = $objTR->GetCompletedTestNames($user_id, $nUserType);
 	
-	$TestInfoAry = $objTR->GetScheduledTestInfo($user_id);
+	$TestInfoAry = $objTR->GetScheduledTestInfo($user_id,true);
 	
 	/*echo("<pre>");
 	print_r($TestInfoAry);
-	echo("</pre>");*/
+	echo("</pre>"); */
 	
 	$objIncludeJsCSS = new IncludeJSCSS();
 	

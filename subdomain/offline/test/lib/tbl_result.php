@@ -633,11 +633,11 @@
 			
 			if($user_type != CConfig::UT_INDIVIDAL)
 			{
-				$query = sprintf("select test.test_id, test_name from result, test where test.test_id = result.test_id and test.owner_id='%s' and test.deleted is null and result.tschd_id != '%s'", $owner_id, CConfig::FEUC_TEST_SCHEDULE_ID);
+				$query = sprintf("select test.test_id, test_name,ta.allocation_id from result inner join test on test.test_id = result.test_id left join test_allocation ta on ta.test_id = result.test_id where test.owner_id='%s' and test.deleted is null and result.tschd_id != '%s' or ta.assignee_id = '%s'", $owner_id, CConfig::FEUC_TEST_SCHEDULE_ID,$owner_id);
 			}
 			else 
 			{
-				$query = sprintf("select test.test_id, test_name, result.visibility from result, test where test.test_id = result.test_id and result.user_id='%s' and test.deleted is null", $owner_id);
+				$query = sprintf("select test.test_id, test_name, result.visibility from result inner join test on test.test_id = result.test_id where result.user_id='%s' and test.deleted is null", $owner_id);
 			}
 			
 			//echo $query."<br/>";
@@ -647,7 +647,9 @@
 			{
 				if($user_type!= CConfig::UT_INDIVIDAL || $row['visibility'] == 2)
 				{
-					$ResultAry[$row['test_id']] = $row['test_name'];
+					
+					$ea_test = $row['allocation_id']==null?"":"EzeeAssess";
+					$ResultAry[$row['test_id']] = $row['test_name'] . $ea_test;
 				}
 			}
 			
