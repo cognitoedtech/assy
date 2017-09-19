@@ -7,7 +7,7 @@
 		//const ROOT_URL = "http://www.ezeeassess.com" ;
 		//const ROOT_URL = "http://mcat.mastishka.com" ;
 
-		const ROOT_URL = "http://localhost/ezeeassess-integration" ;
+		const ROOT_URL = "http://localhost/mipcat" ;
 
 		const HIGHCHART_SERVER_URL = "http://127.0.0.1:3003";
 
