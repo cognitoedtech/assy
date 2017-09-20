@@ -468,6 +468,9 @@ span.username {
 							?>
 						</ul>
 					</div>
+					<div class="row border" id="lang-selection" style="color: #fff;	background-color: #4390df; padding: 5px;">
+						&nbsp;
+					</div>
 				</div>
 				<div class="col-lg-3" id="user-identification">
 					<div class="row border">
@@ -513,8 +516,6 @@ span.username {
 								<?php
 								}
 								?>
-						
-							
 							</div>
 							<br />
 
@@ -672,14 +673,6 @@ span.username {
 							<button class="info" style="margin-top: 5px;">Current</button>
 							<button class="success" style="margin-top: 5px;">Attempted</button>
 							<button class="warning" style="margin-top: 5px;">Flagged</button>
-							<button style="margin-top: 5px;">
-								<i class="fa fa-align-justify on-left" aria-hidden="true"></i>&nbsp;Reading
-								Comprehension Group
-							</button>
-							<button style="margin-top: 5px;">
-								<i class='fa fa-arrow-right on-left' aria-hidden="true"></i>&nbsp;Direction
-								Group
-							</button>
 						</span> 
 					</div>
 					<div class="row">
@@ -693,8 +686,11 @@ span.username {
 						    <?php
 							$secIndex = 0;
 							foreach ( $arySection as $key => $Section ) {
-								printf ( "<div role='tabpanel' class='tab-pane %s' id='%s_questions'>", $secIndex == $nSection ? 'active' : '', $Section ['name'] );
+								printf ( "<div style='border: 1px solid #000; padding: 5px; overflow-y: auto;' role='tabpanel' class='tab-pane %s' id='%s_questions'>", $secIndex == $nSection ? 'active' : '', $Section ['name'] );
+								printf("<button style='margin-top: 5px;'><i class='fa fa-align-justify on-left' aria-hidden='true'></i>&nbsp;Reading Comprehension Group</button>");
+								printf("<button style='margin-top: 5px;margin-bottom: 5px;'><i class='fa fa-arrow-right on-left' aria-hidden='true'></i>&nbsp;Direction Group</button>");
 								printf("<div class='sec-name-questios'>%s</div>", $Section ['name']);
+																
 								for($ques = 0; $ques < $Section ['questions']; $ques ++) {
 									printf ( "<button style='margin-top: 5px;' onClick='LoadQuestion(%d, %d, %d, %d);' id='%d'>%d</button>\n", $nTestID, $nTSchdID, $ques, $secIndex, (($secIndex + 1) * 1000) + ($ques + 1), ($ques + 1) );
 								}

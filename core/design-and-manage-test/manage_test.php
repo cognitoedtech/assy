@@ -37,7 +37,7 @@ $objIncludeJsCSS->CommonIncludeCSS("../../");
 $objIncludeJsCSS->IncludeIconFontCSS("../../");
 $objIncludeJsCSS->IncludeMipcatCSS("../../");
 $objIncludeJsCSS->IncludeFuelUXCSS ( "../../" );
-$objIncludeJsCSS->CommonIncludeJS("../../","1.8.2");
+$objIncludeJsCSS->CommonIncludeJS("../../");
 $objIncludeJsCSS->IncludeJqueryDatatablesMinJS("../../");
 $objIncludeJsCSS->IncludeDatatablesTabletoolsMinJS("../../");
 $objIncludeJsCSS->IncludeDatatablesBootstrapJS("../../");
