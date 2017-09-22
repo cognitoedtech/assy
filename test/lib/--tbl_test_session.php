@@ -11,7 +11,6 @@
 		private $objDBLink;
 		private $objTestDynamic;
 		private $dbCreated = false;
-		private $bResultExist = FALSE;
 		
 		public function __construct($objDBLink = null)
 		{
@@ -376,32 +375,8 @@
 			return ($objTestParam['test_duration'] * 60) - $cur_chronological_time;
 		}
 		
-		private function IsResultPresent($user_id, $test_id, $tschd_id, $test_type)
-		{
-			$retVat = 0;
-			$query = sprintf("select * from result where user_id='%s' AND test_id='%s' AND tschd_id='%s' AND tschd_id > 0", $user_id, $test_id, $tschd_id);
-				
-			$result = mysql_query($query, $this->objDBLink) or die('Is Result Present error : ' . mysql_error());
-				
-			if(mysql_num_rows($result) > 0)
-			{
-				$row = mysql_fetch_array($result);
-				$retVal = $row['test_pnr'];
-			}
-			
-			return $retVal;
-		}
-		
 		private function PrepareAndSaveResult($user_id, $test_id, $tschd_id, $test_type)
 		{
-			$test_pnr = $this->IsResultPresent($user_id, $test_id, $tschd_id, $test_type);
-			if (!empty($test_pnr))
-			{
-				$this->bResultExist = TRUE;
-				return $test_pnr;
-			}
-			$this->bResultExist = FALSE;
-			
 			$query = sprintf("select * from test_session where user_id='%s' AND test_id='%s' AND tschd_id='%s'", $user_id, $test_id, $tschd_id);
 			
 			$result = mysql_query($query, $this->objDBLink) or die('Prepare And Save Result error : ' . mysql_error());
@@ -723,28 +698,25 @@
 			
 			$this->PurgeSession($user_id, $test_id, $tschd_id);
 			
-			if($this->bResultExist == FALSE)
+			$amount = null;
+			$objBilling = new CBilling();
+			$scheduler_id = $objBilling->GetTestSchedulerID($tschd_id);
+			if($objBilling->GetQuesSource($test_id) == "mipcat")
 			{
-				$amount = null;
-				$objBilling = new CBilling();
-				$scheduler_id = $objBilling->GetTestSchedulerID($tschd_id);
-				if($objBilling->GetQuesSource($test_id) == "mipcat")
-				{
-					$amount = $objBilling->GetMIpCATQuesRate($scheduler_id);
-				}
-				else 
-				{
-					$amount = $objBilling->GetPersonalQuesRate($scheduler_id);
-				}
-				
-				$isTestFromAssignedPackage = $objBilling->IsTestAssignedFromPackage($test_id, $scheduler_id);
-				$assignedPackageTestRate = 0;
-				if($isTestFromAssignedPackage)
-				{
-					$assignedPackageTestRate = $objBilling->GetAssignedPackageTestRate($test_id, $scheduler_id);
-				}
-				$objBilling->SubBalance($scheduler_id, ($amount+$assignedPackageTestRate));
+				$amount = $objBilling->GetMIpCATQuesRate($scheduler_id);
 			}
+			else 
+			{
+				$amount = $objBilling->GetPersonalQuesRate($scheduler_id);
+			}
+			
+			$isTestFromAssignedPackage = $objBilling->IsTestAssignedFromPackage($test_id, $scheduler_id);
+			$assignedPackageTestRate = 0;
+			if($isTestFromAssignedPackage)
+			{
+				$assignedPackageTestRate = $objBilling->GetAssignedPackageTestRate($test_id, $scheduler_id);
+			}
+			$objBilling->SubBalance($scheduler_id, ($amount+$assignedPackageTestRate));
 			
 			return $SessionID;
 		}

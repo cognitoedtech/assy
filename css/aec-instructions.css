@@ -1,0 +1,178 @@
+.instruction_area span.answered {
+    background: url("images/buttons-sprite.png") no-repeat scroll 0 0 transparent;
+    color: #FFFFFF;
+    cursor: pointer;
+    float: left;
+    font-weight: bold;
+    height: 38px;
+    line-height: 42px;
+    margin: 3px;
+    text-align: center;
+    width: 34px;
+    background-position: -74px 4px;
+}
+.instruction_area span.review {
+    background: url("images/buttons-sprite.png") no-repeat scroll 0 0 transparent;
+    color: #FFFFFF;
+    cursor: pointer;
+    float: left;
+    font-weight: bold;
+    height: 38px;
+    line-height: 42px;
+    margin: 3px;
+    text-align: center;
+    width: 34px;
+    background-position: -33px -32px;
+}
+ .instruction_area span.review_answered {
+	background: url("images/questions-sprite.png") no-repeat scroll 0 0 transparent;
+    color: #FFFFFF;
+    cursor: pointer;
+    float: left;
+    font-weight: bold;
+    height: 38px;
+    line-height: 42px;
+    margin: 3px;
+    text-align: center;
+    width: 34px;
+    background-position: -169px -47px;
+} 
+.instruction_area span.review_marked_considered {
+	background: url("images/questions-sprite.png") no-repeat scroll 0 0 transparent !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    float: left !important;
+    font-weight: bold !important;
+    height: 38px !important;
+    margin: 3px !important;
+    text-align: center !important;
+    width: 34px !important;
+	background-position: -6px -87px !important;
+}
+.instruction_area span.review_marked {
+	background: url("images/questions-sprite.png") no-repeat scroll 0 0 transparent !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    float: left !important;
+    font-weight: bold !important;
+    height: 38px !important;
+    margin: 3px !important;
+    text-align: center !important;
+    width: 34px !important;
+	background-position: -169px -55px !important;
+}
+.instruction_area span.not_answered {
+	background: url("images/buttons-sprite.png") no-repeat scroll 0 0 transparent;
+    color: #FFFFFF;
+    cursor: pointer;
+    float: left;
+    font-weight: bold;
+    height: 38px;
+    line-height: 42px;
+    margin: 3px;
+    text-align: center;
+    width: 34px;
+    background-position: -33px 6px;
+}
+.instruction_area span.not_visited {
+	background: url("images/buttons-sprite.png") no-repeat scroll 0 0 transparent;
+    color: #FFFFFF;
+    cursor: pointer;
+    float: left;
+    font-weight: bold;
+    height: 38px;
+    line-height: 42px;
+    margin: 3px;
+    text-align: center;
+    width: 34px;
+    background-position: -33px -67px;
+    color: #474747;
+}
+
+.question_area {
+	overflow: auto;
+	font: 0.917em Arial, Helvetica, sans-serif;
+	padding: 5px;
+}
+.question_area span {
+	background: url(images/questions-sprite.png) no-repeat;
+	color: #fff;
+    cursor: pointer;
+    float: left;
+    font-size: 1.417em;
+    font-weight: normal;
+    height: 43px;
+    line-height: 42px;
+    margin-bottom: 10px;
+    margin-right: 2px;
+    text-align: center;
+    width: 50px;
+}
+.question_area input.answered {
+	 background-position: -4px -5px;
+}
+.question_area input.review {
+	  background-position: -108px -1px;
+    height: 50px;
+    line-height: 50px;
+	margin-bottom: 3px;
+}
+.question_area input.review_answered {
+	background-position: -66px -178px;
+    height: 53px;
+    line-height: 51px;
+    margin-bottom: 0;
+  /*  margin-right: 5px;*/
+    width: 49px;
+}
+
+.question_area input.review_marked {
+	background-position: -203px -49px;
+    height: 53px;
+    line-height: 50px;
+    margin-bottom: 0;
+  /*  margin-right: 5px;*/
+    width: 53px;
+}
+
+.question_area input.not_answered {
+	background-position: -57px -6px;
+	width:49px;
+	height: 43px;
+}
+.question_area input.visited {
+	    background-position: -208px -4px;
+    height: 43px;
+    line-height: 43px;
+}
+
+.question_area input.not_visited {
+ background-position: -157px -4px;
+    color: #474747;
+    height: 43px;
+    line-height: 43px;
+}
+.question_area input.not_visited:hover {
+	background-position: -157px -4px;
+}
+.question_area input.visited:hover {
+	background-position: -208px -124px;
+}
+.question_area input.answered:hover {
+	background-position: -4px -126px;
+}
+.question_area input.review:hover {
+	background-position: -108px -122px;
+}
+.question_area input.review_answered:hover {
+	background-position: -5px -178px;
+}
+.question_area input.review_marked {
+	background-position: -203px -49px;
+}
+.question_area input.not_answered:hover {
+	background-position: -57px -127px;
+}
+.question_area input.visited:hover {
+	background-position: -208px -124px;
+}

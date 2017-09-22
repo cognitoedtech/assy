@@ -566,11 +566,17 @@
         const OPER_CODE_START 	= "#@MIPCAT_CODE_START";
         const OPER_CODE_END 	= "#@MIPCAT_CODE_END";
         
-        const EA_OPER_XLS_COPY  	= "#@EZEEASSES_COPY";
-        const EA_OPER_XLS_NA     	= "#@EZEEASSES_NA";
-        const EA_OPER_XLS_EMPTY 	= "#@EZEEASSES_EMPTY";
-        const EA_OPER_CODE_START 	= "#@EZEEASSES_CODE_START";
-        const EA_OPER_CODE_END 		= "#@EZEEASSES_CODE_END";
+        const EA_OPER_XLS_COPY  	= "#@EZEEASSESS_COPY";
+        const EA_OPER_XLS_NA     	= "#@EZEEASSESS_NA";
+        const EA_OPER_XLS_EMPTY 	= "#@EZEEASSESS_EMPTY";
+        const EA_OPER_CODE_START 	= "#@EZEEASSESS_CODE_START";
+        const EA_OPER_CODE_END 		= "#@EZEEASSESS_CODE_END";
+        
+        const QU_OPER_XLS_COPY  	= "#@QUIZUS_COPY";
+        const QU_OPER_XLS_NA     	= "#@QUIZUS_NA";
+        const QU_OPER_XLS_EMPTY 	= "#@QUIZUS_EMPTY";
+        const QU_OPER_CODE_START 	= "#@QUIZUS_CODE_START";
+        const QU_OPER_CODE_END 		= "#@QUIZUS_CODE_END";
        
         static $QUES_XLS_HEADING_ARY  = array("S No"=>'A',
         									  "Para Description"=>'B', 

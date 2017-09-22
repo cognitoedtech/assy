@@ -32,6 +32,7 @@
 		const BOOTSTRAP_WYSIHTML5_CSS			= "3rd_party/wysiwyg/bootstrap-wysihtml5.css";
 		const THREE_D_CORNER_RIBBONS_CSS		= "3rd_party/corner-ribbon/css/3d-corner-ribbons.css";
 		const SR_SIDE_NAV_BAR					= "css/sr-navbar.css";
+		const TCS_BUTTON_LEGEND					= "css/aec-instructions.css";
 
 		const JQUERY_JS							= "js/jquery.js";
 		const JQUERY_2_1_1_JS					= "js/jquery-2.1.1.js";
@@ -131,7 +132,12 @@
 		{
 			printf("<link rel='stylesheet' type='text/css' href='%s' />\n", $include_base_path.self::SR_SIDE_NAV_BAR);
 		}
-					
+
+		public function IncludeTCSButtonsCSS($include_base_path)
+		{
+			printf("<link rel='stylesheet' type='text/css' href='%s' />\n", $include_base_path.self::TCS_BUTTON_LEGEND);
+		}
+		
 		public function IncludeBootstrapFontAwesomeCSS($include_base_path)
 		{
 			printf("<link rel='stylesheet' type='text/css' href='%s' />\n", $include_base_path.self::FONT_AWESOME_CSS);
