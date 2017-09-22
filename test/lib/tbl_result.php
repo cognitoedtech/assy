@@ -403,7 +403,7 @@
 			$query = "";
 			if($bincludeResult)
 			{
-				$query = sprintf("select test.*,test_schedule.*,ta.allocation_id from test join test_schedule on test.test_id = test_schedule.test_id inner join result on test.test_id = result.test_id and test_schedule.schd_id = result.tschd_id  left join test_allocation ta on ta.test_id = test.test_id where (test.owner_id='%s' or ta.assignee_id ='%s') and test_schedule.scheduler_id = '%s' and test_schedule.scheduled_on is not null and test.deleted is null",$owner_id,$owner_id,$owner_id);
+				$query = sprintf("select distinct( test.test_id) as tid,  test.*,test_schedule.*,ta.allocation_id from test join test_schedule on test.test_id = test_schedule.test_id inner join result on test.test_id = result.test_id and test_schedule.schd_id = result.tschd_id  left join test_allocation ta on ta.test_id = test.test_id where (test.owner_id='%s' or ta.assignee_id ='%s') and test_schedule.scheduler_id = '%s' and test_schedule.scheduled_on is not null and test.deleted is null",$owner_id,$owner_id,$owner_id);
 			}
 			else
 			{
@@ -670,7 +670,7 @@
 			if($user_type != CConfig::UT_INDIVIDAL)
 			{
 				//$query = sprintf("select test.test_id, test.owner_id, test_name, result.tschd_id from result, test, test_schedule where test.test_id = result.test_id and (test.owner_id='%s' %s) and test.deleted is null and result.tschd_id != '%s'", $owner_id, $includePackageCond, CConfig::FEUC_TEST_SCHEDULE_ID);
-				$query = sprintf("select test.test_id, test.owner_id, test_name, ta.allocation_id, result.tschd_id from result inner join test on test.test_id = result.test_id inner JOIN test_schedule  on test.test_id = test_schedule.test_id and test_schedule.schd_id = result.tschd_id  left join test_allocation ta on result.test_id = ta.test_id where (test.owner_id='%s' or ta.assignee_id ='%s' %s) and test.deleted is null and result.tschd_id != '%s'  ", $owner_id,$owner_id, $includePackageCond, CConfig::FEUC_TEST_SCHEDULE_ID);
+				$query = sprintf("select distinct(test.test_id), test.owner_id, test_name, ta.allocation_id, result.tschd_id from result inner join test on test.test_id = result.test_id inner JOIN test_schedule  on test.test_id = test_schedule.test_id and test_schedule.schd_id = result.tschd_id  left join test_allocation ta on result.test_id = ta.test_id where (test.owner_id='%s' or ta.assignee_id ='%s' %s) and test.deleted is null and result.tschd_id != '%s'  ", $owner_id,$owner_id, $includePackageCond, CConfig::FEUC_TEST_SCHEDULE_ID);
 				
 			}
 			else 
