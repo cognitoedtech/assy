@@ -16,7 +16,7 @@
 	$user_id = CSessionManager::Get(CSessionManager::STR_USER_ID);
 	$nUserType = CSessionManager::Get(CSessionManager::INT_USER_TYPE);
 	
-	$TNameAry = $objTR->GetCompletedTestNames($user_id, $nUserType, true);
+	$TNameAry = $objTR->GetCompletedTestNames($user_id, $nUserType);
 	
 	$objIncludeJsCSS = new IncludeJSCSS();
 	
