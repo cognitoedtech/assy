@@ -86,6 +86,15 @@ if ($qry [0] == "test_id") {
 		$testTransLang = $qry [11];
 		CSessionManager::Set ( CSessionManager::STR_TEST_TRANS_LANG, $testTransLang );
 	}
+	
+	// Get Org Name who owns the test
+	$sOrgName = $objDB->GetOrganizationNameByTestID($nTestID);
+	
+	if(!empty($sOrgName))
+	{
+		$sOrgName = "by ".$sOrgName;
+	}
+	
 	// Get Test Parameters
 	$objTestParams = $objTH->GetTestParams ( $nTestID );
 	$objMCPAParams = $objTH->GetMCPAParams ( $nTestID );
@@ -329,14 +338,6 @@ span.username {
 	color: white !important; 
 }
 
-.sec-name-questios {
-	color: #fff;
-	background-color: #4390df;
-	text-align: center;
-	font-size: 1.417em;
-	font-weight: bold;
-}
-
 </style>
 		<?php
 		$objIncludeJsCSS->CommonIncludeCSS ( "../" );
@@ -372,6 +373,59 @@ span.username {
 	float: right;
 }
 
+/*---------------------------------------------------------------*/
+/* Group or Section Scroller Style*/
+/*---------------------------------------------------------------*/
+
+.wrapper {
+    position:relative;
+    margin:0 auto;
+    overflow:hidden;
+	padding:5px;
+  	height:50px;
+}
+
+.list {
+    /*position:absolute;*/
+    position:relative;
+    left:0px;
+    top:0px;
+  	min-width:100%;
+  	margin-left:12px;
+    margin-top:0px;
+}
+
+.list li{
+	display:table-cell;
+    position:relative;
+    text-align:center;
+    cursor:grab;
+    cursor:-webkit-grab;
+    color:#efefef;
+    vertical-align:middle;
+}
+
+.scroller {
+  text-align:center;
+  cursor:pointer;
+  display:none;
+  padding:7px;
+  padding-top:11px;
+  white-space:no-wrap;
+  vertical-align:middle;
+  background-color:#fff;
+}
+
+.scroller-right{
+  float:right;
+}
+
+.scroller-left {
+  float:left;
+}
+
+/*---------------------------------------------------------------*/
+
 @media ( max-width : 480px) {
 	.modal {
 		position: absolute;
@@ -397,7 +451,17 @@ span.username {
 	border: 1px solid lightgrey;
 }
 
-@media ( max-width : 767px) {
+@media ( min-width : 769px) and ( max-width : 8000px) {
+	#test-buttons-desktop {
+		display: block;
+	}
+	
+	#test-buttons-mobile {
+		display: none;
+	}
+}
+
+@media ( min-width : 0px) and ( max-width : 768px) {
 	.modal {
 		position: absolute;
 		top: 3%;
@@ -415,6 +479,56 @@ span.username {
 	.timer {
 		float: none;
 	}
+	
+	/*Layout Divs*/
+	#org-name {
+		display:none;
+	}
+	
+	#group-strip {
+		display: none;
+	}
+	
+	#timer-strip {
+		
+	}
+	
+	#cur-section-label {
+		display: none;
+	}
+	
+	#section-strip {
+		
+	}
+	
+	#lang-selection {
+	
+	}
+	
+	#user-identification{
+		display: none;
+	}
+	
+	#question-info {
+	
+	}
+	
+	#question-area {
+		height: 200px;
+		overflow-y: visible;
+	}
+	
+	#legend-and-question {
+		display: none;
+	}
+	
+	#test-buttons-desktop {
+		display: none;
+	}
+	
+	#test-buttons-mobile {
+		display: block;
+	}
 }
 
 .row-eq-height {
@@ -430,6 +544,11 @@ span.username {
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 }
+
+body {
+	height: 100%;
+	overflow: hidden;
+}
 </style>
 </head>
 <body>
@@ -438,8 +557,8 @@ span.username {
 			style="color: white; font-weight: bold; background-color: CornflowerBlue; padding: 10px 10px;"
 			id="header">
 			<span>Test: <?php echo $test_name; ?></span> <span class="pull-right"
-				style="margin-top: -5px">
-				Test by EZeeAssess.com
+				style="margin-top: -5px" id="org-name">
+				<?php echo($sOrgName);?>
 			</span>
 		</div>
 
@@ -449,33 +568,39 @@ span.username {
 					<div class="row row-eq-height" id="group-strip">
 					</div>
 					<div class="row border" id="timer-strip">
-						<div class="col-lg-6">
+						<div class="col-lg-6 col-md-6 col-sm-6" id="cur-section-label">
 							<span class="selected_sec_name"><?php printf("<b><i class='icon-tasks icon-black'></i>&nbsp;Current Section: <span style='color:FireBrick;'>%s</span></b>",$sSectionName);?></span>
 						</div>
-						<div class="col-lg-6">
+						<div class="col-lg-6  col-md-6 col-sm-6">
 							<span class="timer"><input type="text"
 								class="input-medium search-query" size="8" id="timer"
 								style="border: none; text-align: center; color: #009900; font-weight: bold; width: 180px; height: 30px; margin-top: 5px;"></span>
 						</div>
 					</div>
-					<div class="row border" id="section-strip">
-						<ul class="nav nav-tabs" role="tablist">
-						<?php
-							$arySection = $objTH->GetSectionDetails ( $nTestID );
-							
-							$secIndex = 0;
-							foreach ( $arySection as $key => $Section ) {
-								if (! empty ( $Section ['name'] )) {
-									if ($secIndex == $nSection)
-										printf ( "<li role='presentation' class='active'><a href='#%s_questions' aria-controls='%s_questions' role='tab' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>", $Section ['name'], $Section ['name'], $Section ['name'] );
-									else
-										printf ( "<li role='presentation'><a href='#%s_questions' aria-controls='%s_questions' role='tab' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", $Section ['name'], $Section ['name'], $Section ['name'] );
+					<div class="border" id="section-strip">
+						<div class="scroller scroller-left"><i class="fa fa-chevron-left" aria-hidden="false"></i>
+						</div>
+  						<div class="scroller scroller-right"><i class="fa fa-chevron-right" aria-hidden="false"></i>
+  						</div>
+						<div id="wrapper">
+							<ul class="nav nav-tabs list">
+							<?php
+								$arySection = $objTH->GetSectionDetails ( $nTestID );
 								
+								$secIndex = 0;
+								foreach ( $arySection as $key => $Section ) {
+									if (! empty ( $Section ['name'] )) {
+										if ($secIndex == $nSection)
+											printf ( "<li role='presentation' class='active'><a href='#%s_questions' aria-controls='%s_questions' role='tab' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>", $Section ['name'], $Section ['name'], $Section ['name'] );
+										else
+											printf ( "<li role='presentation' ><a href='#%s_questions' aria-controls='%s_questions' role='tab' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", $Section ['name'], $Section ['name'], $Section ['name'] );
+									
+									}
+									$secIndex ++;
 								}
-								$secIndex ++;
-							}
-							?>
-						</ul>
+								?>
+							</ul>
+						</div>
 					</div>
 					<div class="row border" id="lang-selection" style="color: #fff;	background-color: #4390df; padding: 5px;">
 						<div id="choose_lang" class="form-inline" style="text-align:center;width:400px;height:auto;margin-left:auto;border:1px solid #aaa;padding:5px;<?php echo($transLangChoice != "both"?"display:none":"");?>">
@@ -518,7 +643,7 @@ span.username {
 					
 				</div>
 			</div>
-			<form action="mipcat-tcs.php" onReset="return ResetForm();" onsubmit="alert('Test');" method="POST">
+			<form action="mipcat-tcs.php" onReset="return ResetForm();" method="POST">
 				<div class="row row-eq-height" >
 					<div class="col-lg-9 border">
 						<div class="row border" id="question-info">
@@ -657,9 +782,9 @@ span.username {
 							
 						</div>
 					</div>
-					<div class="col-lg-3" style='border: 1px solid #000;'>
+					<div class="col-lg-3" style='border: 1px solid #000;' id="legend-and-question">
 						<div class="row instruction_area" id="sec_ques_info" >
-							<div class="col-lg-6" style="text-align: center; vertical-align: middle;">
+							<div class="col-lg-6">
 								<span class="answered">5</span> Answered
 							</div>
 							<div class="col-lg-6">
@@ -690,6 +815,7 @@ span.username {
 						</div>
 						<br /> <br />
 						 -->
+						 
 						<div class="row metro" id="section_info">
 							<div class="tab-content">
 							    <?php
@@ -698,11 +824,16 @@ span.username {
 									printf ( "<div style='padding: 5px; overflow-y: auto;' role='tabpanel' class='tab-pane %s' id='%s_questions'>", $secIndex == $nSection ? 'active' : '', $Section ['name'] );
 									printf("<button style='margin-top: 5px;'><i class='fa fa-align-justify on-left' aria-hidden='true'></i>&nbsp;Reading Comprehension Group</button>");
 									printf("<button style='margin-top: 5px;margin-bottom: 5px;'><i class='fa fa-arrow-right on-left' aria-hidden='true'></i>&nbsp;Direction Group</button>");
-									printf("<div class='sec-name-questios question-area'>%s</div>", $Section ['name']);
-																	
+									printf("<div class='sec-name-questios'>%s</div>", $Section ['name']);
+									printf("<div class='instruction_area'>");
+									
+									//printf("<script language='JavaScript' type='text/javascript'>alert('%s')</script>", print_r($objAnsAry, TRUE));
+									
 									for($ques = 0; $ques < $Section ['questions']; $ques ++) {
-										printf ( "<input class='not_answered' type='button' style='margin-top: 5px;' onClick='LoadQuestion(%d, %d, %d, %d);' id='%d' value='%d'></input>\n", $nTestID, $nTSchdID, $ques, $secIndex, (($secIndex + 1) * 1000) + ($ques + 1), ($ques + 1) );
+										printf ( "<span class='not_visited' style='margin-top: 5px;' onClick='LoadQuestion(%d, %d, %d, %d);' id='%d'>%d</span>\n", $nTestID, $nTSchdID, $ques, $secIndex, (($secIndex + 1) * 1000) + ($ques + 1), ($ques + 1) );
 									}
+									
+									printf ( "</div>" );
 									printf ( "</div>" );
 									$secIndex ++;
 								}
@@ -712,29 +843,56 @@ span.username {
 						<br />
 					</div>
 				</div>
-				<div class="row row-eq-height" id="test-buttons">
-					<div class="col-lg-9 border">
+				<div class="row row-eq-height" id="test-buttons-desktop">
+					<div class="col-lg-9 border" style="padding-top: 10px;">
 						<?php
 							if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
-								$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Flag";
+								$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
 								$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
-								echo ('<input type="reset" class="btn btn-inverse"/>&nbsp;&nbsp;&nbsp;&nbsp;');
-								echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-warning" id="flag_ques" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
-								echo ('<input type="submit" id="submit_ans" class="btn btn-success" name="btn1" value="Next" disabled/>');
+								echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-primary" id="flag_ques" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
+								echo ('<input type="reset" class="btn btn-default" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
+								echo ('<input type="submit" id="submit_ans" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
 							
 							} else {
-								echo ('<input type="reset" class="btn btn-inverse" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;');
-								echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(0);" class="btn btn-primary" name="btn2" value="Flag / Mark" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
-								echo ('<input type="submit" class="btn btn-success" name="btn1" value="Next" disabled/>');
+								echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(0);" class="btn btn-primary" id="flag_ques" name="btn2" value="Flag / Mark" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
+								echo ('<input type="reset" class="btn btn-default" value="Clear Response" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;');
+								echo ('<input type="submit" id="submit_ans" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
 							}
 							
-							echo ('<b>( After Reseting already selected option&lsaquo;s&rsaquo; or after Selecting option&lsaquo;s&rsaquo; press <span style="color:green">Submit</span> )</b>');
+							//echo ('<br/><b>( After Reseting already selected option&lsaquo;s&rsaquo; or after Selecting option&lsaquo;s&rsaquo; press <span style="color:green">Submit</span> )</b>');
 						?>
 					</div>
-					<div class="col-lg-3 border text-center">
-						<button id="btn_end_exam" class="btn btn-danger">
-							Submit Paper <i class="fa fa-window-close" aria-hidden="true"></i>
-						</button>
+					<div class="col-lg-3 border text-center" style="padding-top: 10px;">
+						<input type="button" id="btn_end_exam" class="btn btn-danger" value="Submit & Close Test">
+						</input>
+					</div>
+				</div>
+				<div class="row row-eq-height" id="test-buttons-mobile">
+					<div class="col-lg-6 col-md-6 col-sm-6 border" style="padding-top: 10px;">
+						<?php
+							if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
+								$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
+								$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
+								echo ('<input type="reset" class="btn btn-default" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
+								echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-primary" id="flag_ques_m" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
+							} else {
+								echo ('<input type="reset" class="btn btn-default" value="Clear Response" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;');
+								echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(0);" class="btn btn-primary" name="btn2" id="flag_ques_m" value="Flag / Mark" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
+							}
+						?>
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-6 border text-center" style="padding-top: 10px;">
+						<input type="button" id="btn_end_exam_m" class="btn btn-danger" value="Submit & Close Test"></input>
+						<?php
+							if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
+								$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
+								$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
+								echo ('<input type="submit" id="submit_ans_m" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
+							
+							} else {
+								echo ('<input type="submit" id="submit_ans_m" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
+							}
+						?>
 					</div>
 				</div>
 			</form>
@@ -789,6 +947,8 @@ span.username {
 		</div>
 		<script language="JavaScript" type="text/javascript">
 		//parent.ShowLeftMenu();
+		// ---------------------------------------------------------
+
 		OnTransChoiceChange();
 
 		$(document).ready(function() {
@@ -796,10 +956,12 @@ span.username {
 			HeartBeat();
 			$("div.mipcat_code_ques").snippet("c",{style:"vim"});
 			$("#submit_ans").removeAttr('disabled');
+			$("#submit_ans_m").removeAttr('disabled');
 			<?php
 			if ($objMCPAParams ['mcpa_flash_ques'] != 1) {
 				?>
 			$("#flag_ques").removeAttr('disabled');
+			$("#flag_ques_m").removeAttr('disabled');
 			<?php
 			}
 			if ($aryQues ['ques_type'] != CConfig::QT_NORMAL) {
@@ -810,9 +972,87 @@ span.username {
 			?>
 
 			ToggleSections();
+			
+			// -------------------------------------------------------
+
+			var hidWidth;
+			var scrollBarWidths = 40;
+
+			var widthOfList = function(){
+			  var itemsWidth = 0;
+			  $('.list li').each(function(){
+			    var itemWidth = $(this).outerWidth();
+			    itemsWidth+=itemWidth;
+			  });
+			  return itemsWidth;
+			};
+
+			var widthOfHidden = function(){
+			  return (($('.wrapper').outerWidth())-widthOfList()-getLeftPosi())-scrollBarWidths;
+			};
+
+			var getLeftPosi = function(){
+			  return $('.list').position().left;
+			};
+
+			var reAdjust = function(){
+			  if (($('.wrapper').outerWidth()) < widthOfList()) {
+			    $('.scroller-right').show();
+			  }
+			  else {
+				$('.scroller-right').hide();
+			  }
+			  
+			  if (getLeftPosi()<0) {
+			    $('.scroller-left').show();
+			  }
+			  else {
+			    $('.item').animate({left:"-="+getLeftPosi()+"px"},'slow');
+			    $('.scroller-left').hide();
+			  }
+			}
+
+			reAdjust();
+
+			$(window).on('resize',function(e){  
+			  	reAdjust();
+			});
+
+			$('.scroller-right').click(function() {
+			  
+			  $('.scroller-left').fadeIn('slow');
+			  $('.scroller-right').fadeOut('slow');
+			  
+			  $('.list').animate({left:"+="+widthOfHidden()+"px"},'slow',function(){
+
+			  });
+			});
+
+			$('.scroller-left').click(function() {
+			  
+				$('.scroller-right').fadeIn('slow');
+				$('.scroller-left').fadeOut('slow');
+			  
+			  	$('.list').animate({left:"-="+getLeftPosi()+"px"},'slow',function(){
+			  	
+			  	});
+			});
+			
+			// ---------------------------------------------------
 		});
 
 		$("#btn_end_exam").click(function(){
+			if(OnEndExam.bExamEnded == false)
+			{
+				$('#dlg_test_end_confirm').modal("show");
+			}
+			else 
+			{
+				OnEndExam();
+			}
+		});
+
+		$("#btn_end_exam_m").click(function(){
 			if(OnEndExam.bExamEnded == false)
 			{
 				$('#dlg_test_end_confirm').modal("show");
@@ -1003,11 +1243,11 @@ span.username {
 			<?php
 			if ((count ( $objAnsAry [$nSection] [$nQuestion] ) > 0 && ! in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) && ! in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) {
 				?>
-					ChangeSubmitBtnName("Submit");
+					ChangeSubmitBtnName("Save & Next");
 			<?php
 			} else {
 				?>
-				ChangeSubmitBtnName("Next");
+				ChangeSubmitBtnName("Go to Next");
 			<?php
 			}
 			?>
@@ -1020,7 +1260,7 @@ span.username {
 			$("input:checkbox[name='answer[]']").each(function(key, val){
 				if($(this).is(':checked'))
 				{
-		    		ChangeSubmitBtnName("Submit");
+		    		ChangeSubmitBtnName("Save & Next");
 		    		bAnyChecked = true;
 		    		return false;
 				}
@@ -1028,20 +1268,21 @@ span.username {
 			
 			if(!bAnyChecked)
 			{
-				ChangeSubmitBtnName("Next");
+				ChangeSubmitBtnName("Go to Next");
 			}
 		});
 		
 		$("input:radio[name='answer[]']").click(function(){
 			if($(this).is(':checked'))
 			{
-	    		ChangeSubmitBtnName("Submit");
+	    		ChangeSubmitBtnName("Save & Next");
 			}
 		});
 		
 		function ChangeSubmitBtnName(sName)
 		{
 			$("#submit_ans").val(sName);
+			$("#submit_ans_m").val(sName);
 		}
 
 		function LoadQuestion(test_id, tschd_id, ques, sec)
@@ -1116,17 +1357,23 @@ span.username {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','info');");
 					} else {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','success');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered');");
 					}
 				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 1, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','info');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered');");
 					}
 				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 2, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','info');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered');");
 					} else {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','warning');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered');");
+					}
+				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 3, $objAnsAry [$secIndex] [$qusIndex] ))) {
+					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered');");
+					} else {
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_visited');");
 					}
 				}
 			}

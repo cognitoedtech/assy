@@ -244,7 +244,7 @@
 				<?php 
 				}
 				?>
-				window.location = "mipcat-tcs.php?test_id="+<?php echo($test_id); ?>+"&tschd_id="+<?php echo($tschd_id); ?>+"&sec="+<?php echo($QuesInfoAry['sec']); ?>+"&ques="+<?php echo($QuesInfoAry['ques']); ?>+langParams;
+				window.location = "mipcat.php?test_id="+<?php echo($test_id); ?>+"&tschd_id="+<?php echo($tschd_id); ?>+"&sec="+<?php echo($QuesInfoAry['sec']); ?>+"&ques="+<?php echo($QuesInfoAry['ques']); ?>+langParams;
 			});
 
 			<?php 
