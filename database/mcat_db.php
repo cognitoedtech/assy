@@ -1703,7 +1703,12 @@
 				$test_static_ary = NULL;
 				$test_dynamic_ary = NULL;
 				$last_edited      = NULL;
-				echo "<tr id='".$row['test_id']."'>";
+				
+				if($row['allocation_id']==null)
+					echo "<tr id='".$row['test_id']."'>";
+				else
+					echo "<tr>";
+				
 				echo "<td>".$row['test_name']. $ea_test."</td>";
 				if($row['is_static'] == CConfig::TEST_NATURE_STATIC)
 				{
