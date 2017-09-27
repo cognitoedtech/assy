@@ -25,7 +25,7 @@ if ($bFreeEZeeAssesUser == 1) {
 	printf ( "<script type='text/javascript'> var bIsFree = false;  </script>" );
 }
 
-$sUserName = $objDB->GetUserName($sUserID);
+$sUserName = $objDB->GetUserName ( $sUserID );
 
 $bDecrAttemptCount = CSessionManager::Get ( CSessionManager::BOOL_DECR_ATTEMPT_COUNT );
 
@@ -88,11 +88,10 @@ if ($qry [0] == "test_id") {
 	}
 	
 	// Get Org Name who owns the test
-	$sOrgName = $objDB->GetOrganizationNameByTestID($nTestID);
+	$sOrgName = $objDB->GetOrganizationNameByTestID ( $nTestID );
 	
-	if(!empty($sOrgName))
-	{
-		$sOrgName = "by ".$sOrgName;
+	if (! empty ( $sOrgName )) {
+		$sOrgName = "by " . $sOrgName;
 	}
 	
 	// Get Test Parameters
@@ -334,10 +333,9 @@ span.username {
 }
 
 .active a {
-	background-color: #4390df !important; 
-	color: white !important; 
+	background-color: #4390df !important;
+	color: white !important;
 }
-
 </style>
 		<?php
 		$objIncludeJsCSS->CommonIncludeCSS ( "../" );
@@ -348,6 +346,7 @@ span.username {
 		$objIncludeJsCSS->IncludeJquerySnippetJS ( "../" );
 		$objIncludeJsCSS->IncludeMathJAXJS ( "../" );
 		$objIncludeJsCSS->IncludeJqueryUI_1_12_1_JS ( "../" );
+		
 		?>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
@@ -376,56 +375,57 @@ span.username {
 /*---------------------------------------------------------------*/
 /* Group or Section Scroller Style*/
 /*---------------------------------------------------------------*/
-
 .wrapper {
-    position:relative;
-    margin:0 auto;
-    overflow:hidden;
-	padding:5px;
-  	height:50px;
+	position: relative;
+	margin: 0 auto;
+	overflow: hidden;
+	padding: 5px;
+	height: 50px;
 }
 
 .list {
-    /*position:absolute;*/
-    position:relative;
-    left:0px;
-    top:0px;
-  	min-width:100%;
-  	margin-left:12px;
-    margin-top:0px;
+	position: relative;
+	left: 0px;
+	top: 0px;
+	min-width: 3000px;
+	margin-left: 12px;
+	margin-top: 0px;
+	list-style: none;
+	white-space: nowrap;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
-.list li{
-	display:table-cell;
-    position:relative;
-    text-align:center;
-    cursor:grab;
-    cursor:-webkit-grab;
-    color:#efefef;
-    vertical-align:middle;
+.list li {
+	display: table-cell;
+	position: relative;
+	text-align: center;
+	cursor: grab;
+	cursor: -webkit-grab;
+	color: #efefef;
+	vertical-align: middle;
 }
 
 .scroller {
-  text-align:center;
-  cursor:pointer;
-  display:none;
-  padding:7px;
-  padding-top:11px;
-  white-space:no-wrap;
-  vertical-align:middle;
-  background-color:#fff;
+	text-align: center;
+	cursor: pointer;
+	display: none;
+	padding: 7px;
+	padding-top: 11px;
+	white-space: no-wrap;
+	vertical-align: middle;
+	background-color: #fff;
 }
 
-.scroller-right{
-  float:right;
+.scroller-right {
+	float: right;
 }
 
 .scroller-left {
-  float:left;
+	float: left;
 }
 
 /*---------------------------------------------------------------*/
-
 @media ( max-width : 480px) {
 	.modal {
 		position: absolute;
@@ -446,8 +446,7 @@ span.username {
 	}
 }
 
-.border
-{
+.border {
 	border: 1px solid lightgrey;
 }
 
@@ -455,9 +454,14 @@ span.username {
 	#test-buttons-desktop {
 		display: block;
 	}
-	
 	#test-buttons-mobile {
 		display: none;
+	}
+	.hideon-dt-mode {
+		display: none;
+	}
+	#legend-and-question {
+		display: block !important;
 	}
 }
 
@@ -479,63 +483,59 @@ span.username {
 	.timer {
 		float: none;
 	}
-	
+
 	/*Layout Divs*/
 	#org-name {
-		display:none;
+		display: none;
 	}
-	
 	#group-strip {
 		display: none;
 	}
-	
 	#timer-strip {
 		
 	}
-	
 	#cur-section-label {
 		display: none;
 	}
-	
 	#section-strip {
 		
 	}
-	
 	#lang-selection {
-	
+		
 	}
-	
-	#user-identification{
+	#user-identification {
 		display: none;
 	}
-	
 	#question-info {
-	
+		
 	}
-	
 	#question-area {
-		height: 200px;
+		height: 100%;
 		overflow-y: visible;
 	}
-	
+	#md-container {
+		position: relative;
+	}
 	#legend-and-question {
 		display: none;
+		position: absolute;
+		left: auto;
+		background-color: #fff;
+		z-index: 100;
 	}
-	
 	#test-buttons-desktop {
 		display: none;
 	}
-	
 	#test-buttons-mobile {
 		display: block;
 	}
 }
 
 .row-eq-height {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display:         flex;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
 }
 
 .modal-body {
@@ -548,12 +548,13 @@ span.username {
 body {
 	height: 100%;
 	overflow: hidden;
+	padding: 10px;
 }
 </style>
 </head>
 <body>
 	<div class="container">
-		<div
+		<div class="row"
 			style="color: white; font-weight: bold; background-color: CornflowerBlue; padding: 10px 10px;"
 			id="header">
 			<span>Test: <?php echo $test_name; ?></span> <span class="pull-right"
@@ -562,52 +563,59 @@ body {
 			</span>
 		</div>
 
-		<div class="container-fluid">
-			<div class="row row-eq-height" >
-				<div class="col-lg-9">
-					<div class="row row-eq-height" id="group-strip">
+		<div class="row row-eq-height">
+			<div class="col-xs-12 col-sm-9">
+				<div class="row row-eq-height" id="group-strip"></div>
+				<div class="row border" id="timer-strip">
+					<div class="col-sm-6" id="cur-section-label">
+						<span class="selected_sec_name"><?php printf("<b><i class='icon-tasks icon-black'></i>&nbsp;Current Section: <span style='color:FireBrick;'>%s</span></b>",$sSectionName);?></span>
 					</div>
-					<div class="row border" id="timer-strip">
-						<div class="col-lg-6 col-md-6 col-sm-6" id="cur-section-label">
-							<span class="selected_sec_name"><?php printf("<b><i class='icon-tasks icon-black'></i>&nbsp;Current Section: <span style='color:FireBrick;'>%s</span></b>",$sSectionName);?></span>
-						</div>
-						<div class="col-lg-6  col-md-6 col-sm-6">
-							<span class="timer"><input type="text"
-								class="input-medium search-query" size="8" id="timer"
-								style="border: none; text-align: center; color: #009900; font-weight: bold; width: 180px; height: 30px; margin-top: 5px;"></span>
-						</div>
+					<div class="col-sm-6">
+						<span class="timer"><input type="text"
+							class="input-medium search-query" size="8" id="timer"
+							style="border: none; text-align: center; color: #009900; font-weight: bold; width: 180px; height: 30px; margin-top: 5px;"></span>
 					</div>
-					<div class="border" id="section-strip">
-						<div class="scroller scroller-left"><i class="fa fa-chevron-left" aria-hidden="false"></i>
-						</div>
-  						<div class="scroller scroller-right"><i class="fa fa-chevron-right" aria-hidden="false"></i>
-  						</div>
-						<div id="wrapper">
-							<ul class="nav nav-tabs list">
+				</div>
+				<div class="row border" id="section-strip">
+					<div class="scroller scroller-left">
+						<i class="fa fa-chevron-left" aria-hidden="false"></i>
+					</div>
+					<div class="scroller scroller-right">
+						<i class="fa fa-chevron-right" aria-hidden="false"></i>
+					</div>
+					<div class="wrapper">
+						<ul class="nav nav-tabs list">
 							<?php
-								$arySection = $objTH->GetSectionDetails ( $nTestID );
+							$arySection = $objTH->GetSectionDetails ( $nTestID );
+							
+							$secIndex = 0;
+							foreach ( $arySection as $key => $Section ) {
+								if (! empty ( $Section ['name'] )) {
+									if ($secIndex == $nSection)
+										printf ( "<li class='active'><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", $Section ['name'], $Section ['name'], $Section ['name'] );
+									else
+										printf ( "<li ><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", $Section ['name'], $Section ['name'], $Section ['name'] );
 								
-								$secIndex = 0;
-								foreach ( $arySection as $key => $Section ) {
-									if (! empty ( $Section ['name'] )) {
-										if ($secIndex == $nSection)
-											printf ( "<li role='presentation' class='active'><a href='#%s_questions' aria-controls='%s_questions' role='tab' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>", $Section ['name'], $Section ['name'], $Section ['name'] );
-										else
-											printf ( "<li role='presentation' ><a href='#%s_questions' aria-controls='%s_questions' role='tab' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", $Section ['name'], $Section ['name'], $Section ['name'] );
-									
-									}
-									$secIndex ++;
 								}
-								?>
-							</ul>
-						</div>
+								$secIndex ++;
+							}
+							?>
+						</ul>
 					</div>
-					<div class="row border" id="lang-selection" style="color: #fff;	background-color: #4390df; padding: 5px;">
+				</div>
+				<div class="row border" id="lang-selection"
+					style="color: #fff; background-color: #4390df; padding: 5px;">
+					<div class="col-xs-3 hideon-dt-mode"
+						style="border-right: 1px solid #ddd;">
+						<span class="btn" id="mobile-book-btn"><i class="fa fa-book"
+							aria-hidden="true"></i></span>
+					</div>
+					<div class="col-xs-6 col-sm-12">
 						<div id="choose_lang" class="form-inline" style="text-align:center;width:400px;height:auto;margin-left:auto;border:1px solid #aaa;padding:5px;<?php echo($transLangChoice != "both"?"display:none":"");?>">
-							<div class="radio" style='color: White;'>Choose Language &nbsp; :&nbsp;&nbsp; <label
-								class="radio"> <input type="radio" id="trans_choice_base"
-									value='base' name="trans_choice"
-									onchange="OnTransChoiceChange();"
+							<div class="radio" style='color: White;'>
+								Choose Language &nbsp; :&nbsp;&nbsp; <label class="radio"> <input
+									type="radio" id="trans_choice_base" value='base'
+									name="trans_choice" onchange="OnTransChoiceChange();"
 									<?php echo($langofchoice==0?"checked":""); ?>>&nbsp;&nbsp;<?php echo(ucfirst($objMCPAParams['pref_lang'])); ?>&nbsp;&nbsp;
 							</label>
 							<?php
@@ -623,332 +631,348 @@ body {
 								?>
 							<label style="color: yellow;">Question&rsquo;s translation in <b>&lsaquo; <?php echo(ucfirst($testTransLang)); ?> Language &rsaquo;</b>
 									is not available.
-							</label>
+								</label>
 							<?php
 							}
 							?>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="col-lg-3 border" id="user-identification">
-					<div class="row">
-						<div class="col-lg-6">
-							<img class="border" src="../images/NewCandidateImage.jpg" width="94" height="101"/>
-						</div>
-						<div class="col-lg-6">
-							<span class="username"><?php echo($sUserName);?></span>
-						</div>
+					<div class="col-xs-3 hideon-dt-mode"
+						style="border-left: 1px solid #ddd;">
+						<span class="btn" id="mobile-bars-btn"><i class="fa fa-bars"
+							aria-hidden="true"></i></span>
 					</div>
-					
 				</div>
 			</div>
-			<form action="mipcat-tcs.php" onReset="return ResetForm();" method="POST">
-				<div class="row row-eq-height" >
-					<div class="col-lg-9 border">
-						<div class="row border" id="question-info">
-						
-						</div>
-						<div class="row" id="question-area" style="overflow-y: auto;">
-							<button type="button" class="btn btn-primary" onclick="TogglePara()" id="toggle_para" style="<?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "display:none;" : "");?>">
-	
-							</button>
-							<br /> <br />
-	
-							<div class="well" id="base_para" style="overflow: auto;border:1px solid #aaa;max-height:250px;<?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "display:none;" : "");?>">
-								<blockquote>
-									<p>
-		    					<?php
-											if ($aryQues ['ques_type'] != CConfig::QT_NORMAL && $aryQues ['ques_type'] != - 1) {
-												echo ($objTH->GetRCDirectionPara ( $aryQues ['ques_id'], $aryQues ['ques_type'] ));
-											}
-											?>
-		    					</p>
-									<small><?php echo(ucwords($aryQues['language']));?></small>
-								</blockquote>
-							</div>
-	    	
+			<div class="col-sm-3 border" id="user-identification">
+				<div class="row">
+					<div class="col-sm-6">
+						<img class="border" src="../images/NewCandidateImage.jpg"
+							width="94" height="101" />
+					</div>
+					<div class="col-sm-6">
+						<span class="username"><?php echo($sUserName);?></span>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<form action="mipcat-tcs.php" onReset="return ResetForm();"
+			method="POST">
+			<div class="row row-eq-height" id="md-container">
+				<div class="col-xs-12 col-sm-9 border">
+					<div class="row border" id="question-info"></div>
+					<div class="row" id="question-area" style="overflow-y: auto;">
+						<button type="button" class="btn btn-primary" onclick="TogglePara()" id="toggle_para" style="<?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "display:none;" : "");?>">
+
+						</button>
+						<br /> <br />
+
+						<div class="well" id="base_para" style="overflow: auto;border:1px solid #aaa;max-height:250px;<?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "display:none;" : "");?>">
+							<blockquote>
+								<p>
 	    					<?php
-							if (! empty ( $aryTransQues )) {
-							?>
-	    					<div id="trans_para"
-								style="overflow: auto; border: 1px solid #aaa; padding: 5px; max-height: 250px; display: none;">
-								<blockquote>
-									<p>
-			    				<?php
+										if ($aryQues ['ques_type'] != CConfig::QT_NORMAL && $aryQues ['ques_type'] != - 1) {
+											echo ($objTH->GetRCDirectionPara ( $aryQues ['ques_id'], $aryQues ['ques_type'] ));
+										}
+										?>
+	    					</p>
+								<small><?php echo(ucwords($aryQues['language']));?></small>
+							</blockquote>
+						</div>
+    	
+    					<?php
+									if (! empty ( $aryTransQues )) {
+										?>
+    					<div id="trans_para"
+							style="overflow: auto; border: 1px solid #aaa; padding: 5px; max-height: 250px; display: none;">
+							<blockquote>
+								<p>
+		    				<?php
 										if ($aryTransQues ['ques_type'] != CConfig::QT_NORMAL && $aryTransQues ['ques_type'] != - 1) {
 											echo ($objTH->GetRCDirectionPara ( $aryTransQues ['ques_id'], $aryTransQues ['ques_type'] ));
 										}
 										?>
-		    					</p>
-									<small><?php echo(ucwords($aryTransQues['language']));?></small>
-								</blockquote>
-							</div>
-	    					<?php
-							}
-							?>	 
-							<table width="100%" cellpadding="4" cellspacing="4">
-								<tr>
-									<td colspan="2" id="td_question" style="color: DarkSlateBlue;">
-									<?php
-									$ques_cnts = "";
-									if (CUtils::getMimeType ( $aryQues ['question'] ) == "application/octet-stream") {
-										$ques_cnts = str_replace ( "\n", "<br />", $aryQues ['question'] );
-									} else {
-										$ques_cnts = sprintf ( "<img src='lib/print_image.php?qid=%s&opt=0'>", $aryQues ['ques_id'] );
+	    					</p>
+								<small><?php echo(ucwords($aryTransQues['language']));?></small>
+							</blockquote>
+						</div>
+    					<?php
 									}
-									printf ( "<blockquote id='base_ques'><p><b>Ques %d). %s</b></p><small>%s</small></blockquote>", ($nQuestion + 1), $ques_cnts, ucwords ( $aryQues ['language'] ) );
-									
-									$opt_ary = array ();
-									for($index = 0; $index < $aryQues ['opt_count']; $index ++) {
-										if (CUtils::getMimeType ( base64_decode ( $aryQues ['options'] [$index] ["option"] ) ) == "application/octet-stream") {
-											$opt_ary [$index] = base64_decode ( $aryQues ['options'] [$index] ["option"] );
-										} else {
-											$opt_ary [$index] = sprintf ( "<img src='lib/print_image.php?qid=%s&opt=%s'>", $aryQues ['ques_id'], ($index + 1) );
-										}
-									}
-									
-									if (! empty ( $aryTransQues )) {
-										
-										$ques_cnts = "";
-										if (CUtils::getMimeType ( $aryTransQues ['question'] ) == "application/octet-stream") {
-											$ques_cnts = str_replace ( "\n", "<br />", $aryTransQues ['question'] );
-										} else {
-											$ques_cnts = sprintf ( "<img src='lib/print_image.php?qid=%s&opt=0'>", $aryTransQues ['ques_id'] );
-										}
-										printf ( "<blockquote id='trans_ques' style='display :none'><p><b>Ques %d). %s</b></p><small>%s</small></blockquote>", ($nQuestion + 1), $ques_cnts, ucwords ( $aryTransQues ['language'] ) );
-										
-										$trans_opt_ary = array ();
-										for($index = 0; $index < $aryTransQues ['opt_count']; $index ++) {
-											if (CUtils::getMimeType ( base64_decode ( $aryTransQues ['options'] [$index] ["option"] ) ) == "application/octet-stream") {
-												$trans_opt_ary [$index] = base64_decode ( $aryTransQues ['options'] [$index] ["option"] );
-											} else {
-												$trans_opt_ary [$index] = sprintf ( "<img src='lib/print_image.php?qid=%s&opt=%s'>", $aryTransQues ['ques_id'], ($index + 1) );
-											}
-										}
-									}
-									?><br />
-									</td>
-								</tr>
+									?>	 
+						<table width="100%" cellpadding="4" cellspacing="4">
+							<tr>
+								<td colspan="2" id="td_question" style="color: DarkSlateBlue;">
 								<?php
-								for($opt_idx = 0; $opt_idx < $aryQues ['opt_count']; $opt_idx ++) {
-									if ($opt_idx == 0) {
-										printf ( "<tr>\n" );
-									} 
-	
-									else if (($opt_idx % 2) == 0) {
-										printf ( "</tr>\n<tr>\n" );
-									}
-									
-									$ip_type = "radio";
-									if ($objMCPAParams ['mcq_type'] == 1) {
-										$ip_type = "checkbox";
-									}
-								?>
-								<td class="info" id="td_opts" style="<?php echo((empty($opt_ary[$opt_idx]) && !is_numeric($opt_ary[$opt_idx])) ? "display:none;" : "");?>"><label><?php echo($opt_idx+1);?>). <input
-										style="position: relative; top: -4px;"
-										id="rb_opt_<?php echo($opt_idx+1);?>"
-										type="<?php echo($ip_type);?>" name="answer[]"
-										value="<?php echo($opt_idx+1);?>"
-										<?php echo(in_array(($opt_idx+1), $objAnsAry[$nSection][$nQuestion])?"checked='checked'":""); ?> />
-										<span id="base_opt_<?php echo($opt_idx+1);?>"><?php echo($opt_ary[$opt_idx]);?></span><?php printf(!empty($aryTransQues)?"<span id='trans_opt_%d' style='display :none;'>%s</span>":"", ($opt_idx+1), $trans_opt_ary[$opt_idx]);?></label></td>
-									<?php
-									if ($opt_idx == ($aryQues ['opt_count'] - 1)) {
-										printf ( "</tr>\n" );
+								$ques_cnts = "";
+								if (CUtils::getMimeType ( $aryQues ['question'] ) == "application/octet-stream") {
+									$ques_cnts = str_replace ( "\n", "<br />", $aryQues ['question'] );
+								} else {
+									$ques_cnts = sprintf ( "<img src='lib/print_image.php?qid=%s&opt=0'>", $aryQues ['ques_id'] );
+								}
+								printf ( "<blockquote id='base_ques'><p><b>Ques %d). %s</b></p><small>%s</small></blockquote>", ($nQuestion + 1), $ques_cnts, ucwords ( $aryQues ['language'] ) );
+								
+								$opt_ary = array ();
+								for($index = 0; $index < $aryQues ['opt_count']; $index ++) {
+									if (CUtils::getMimeType ( base64_decode ( $aryQues ['options'] [$index] ["option"] ) ) == "application/octet-stream") {
+										$opt_ary [$index] = base64_decode ( $aryQues ['options'] [$index] ["option"] );
+									} else {
+										$opt_ary [$index] = sprintf ( "<img src='lib/print_image.php?qid=%s&opt=%s'>", $aryQues ['ques_id'], ($index + 1) );
 									}
 								}
-							?>
-						</table>
-							<input type="hidden" id="test_id" name="test_id"
-								value="<?php echo($nTestID);?>" /> <input type="hidden"
-								id="tschd_id" name="tschd_id" value="<?php echo($nTSchdID);?>" />
-							<input type="hidden" id="section" name="section"
-								value="<?php echo($nSection);?>" /> <input type="hidden"
-								id="question" name="question" value="<?php echo($nQuestion);?>" />
-							<input type="hidden" id="langofchoice" name="langofchoice"
-								value="0" /> <input type="hidden" id="showParaChoice"
-								name="showParaChoice" /> <input type="hidden"
-								id="prev_linked_to" name="prev_linked_to"
-								value="<?php echo($aryQues['linked_to']);?>"> <input
-								type="hidden" id="showSectionChoice" name="showSectionChoice">
-							<?php
-							if ($objMCPAParams ['mcpa_flash_ques'] != 1) {
-								?>
-							<input type="hidden" id="flag_choice" name="flag_choice" value="0" />
-							<?php
-							}
-							?>
-							<input type="hidden" id="cur_timer" name="cur_timer" value="" />
-							
-						</div>
-					</div>
-					<div class="col-lg-3" style='border: 1px solid #000;' id="legend-and-question">
-						<div class="row instruction_area" id="sec_ques_info" >
-							<div class="col-lg-6">
-								<span class="answered">5</span> Answered
-							</div>
-							<div class="col-lg-6">
-								<span class="not_answered">6</span> Not Answered
-							</div>
-							<div class="col-lg-6">
-								<span class="not_visited">7</span> Not Visited
-							</div>
-							<div class="col-lg-6">
-								<span class="review">8</span> Marked for Review
-							</div>
-							<div class="col-lg-12">
-								<span class="review_answered">9</span> Answered &amp; Marked for Review
-							</div>
-						</div>
-						<!--
-						<div class="row">
-							<span class="metro" id="sec_ques_info">
-								<button class="info" style="margin-top: 5px;">Current</button>
-								<button class="success" style="margin-top: 5px;">Attempted</button>
-								<button class="warning" style="margin-top: 5px;">Flagged</button>
-							</span> 
-						</div>
-						<div class="row">
-							<button type="button" onclick="ToggleSections();"
-								class="btn btn-primary" id="toggle_sec"
-								style="font-weight: bold; margin-top: 5px; margin-left: 7px; float: left;"></button>
-						</div>
-						<br /> <br />
-						 -->
-						 
-						<div class="row metro" id="section_info">
-							<div class="tab-content">
-							    <?php
-								$secIndex = 0;
-								foreach ( $arySection as $key => $Section ) {
-									printf ( "<div style='padding: 5px; overflow-y: auto;' role='tabpanel' class='tab-pane %s' id='%s_questions'>", $secIndex == $nSection ? 'active' : '', $Section ['name'] );
-									printf("<button style='margin-top: 5px;'><i class='fa fa-align-justify on-left' aria-hidden='true'></i>&nbsp;Reading Comprehension Group</button>");
-									printf("<button style='margin-top: 5px;margin-bottom: 5px;'><i class='fa fa-arrow-right on-left' aria-hidden='true'></i>&nbsp;Direction Group</button>");
-									printf("<div class='sec-name-questios'>%s</div>", $Section ['name']);
-									printf("<div class='instruction_area'>");
+								
+								if (! empty ( $aryTransQues )) {
 									
-									//printf("<script language='JavaScript' type='text/javascript'>alert('%s')</script>", print_r($objAnsAry, TRUE));
-									
-									for($ques = 0; $ques < $Section ['questions']; $ques ++) {
-										printf ( "<span class='not_visited' style='margin-top: 5px;' onClick='LoadQuestion(%d, %d, %d, %d);' id='%d'>%d</span>\n", $nTestID, $nTSchdID, $ques, $secIndex, (($secIndex + 1) * 1000) + ($ques + 1), ($ques + 1) );
+									$ques_cnts = "";
+									if (CUtils::getMimeType ( $aryTransQues ['question'] ) == "application/octet-stream") {
+										$ques_cnts = str_replace ( "\n", "<br />", $aryTransQues ['question'] );
+									} else {
+										$ques_cnts = sprintf ( "<img src='lib/print_image.php?qid=%s&opt=0'>", $aryTransQues ['ques_id'] );
 									}
+									printf ( "<blockquote id='trans_ques' style='display :none'><p><b>Ques %d). %s</b></p><small>%s</small></blockquote>", ($nQuestion + 1), $ques_cnts, ucwords ( $aryTransQues ['language'] ) );
 									
-									printf ( "</div>" );
-									printf ( "</div>" );
-									$secIndex ++;
+									$trans_opt_ary = array ();
+									for($index = 0; $index < $aryTransQues ['opt_count']; $index ++) {
+										if (CUtils::getMimeType ( base64_decode ( $aryTransQues ['options'] [$index] ["option"] ) ) == "application/octet-stream") {
+											$trans_opt_ary [$index] = base64_decode ( $aryTransQues ['options'] [$index] ["option"] );
+										} else {
+											$trans_opt_ary [$index] = sprintf ( "<img src='lib/print_image.php?qid=%s&opt=%s'>", $aryTransQues ['ques_id'], ($index + 1) );
+										}
+									}
+								}
+								?><br />
+								</td>
+							</tr>
+							<?php
+							for($opt_idx = 0; $opt_idx < $aryQues ['opt_count']; $opt_idx ++) {
+								if ($opt_idx == 0) {
+									printf ( "<tr>\n" );
+								} 
+
+								else if (($opt_idx % 2) == 0) {
+									printf ( "</tr>\n<tr>\n" );
+								}
+								
+								$ip_type = "radio";
+								if ($objMCPAParams ['mcq_type'] == 1) {
+									$ip_type = "checkbox";
 								}
 								?>
-							</div>
-						</div>
-						<br />
+							<td class="info" id="td_opts" style="<?php echo((empty($opt_ary[$opt_idx]) && !is_numeric($opt_ary[$opt_idx])) ? "display:none;" : "");?>"><label><?php echo($opt_idx+1);?>). <input
+									style="position: relative; top: -4px;"
+									id="rb_opt_<?php echo($opt_idx+1);?>"
+									type="<?php echo($ip_type);?>" name="answer[]"
+									value="<?php echo($opt_idx+1);?>"
+									<?php echo(in_array(($opt_idx+1), $objAnsAry[$nSection][$nQuestion])?"checked='checked'":""); ?> />
+									<span id="base_opt_<?php echo($opt_idx+1);?>"><?php echo($opt_ary[$opt_idx]);?></span><?php printf(!empty($aryTransQues)?"<span id='trans_opt_%d' style='display :none;'>%s</span>":"", ($opt_idx+1), $trans_opt_ary[$opt_idx]);?></label></td>
+								<?php
+								if ($opt_idx == ($aryQues ['opt_count'] - 1)) {
+									printf ( "</tr>\n" );
+								}
+							}
+							?>
+					</table>
+						<input type="hidden" id="test_id" name="test_id"
+							value="<?php echo($nTestID);?>" /> <input type="hidden"
+							id="tschd_id" name="tschd_id" value="<?php echo($nTSchdID);?>" />
+						<input type="hidden" id="section" name="section"
+							value="<?php echo($nSection);?>" /> <input type="hidden"
+							id="question" name="question" value="<?php echo($nQuestion);?>" />
+						<input type="hidden" id="langofchoice" name="langofchoice"
+							value="0" /> <input type="hidden" id="showParaChoice"
+							name="showParaChoice" /> <input type="hidden" id="prev_linked_to"
+							name="prev_linked_to"
+							value="<?php echo($aryQues['linked_to']);?>"> <input
+							type="hidden" id="showSectionChoice" name="showSectionChoice">
+						<?php
+						if ($objMCPAParams ['mcpa_flash_ques'] != 1) {
+							?>
+						<input type="hidden" id="flag_choice" name="flag_choice" value="0" />
+						<?php
+						}
+						?>
+						<input type="hidden" id="cur_timer" name="cur_timer" value="" />
+
 					</div>
 				</div>
-				<div class="row row-eq-height" id="test-buttons-desktop">
-					<div class="col-lg-9 border" style="padding-top: 10px;">
-						<?php
-							if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
-								$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
-								$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
-								echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-primary" id="flag_ques" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
-								echo ('<input type="reset" class="btn btn-default" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
-								echo ('<input type="submit" id="submit_ans" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
-							
-							} else {
-								echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(0);" class="btn btn-primary" id="flag_ques" name="btn2" value="Flag / Mark" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
-								echo ('<input type="reset" class="btn btn-default" value="Clear Response" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;');
-								echo ('<input type="submit" id="submit_ans" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
-							}
-							
-							//echo ('<br/><b>( After Reseting already selected option&lsaquo;s&rsaquo; or after Selecting option&lsaquo;s&rsaquo; press <span style="color:green">Submit</span> )</b>');
-						?>
-					</div>
-					<div class="col-lg-3 border text-center" style="padding-top: 10px;">
-						<input type="button" id="btn_end_exam" class="btn btn-danger" value="Submit & Close Test">
-						</input>
-					</div>
-				</div>
-				<div class="row row-eq-height" id="test-buttons-mobile">
-					<div class="col-lg-6 col-md-6 col-sm-6 border" style="padding-top: 10px;">
-						<?php
-							if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
-								$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
-								$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
-								echo ('<input type="reset" class="btn btn-default" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
-								echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-primary" id="flag_ques_m" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
-							} else {
-								echo ('<input type="reset" class="btn btn-default" value="Clear Response" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;');
-								echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(0);" class="btn btn-primary" name="btn2" id="flag_ques_m" value="Flag / Mark" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
-							}
-						?>
-					</div>
-					<div class="col-lg-6 col-md-6 col-sm-6 border text-center" style="padding-top: 10px;">
-						<input type="button" id="btn_end_exam_m" class="btn btn-danger" value="Submit & Close Test"></input>
-						<?php
-							if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
-								$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
-								$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
-								echo ('<input type="submit" id="submit_ans_m" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
-							
-							} else {
-								echo ('<input type="submit" id="submit_ans_m" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
-							}
-						?>
-					</div>
-				</div>
-			</form>
-			
-			<div class="modal fade" id="dlg_test_end_confirm" tabindex="-1"
-				role="dialog" aria-labelledby="myModalLabel">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal"
-								aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-							<h4 class="modal-title" id="myModalLabel">End Exam Confirmation</h4>
+				<div class="col-sm-3 col-xs-12" style='border: 1px solid #000;'
+					id="legend-and-question">
+					<div class="row instruction_area" id="sec_ques_info">
+						<div class="col-sm-6 col-xs-6">
+							<span class="answered">5</span> Answered
 						</div>
-						<div class="modal-body">
-							<p>Are you sure to end the exam? After confirmation your test
-								progress will be submited for result and you will no longer be
-								able to attempt this test again.</p>
-							<p style="color: #666">To cancel, click the No button or hit the
-								ESC key.</p>
+						<div class="col-sm-6 col-xs-6">
+							<span class="not_answered">6</span> Not Answered
 						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default"
-								data-dismiss="modal">No</button>
-							<button type="button" onclick="OnEndExam()"
-								class="btn btn-primary">Yes</button>
+						<div class="col-sm-6 col-xs-6">
+							<span class="not_visited">7</span> Not Visited
+						</div>
+						<div class="col-sm-6 col-xs-6">
+							<span class="review">8</span> Marked for Review
+						</div>
+						<div class="col-sm-12 col-xs-12">
+							<span class="review_answered">9</span> Answered &amp; Marked for
+							Review
 						</div>
 					</div>
+					<!--
+					<div class="row">
+						<span class="metro" id="sec_ques_info">
+							<button class="info" style="margin-top: 5px;">Current</button>
+							<button class="success" style="margin-top: 5px;">Attempted</button>
+							<button class="warning" style="margin-top: 5px;">Flagged</button>
+						</span> 
+					</div>
+					<div class="row">
+						<button type="button" onclick="ToggleSections();"
+							class="btn btn-primary" id="toggle_sec"
+							style="font-weight: bold; margin-top: 5px; margin-left: 7px; float: left;"></button>
+					</div>
+					<br /> <br />
+					 -->
+
+					<div class="row metro" id="section_info">
+						<div class="tab-content">
+						    <?php
+										$secIndex = 0;
+										foreach ( $arySection as $key => $Section ) {
+											printf ( "<div style='padding: 5px; overflow-y: auto;' role='tabpanel' class='tab-pane %s' id='%s_questions'>", $secIndex == $nSection ? 'active' : '', $Section ['name'] );
+											printf ( "<button style='margin-top: 5px;'><i class='fa fa-align-justify on-left' aria-hidden='true'></i>&nbsp;Reading Comprehension Group</button>" );
+											printf ( "<button style='margin-top: 5px;margin-bottom: 5px;'><i class='fa fa-arrow-right on-left' aria-hidden='true'></i>&nbsp;Direction Group</button>" );
+											printf ( "<div class='sec-name-questios'>%s</div>", $Section ['name'] );
+											printf ( "<div class='instruction_area'>" );
+											
+											// printf("<script
+											// language='JavaScript'
+											// type='text/javascript'>alert('%s')</script>",
+											// print_r($objAnsAry, TRUE));
+											
+											for($ques = 0; $ques < $Section ['questions']; $ques ++) {
+												printf ( "<span class='not_visited' style='margin-top: 5px;' onClick='LoadQuestion(%d, %d, %d, %d);' id='%d'>%d</span>\n", $nTestID, $nTSchdID, $ques, $secIndex, (($secIndex + 1) * 1000) + ($ques + 1), ($ques + 1) );
+											}
+											
+											printf ( "</div>" );
+											printf ( "</div>" );
+											$secIndex ++;
+										}
+										?>
+						</div>
+					</div>
+					<br />
 				</div>
 			</div>
+			<div class="row row-eq-height" id="test-buttons-desktop">
+				<div class="col-sm-9 border" style="padding-top: 10px;">
+					<?php
+					if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
+						$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
+						$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
+						echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-primary" id="flag_ques" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
+						echo ('<input type="reset" class="btn btn-default" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
+						echo ('<input type="submit" id="submit_ans" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
+					
+					} else {
+						echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(0);" class="btn btn-primary" id="flag_ques" name="btn2" value="Flag / Mark" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
+						echo ('<input type="reset" class="btn btn-default" value="Clear Response" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;');
+						echo ('<input type="submit" id="submit_ans" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
+					}
+					
+					// echo ('<br/><b>( After Reseting already selected
+					// option&lsaquo;s&rsaquo; or after Selecting
+					// option&lsaquo;s&rsaquo; press <span
+					// style="color:green">Submit</span> )</b>');
+					?>
+				</div>
+				<div class="col-sm-3 border text-center" style="padding-top: 10px;">
+					<input type="button" id="btn_end_exam" class="btn btn-danger"
+						value="Submit & Close Test"> </input>
+				</div>
+			</div>
+			<div class="row row-eq-height" id="test-buttons-mobile">
+				<div class="col-xs-12 border" style="padding: 5px;">
+					<?php
+					if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
+						$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
+						$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
+						echo ('<input type="reset" class="btn btn-default btn-sm pull-left" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
+						echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-primary btn-sm pull-right" id="flag_ques_m" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
+					} else {
+						echo ('<input type="reset" class="btn btn-default btn-sm pull-left" value="Clear Response" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;');
+						echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(0);" class="btn btn-primary btn-sm pull-right" name="btn2" id="flag_ques_m" value="Flag / Mark" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
+					}
+					?>
+				</div>
+				<div class="col-xs-12 border" style="padding: 5px;">
+					<input type="button" id="btn_end_exam_m"
+						class="btn btn-danger btn-sm pull-left"
+						value="Submit & Close Test"></input>
+					<?php
+					if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
+						$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
+						$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
+						echo ('<input type="submit" id="submit_ans_m" class="btn btn-success btn-sm pull-right" name="btn1" value="Go to Next" disabled/>');
+					
+					} else {
+						echo ('<input type="submit" id="submit_ans_m" class="btn btn-success btn-sm pull-right" name="btn1" value="Go to Next" disabled/>');
+					}
+					?>
+				</div>
+			</div>
+		</form>
 
-			<div class="modal fade" id="MessageModal" tabindex="-1"
-				role="dialog" aria-labelledby="MessageModalLabel">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal"
-								aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-							<h4 class="modal-title" id="MessageModalLabel"><?php echo(CConfig::SNC_SITE_NAME);?> - Closing Test</h4>
-						</div>
-						<div id="ModalMsgStr" class="modal-body"></div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default"
-								data-dismiss="modal">Close</button>
-						</div>
+		<div class="modal fade" id="dlg_test_end_confirm" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">End Exam Confirmation</h4>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure to end the exam? After confirmation your test
+							progress will be submited for result and you will no longer be
+							able to attempt this test again.</p>
+						<p style="color: #666">To cancel, click the No button or hit the
+							ESC key.</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+						<button type="button" onclick="OnEndExam()"
+							class="btn btn-primary">Yes</button>
 					</div>
 				</div>
 			</div>
 		</div>
+
+		<div class="modal fade" id="MessageModal" tabindex="-1" role="dialog"
+			aria-labelledby="MessageModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="MessageModalLabel"><?php echo(CConfig::SNC_SITE_NAME);?> - Closing Test</h4>
+					</div>
+					<div id="ModalMsgStr" class="modal-body"></div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<script language="JavaScript" type="text/javascript">
 		//parent.ShowLeftMenu();
 		// ---------------------------------------------------------
-
+		var toggle_btn_book = 0;
+		var toggle_btn_bars = 0;
+		
 		OnTransChoiceChange();
 
 		$(document).ready(function() {
@@ -977,68 +1001,103 @@ body {
 
 			var hidWidth;
 			var scrollBarWidths = 40;
-
+			var nItemsCount = 0;
+			var nScrollLen;
+			
 			var widthOfList = function(){
-			  var itemsWidth = 0;
-			  $('.list li').each(function(){
-			    var itemWidth = $(this).outerWidth();
-			    itemsWidth+=itemWidth;
-			  });
-			  return itemsWidth;
+ 				var itemsWidth = 0;
+ 				nItemsCount = 0;
+				$('.list li').each(function(){
+  					var itemWidth = $(this).outerWidth();
+ 					itemsWidth+=itemWidth;
+					
+					nItemsCount++;
+				});
+  			return itemsWidth;
 			};
 
 			var widthOfHidden = function(){
-			  return (($('.wrapper').outerWidth())-widthOfList()-getLeftPosi())-scrollBarWidths;
+				return (($('.wrapper').outerWidth())-widthOfList()-getLeftPosi())-scrollBarWidths;
 			};
 
 			var getLeftPosi = function(){
-			  return $('.list').position().left;
+				return $('.list').position().left;
 			};
 
 			var reAdjust = function(){
-			  if (($('.wrapper').outerWidth()) < widthOfList()) {
-			    $('.scroller-right').show();
-			  }
-			  else {
-				$('.scroller-right').hide();
-			  }
-			  
-			  if (getLeftPosi()<0) {
-			    $('.scroller-left').show();
-			  }
-			  else {
-			    $('.item').animate({left:"-="+getLeftPosi()+"px"},'slow');
-			    $('.scroller-left').hide();
-			  }
-			}
+				if (($('.wrapper').outerWidth()) < widthOfList()) {
+			    	$('.scroller-right').show();
+			  	}
+			  	else {
+					$('.scroller-right').hide();
+			  	}
 
+				if (getLeftPosi()<0) {
+			    	$('.scroller-left').show();
+			  	}
+			  	else {
+			    	$('.item').animate({left:"-="+getLeftPosi()+"px"},'slow');
+			    	$('.scroller-left').hide();
+			  	}
+
+			  	var nItemsWidth = $('.wrapper').width();
+			  	nScrollLen  = nItemsWidth / nItemsCount;
+
+			  	//alert($(".list li.active").position().left);
+			}
+			
 			reAdjust();
 
-			$(window).on('resize',function(e){  
-			  	reAdjust();
+			$(window).on('resize',function(e){
+				$('.wrapper').animate({scrollLeft:5},'slow',function(){
+		        	reAdjust();
+			        });
+				
+				reAdjust();
 			});
 
-			$('.scroller-right').click(function() {
-			  
-			  $('.scroller-left').fadeIn('slow');
-			  $('.scroller-right').fadeOut('slow');
-			  
-			  $('.list').animate({left:"+="+widthOfHidden()+"px"},'slow',function(){
+			if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+			    $(".scroller-right").bind("click", function(event) {
+				    scrollContent("right");
+			    });
 
-			  });
-			});
+			    $(".scroller-left").bind("click", function(event) {
+			    	scrollContent("left");
+			    });
 
-			$('.scroller-left').click(function() {
-			  
-				$('.scroller-right').fadeIn('slow');
-				$('.scroller-left').fadeOut('slow');
-			  
-			  	$('.list').animate({left:"-="+getLeftPosi()+"px"},'slow',function(){
-			  	
-			  	});
-			});
-			
+			    function scrollContent(direction) {
+			    	var amount = (direction === "left" ? "-="+ nScrollLen : "+="+nScrollLen);
+					
+			        $('.wrapper').animate({scrollLeft:amount}, function(){
+			        	reAdjust();
+				        });
+			    }
+			  }
 			// ---------------------------------------------------
+
+			$("#mobile-book-btn").on("click", function(){
+				alert("Test-L");
+			});
+
+			$("#mobile-bars-btn").on("click", function(){
+				if(toggle_btn_bars == 0)
+				{
+					$("#legend-and-question").show("slide", { direction: "right" }, 250);
+					toggle_btn_bars = 1;
+				}
+				else
+				{
+					$("#legend-and-question").hide("slide", { direction: "right" }, 250);
+					toggle_btn_bars = 0;
+				}
+			});
+
+			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+				var amount = $(".list li.active").position().left;
+				$('.wrapper').animate({scrollLeft:amount}, function(){
+		        	reAdjust();
+			        });
+			});
 		});
 
 		$("#btn_end_exam").click(function(){
@@ -1446,12 +1505,12 @@ body {
 		}
 		?>
 		</script>
-			<script type="text/x-mathjax-config">
+		<script type="text/x-mathjax-config">
   			MathJax.Hub.Config({
     			tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
  			});
 		</script>
-		</div>
+	</div>
 
 </body>
 </html>
