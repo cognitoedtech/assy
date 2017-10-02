@@ -1,0 +1,599 @@
+Answer: Array
+(
+    [0] => -3
+)
+Intersect: Array
+(
+    [2] => -3
+)
+Answer: Array
+(
+    [0] => 1
+)
+Intersect: Array
+(
+)
+Answer: Array
+(
+    [0] => -2
+)
+Intersect: Array
+(
+    [1] => -2
+)
+Answer: Array
+(
+    [0] => -3
+)
+Intersect: Array
+(
+    [2] => -3
+)
+Answer: Array
+(
+    [0] => -3
+)
+Intersect: Array
+(
+    [2] => -3
+)
+Answer: Array
+(
+    [0] => -3
+)
+Intersect: Array
+(
+    [2] => -3
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)
+Answer: Array
+(
+    [0] => -1
+)
+Intersect: Array
+(
+    [0] => -1
+)

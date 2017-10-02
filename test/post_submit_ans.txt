@@ -1,0 +1,23 @@
+Array
+(
+    [answer] => Array
+        (
+            [0] => 1
+        )
+
+    [test_id] => 403
+    [tschd_id] => -100
+    [section] => 0
+    [question] => 1
+    [langofchoice] => 0
+    [showParaChoice] => 
+    [prev_linked_to] => 0
+    [showSectionChoice] => 1
+    [flag_choice] => 3
+    [cur_timer] => 4702
+    [btn1] => Save & Next
+)
+Array
+(
+    [0] => 1
+)
