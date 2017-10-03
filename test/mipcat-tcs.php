@@ -685,7 +685,7 @@ body {
 					</div>
 					<div class="col-xs-6 col-sm-12">
 						<div id="choose_lang" class="pull-right" style="<?php echo($transLangChoice != "both"?"display:none;":"");?>">
-							<!-- <select  name="trans_choice" class="form-control" onchange="OnTransChoiceChange();">
+							<select  name="trans_choice" class="form-control" onchange="OnTransChoiceChange();">
 								<option id="trans_choice_base" value="base" <?php echo($langofchoice==0?"selected":""); ?>><?php echo(ucfirst($objMCPAParams['pref_lang'])); ?></option>
 								<?php
 								if (! empty ( $aryTransQues )) {
@@ -694,7 +694,8 @@ body {
 								<?php 
 								}
 								?>
-							</select>  -->
+							</select>
+							<!-- 
 							<div class="radio" style='color: White;'>Choose Language &nbsp; :&nbsp;&nbsp; <label
 								class="radio"> <input type="radio" id="trans_choice_base"
 									value='base' name="trans_choice"
@@ -718,7 +719,7 @@ body {
 							<?php
 							}
 							?>
-							</div>
+							</div>-->
 						</div>
 					</div>
 					<div class="col-xs-3 hideon-dt-mode" style="border-left: 1px solid #ddd;">
@@ -1306,10 +1307,11 @@ body {
 		<?php
 		}
 		?>
+
 		function OnTransChoiceChange()
 		{
-			//var val = this.value;
-			var val = $("input[name=trans_choice]:checked").val();
+			var val = $('select[name=trans_choice]').val();
+			//var val = $("input[name=trans_choice]:checked").val();
 			
 			if(val == "base")
 			{
