@@ -180,8 +180,11 @@ if ($qry [0] == "test_id") {
 	$langofchoice = $_POST ['langofchoice'];
 	CSessionManager::Set ( CSessionManager::BOOL_SEL_TEST_LANG, $langofchoice );
 	
+	/*
 	$handle = fopen("post_submit_ans.txt","w");
 	fwrite($handle, print_r($_POST, TRUE));
+	fclose($handle);
+	*/
 	
 	if(count ( $nAns ) > 0 && ! in_array ( - 1, $nAns ))
 	{
@@ -197,8 +200,6 @@ if ($qry [0] == "test_id") {
 			$nAns = array ("-3" );
 		}
 	}
-	fwrite($handle, print_r($nAns, TRUE));
-	fclose($handle);
 	
 	$nCurTime = $_POST ['cur_timer'];
 	$nTSchdID = $_POST ['tschd_id'];
@@ -472,6 +473,11 @@ span.username {
 	border: 1px solid lightgrey;
 }
 
+.highlight-button {
+	outline: 2px solid #4390df;
+	outline-offset: 2px;
+}
+
 @media ( min-width : 769px) and ( max-width : 8000px) {
 	#test-buttons-desktop {
 		display: block;
@@ -678,7 +684,17 @@ body {
 						<span class="btn" id="mobile-book-btn" style="<?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "display:none;" : "");?>"><i class="fa fa-book" aria-hidden="true"></i></span>
 					</div>
 					<div class="col-xs-6 col-sm-12">
-						<div id="choose_lang" class="form-inline" style="text-align:center;width:400px;height:auto;margin-left:auto;border:1px solid #aaa;padding:5px;<?php echo($transLangChoice != "both"?"display:none":"");?>">
+						<div id="choose_lang" class="pull-right" style="<?php echo($transLangChoice != "both"?"display:none;":"");?>">
+							<!-- <select  name="trans_choice" class="form-control" onchange="OnTransChoiceChange();">
+								<option id="trans_choice_base" value="base" <?php echo($langofchoice==0?"selected":""); ?>><?php echo(ucfirst($objMCPAParams['pref_lang'])); ?></option>
+								<?php
+								if (! empty ( $aryTransQues )) {
+								?>
+								<option id="trans_choice_translated" value="translated" <?php echo($langofchoice==1?"selected":""); ?>><?php echo(ucfirst($testTransLang)); ?></option>
+								<?php 
+								}
+								?>
+							</select>  -->
 							<div class="radio" style='color: White;'>Choose Language &nbsp; :&nbsp;&nbsp; <label
 								class="radio"> <input type="radio" id="trans_choice_base"
 									value='base' name="trans_choice"
@@ -1292,6 +1308,7 @@ body {
 		?>
 		function OnTransChoiceChange()
 		{
+			//var val = this.value;
 			var val = $("input[name=trans_choice]:checked").val();
 			
 			if(val == "base")
@@ -1506,7 +1523,6 @@ body {
 		$icon_ary = array (CConfig::QT_READ_COMP => "<i class='fa fa-align-justify'></i>", CConfig::QT_DIRECTIONS => "<i class='fa fa-arrow-right'></i>" );
 		$class_ary = array ("default", "danger" );
 		
-		$handle = fopen("Test-val.txt", "w");
 		foreach ( $objAnsAry as $secIndex => $ansSection ) {
 			foreach ( $ansSection as $qusIndex => $ansQuestion ) {
 				if ($linked_to != $objIter [$secIndex] [$qusIndex] ['linked_to'] && $objIter [$secIndex] [$qusIndex] ['ques_type'] != CConfig::QT_NORMAL) {
@@ -1535,37 +1551,31 @@ body {
 					$color = "Blue";
 				}
 				
-				
-				fwrite($handle, "Answer: ".print_r($objAnsAry [$secIndex] [$qusIndex], TRUE));
-				fwrite($handle, "Intersect: ".print_r(array_intersect(array(-1, -2, -3), $objAnsAry [$secIndex] [$qusIndex]), TRUE));
-				
-				
 				if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) > 0 && count(array_intersect(array(-1, -2, -3), $objAnsAry [$secIndex] [$qusIndex])) == 0 )) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered highlight-button');");
 					} else {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered');");
 					}
 				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 1, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_visited');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_visited highlight-button');");
 					}
 				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 2, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review highlight-button');");
 					} else {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review');");
 					}
 				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 3, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered highlight-button');");
 					} else {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered');");
 					}
 				}
 			}
 		}
-		fclose($handle);
 		?>
 
 		function triggerClick(id)
