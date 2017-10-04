@@ -738,7 +738,7 @@ body {
 				
 			</div>
 		</div>
-		<form action="mipcat-tcs.php" onReset="return ResetForm();" method="POST">
+		<form id="question-form" action="mipcat-tcs.php" onReset="return ResetForm();" method="POST">
 			<div class="row" id="md-container">
 				<div class="col-xs-12 col-sm-9 border">
 					<div class="row border" id="question-info">
@@ -1436,8 +1436,8 @@ body {
 		
 		function ResetForm()
 		{
-			$("input:radio[name='answer[]']").removeAttr("checked");
-			$("input:checkbox[name='answer[]']").removeAttr("checked");
+			$("input:radio[name='answer[]']").prop('checked', false);
+			$("input:checkbox[name='answer[]']").prop('checked', false);
 			
 			<?php
 			if ((count ( $objAnsAry [$nSection] [$nQuestion] ) > 0 && ! in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) && ! in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) {
@@ -1450,7 +1450,8 @@ body {
 			<?php
 			}
 			?>
-			
+
+			$("#question-form").submit();
 			return false;
 		}
 		
