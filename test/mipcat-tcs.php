@@ -474,8 +474,7 @@ span.username {
 }
 
 .highlight-button {
-	outline: 2px solid #4390df;
-	outline-offset: 2px;
+	border-top: 2px solid #4390df;
 }
 
 @media ( min-width : 769px) and ( max-width : 8000px) {
@@ -740,7 +739,7 @@ body {
 			</div>
 		</div>
 		<form action="mipcat-tcs.php" onReset="return ResetForm();" method="POST">
-			<div class="row row-eq-height" id="md-container">
+			<div class="row" id="md-container">
 				<div class="col-xs-12 col-sm-9 border">
 					<div class="row border" id="question-info">
 					
@@ -1531,10 +1530,10 @@ body {
 					$linked_to = $objIter [$secIndex] [$qusIndex] ['linked_to'];
 					$index ++;
 					
-					printf ( "$(\"<button style='margin-right: -4px; margin-top: 4px;height: 26px;' onclick='triggerClick(%s)'>%s</button>\").insertBefore('#%s');", ((($secIndex + 1) * 1000) + ($qusIndex + 1)), $icon_ary [$objIter [$secIndex] [$qusIndex] ['ques_type']], ((($secIndex + 1) * 1000) + ($qusIndex + 1)) );
+					printf ( "$(\"<span class='not_visited' style='margin-top: 5px; margin-right: -6px;' onclick='triggerClick(%s)'>%s</span>\").insertBefore('#%s');\n", ((($secIndex + 1) * 1000) + ($qusIndex + 1)), $icon_ary [$objIter [$secIndex] [$qusIndex] ['ques_type']], ((($secIndex + 1) * 1000) + ($qusIndex + 1)) );
 					
 					if (isset ( $objIter [$secIndex] [$qusIndex + 1] ['linked_to'] ) && $linked_to == $objIter [$secIndex] [$qusIndex + 1] ['linked_to']) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('style','margin-top: 5px;margin-right: -4px;');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('style','margin-top: 5px;margin-right: -6px;');\n");
 					}
 					$color = $colorAry [$index % 2];
 					
@@ -1543,7 +1542,7 @@ body {
 					}
 				} else if ($linked_to == $objIter [$secIndex] [$qusIndex] ['linked_to'] && $objIter [$secIndex] [$qusIndex] ['ques_type'] != CConfig::QT_NORMAL) {
 					if (isset ( $objIter [$secIndex] [$qusIndex + 1] ['linked_to'] ) && $linked_to == $objIter [$secIndex] [$qusIndex + 1] ['linked_to']) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('style','margin-top: 5px;margin-right: -4px;');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('style','margin-top: 5px;margin-right: -6px;');\n");
 					}
 					
 					if ($nSection == $secIndex && $nQuestion == $qusIndex && $prev_linked_to != $objIter [$secIndex] [$qusIndex] ['linked_to']) {
@@ -1555,25 +1554,25 @@ body {
 				
 				if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) > 0 && count(array_intersect(array(-1, -2, -3), $objAnsAry [$secIndex] [$qusIndex])) == 0 )) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered highlight-button');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered highlight-button');\n");
 					} else {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered');\n");
 					}
 				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 1, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_visited highlight-button');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_visited highlight-button');\n");
 					}
 				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 2, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review highlight-button');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review highlight-button');\n");
 					} else {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review');\n");
 					}
 				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 3, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered highlight-button');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered highlight-button');\n");
 					} else {
-						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered');");
+						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered');\n");
 					}
 				}
 			}
