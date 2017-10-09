@@ -328,6 +328,35 @@ if (isset ( $_POST ['showSectionChoice'] )) {
 if ((isset ( $_POST ['section'] ) && $_POST ['section'] != $nSection) || (isset ( $_GET ['sec'] ) && $_GET ['sec'] != $nSection)) {
 	$bShowSections = 1;
 }
+
+$nAnsweredLegend = 0;
+$nNotVisitedLegend = 0;
+$nReviewLegend = 0;
+$nUnansweredLegend = 0;
+
+/*$handle = fopen("post_sec_ques.txt","w");
+fwrite($handle, print_r($objAnsAry[$nSection], TRUE));
+fclose($handle);*/
+
+foreach ( $objAnsAry[$nSection] as $qusIndex => $Answer ) 
+{
+	if (count(array_intersect(array(-1, -2, -3), $Answer)) == 0 )
+	{
+		$nAnsweredLegend = $nAnsweredLegend + 1;
+	}
+	else if(in_array(-1, $Answer))
+	{
+		$nNotVisitedLegend = $nNotVisitedLegend + 1;
+	}
+	else if (in_array(-2, $Answer))
+	{
+		$nReviewLegend = $nReviewLegend + 1;
+	}
+	else if (in_array(-3, $Answer))
+	{
+		$nUnansweredLegend = $nUnansweredLegend + 1;
+	}
+}
 ?>
 <html>
 <head>
@@ -880,19 +909,16 @@ body {
 				<div class="col-sm-3 col-xs-12" style='border: 1px solid #000;' id="legend-and-question">
 					<div class="row instruction_area" id="sec_ques_info" >
 						<div class="col-sm-6 col-xs-6">
-							<span class="answered">5</span> Answered
+							<span class="answered"><?php echo($nAnsweredLegend);?></span> Answered
 						</div>
 						<div class="col-sm-6 col-xs-6">
-							<span class="not_answered">6</span> Not Answered
+							<span class="not_answered"><?php echo($nUnansweredLegend);?></span> Not Answered
 						</div>
 						<div class="col-sm-6 col-xs-6">
-							<span class="not_visited">7</span> Not Visited
+							<span class="not_visited"><?php echo($nNotVisitedLegend);?></span> Not Visited
 						</div>
 						<div class="col-sm-6 col-xs-6">
-							<span class="review">8</span> Marked for Review
-						</div>
-						<div class="col-sm-12 col-xs-12">
-							<span class="review_answered">9</span> Answered &amp; Marked for Review
+							<span class="review"><?php echo($nReviewLegend);?></span> Marked for Review
 						</div>
 					</div>
 					<!--
@@ -1205,16 +1231,26 @@ body {
 			});
 
 			$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+				var newUrl;
 				var url = e.target.toString();
 				var nTargetSecIndex = $(e.target).closest('li').index();
 
 				var secPattern = /&sec=[0-9]+/g;
-				url = url.replace(secPattern, "&sec="+nTargetSecIndex);
-				var quesPattern = /&ques=[0-9]+/g;
-				url = url.replace(quesPattern, "&ques=0");
+				newUrl = url.replace(secPattern, "&sec="+nTargetSecIndex);
 
-				location = url;
-
+				if(newUrl === url)
+				{
+					$("#section").val(nTargetSecIndex);
+					$("#question").val(-1);
+					$("#question-form").submit();
+				}
+				else
+				{
+					var quesPattern = /&ques=[0-9]+/g;
+					newUrl = newUrl.replace(quesPattern, "&ques=0");
+	
+					window.location = newUrl;
+				}
 				return false;
 				/*
 				var sSecNameLen = $(e.target).attr('href').lastIndexOf("_") - 1;
