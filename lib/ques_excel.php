@@ -49,6 +49,8 @@
 			{
 				$zipFileTmp = $zip_file['tmp_name'];
 				$zipFileName = substr($zip_file["name"] ,0,-4);
+				//echo $zipFileName.'/'.$img;
+				
 				$zip = new ZipArchive;
 				if($zip->open($zipFileTmp) === TRUE)
 				{
@@ -392,7 +394,7 @@
 					{
 						$cell_value = trim($cell->getValue());
 						$pos = stripos($cell_value, "#@MIPCAT_Img[");
-						$ea_pos = stripos($cell_value, "#@EZEEASSES_Img[");
+						$ea_pos = stripos($cell_value, "#@EZEEASSESS_Img[");
 							
 						if($pos !== false)
 						{
@@ -401,7 +403,7 @@
 						}
 						else if($ea_pos !== false)
 						{
-							$img = trim(substr($cell_value, 16,-1));
+							$img = trim(substr($cell_value, 17,-1));
 							$data_row[$cell_index] = $this->GetImageFromZip($zip_file,$img);
 						}
 						else if(strtoupper($cell_value) == CConfig::OPER_XLS_COPY || strtoupper($cell_value) == CConfig::EA_OPER_XLS_COPY)
@@ -466,16 +468,16 @@
 					{
 						$cell_value = trim($cell->getValue());
 						$pos = stripos($cell_value, "#@MIPCAT_Img[");
-						$ea_pos = stripos($cell_value, "#@EZEEASSES_Img[");
+						$ea_pos = stripos($cell_value, "#@EZEEASSESS_Img[");
 							
 						if($pos !== false)
 						{
 							$img = trim(substr($cell_value, 13,-1));
 							$data_row[$cell_index] = $this->GetImageFromZip($zip_file,$img);
 						}
-						else if($pos !== false)
+						else if($ea_pos !== false)
 						{
-							$img = trim(substr($cell_value, 16,-1));
+							$img = trim(substr($cell_value, 17,-1));
 							$data_row[$cell_index] = $this->GetImageFromZip($zip_file,$img);
 						}
 						else if(strtoupper($cell_value) == CConfig::OPER_XLS_COPY || strtoupper($cell_value) == CConfig::EA_OPER_XLS_COPY)
@@ -606,7 +608,7 @@
 						{
 							$cell_val = str_replace("’", "'", trim($cell->getValue()));
 							$pos = stripos($cell_val, "#@MIPCAT_Img[");
-							$ea_pos = stripos($cell_value, "#@EZEEASSES_Img[");
+							$ea_pos = stripos($cell_value, "#@EZEEASSESS_Img[");
 							$img_content = "";
 							$img_type = "";
 								
@@ -620,7 +622,7 @@
 							}
 							else if($ea_pos !== false)
 							{
-								$img = trim(substr($cell_val, 16,-1));
+								$img = trim(substr($cell_val, 17,-1));
 									
 								$img_content = $this->GetImageFromZip($zip_file, $img);
 									
