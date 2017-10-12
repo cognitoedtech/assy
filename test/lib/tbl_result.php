@@ -83,7 +83,7 @@
 			$objResult['unattempted'] = 0;
 			foreach($CandAnsAry as $key=>$answer_ary)
 			{
-				if(count($answer_ary) == 1 && !in_array(-1, $answer_ary) && !in_array(-2, $answer_ary))
+				if(count($answer_ary) == 1 && !in_array(-1, $answer_ary) && !in_array(-2, $answer_ary) && !in_array(-3, $answer_ary))
 				{
 					$objResult['attempted']++;
 				}
@@ -152,6 +152,10 @@
 				else if(count($CandAnsAry[$QuesID]) == 1 && in_array(-2, $CandAnsAry[$QuesID]))
 				{
 					$objResult[$Section][$Subject][$Topic][$Difficulty][$Question] = -2;
+				}
+				else if(count($CandAnsAry[$QuesID]) == 1 && in_array(-3, $CandAnsAry[$QuesID]))
+				{
+					$objResult[$Section][$Subject][$Topic][$Difficulty][$Question] = -3;
 				}
 				else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) == 0 && count(array_diff($CandAnsAry[$QuesID], $Answer)) == 0)
 				{

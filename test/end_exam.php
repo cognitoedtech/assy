@@ -165,7 +165,7 @@
 								{
 									$CorrectAns++;
 								}
-								else if($Answer == -1 || $Answer == -2)
+								else if($Answer == -1 || $Answer == -2 || $Answer == -3)
 								{
 									$Unanswered++;
 								}

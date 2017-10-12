@@ -42,6 +42,11 @@
 	{
 		$logged_in = true;
 	}
+	
+	/*if(strcasecmp($_SERVER['HTTP_HOST'], CSiteConfig::STICKY_URL) != 0)
+	{
+		runkit_constant_redefine("CSiteConfig::ROOT_URL", $_SERVER['HTTP_HOST']);
+	}*/
 ?>
 	<script type="text/javascript">
 	<?php 

@@ -226,7 +226,7 @@
 			{
 				if(isset($aryWeights[$ques_id]))
 				{	
-					if(count($ansAry[$key]) == 1 && !in_array(-1, $ansAry[$key]) && !in_array(-2, $ansAry[$key]))
+					if(count($ansAry[$key]) == 1 && !in_array(-1, $ansAry[$key]) && !in_array(-2, $ansAry[$key]) && !in_array(-3, $ansAry[$key]))
 					{
 						if(!isset($arySecAttemptedQues[$secIndex]['score']))
 						{
@@ -325,8 +325,8 @@
 					{
 						$nRight++;
 					}
-					else if(count($ansAry[$key]) == 1 && (in_array(-1, $ansAry[$key]) || in_array(-2, $ansAry[$key])))
-					{
+					else if(count($ansAry[$key]) == 1 && count(array_intersect(array(-1, -2, -3), $ansAry[$key])) != 0)//count($ansAry[$key]) == 1 && (in_array(-1, $ansAry[$key]) || in_array(-2, $ansAry[$key])))
+					{	
 						$nUnans++;
 					}
 					else
@@ -702,7 +702,7 @@
 					{
 						//printf("Question: %s, Answer: %s, Section: %s\n<br/>", $qIndex, $ansAry[$ansIndex], $key);
 						$answer_ary = $ques_map[$ansAry[$ansIndex]]['answer'];
-						if(count($answer_ary) == 1 && in_array(-1, $$answer_ary))
+						if(count($answer_ary) == 1 && (in_array(-1, $$answer_ary) || in_array(-3, $$answer_ary)))
 						{
 							$QuesInfoAry['sec'] = $key;
 							$QuesInfoAry['ques'] = $qIndex;
