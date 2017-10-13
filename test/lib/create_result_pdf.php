@@ -557,7 +557,7 @@
 										$nDifCorrectAns[$difficulty]++;
 										$nTotalCorrectAns++;
 									}
-									else if($Answer == -1 || $Answer == -2)
+									else if($Answer == -1 || $Answer == -2 || $Answer == -3)
 									{
 										$Unanswered++;
 										
@@ -1466,7 +1466,7 @@
 				$pdf->Ln(2);
 				$ResultAry[$qIndex]['answer'] = implode(",", $ansAry);
 				$selected_answer = "Your Answer : ".implode(",",$ResultAry[$qIndex]['selected']);
-				if(in_array(-1, $ResultAry[$qIndex]['selected']) || in_array(-2, $ResultAry[$qIndex]['selected']))
+				if(in_array(-1, $ResultAry[$qIndex]['selected']) || in_array(-2, $ResultAry[$qIndex]['selected']) || in_array(-3, $ResultAry[$qIndex]['selected']))
 				{
 					$selected_answer = "You did not attempt this question.";
 				}
