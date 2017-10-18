@@ -456,10 +456,22 @@
 		  	return $row;
 		}
 		
-		public function GetOrgInfoFromLoginName($login_name)
+		public function GetOrgInfoFromLoginName($login_name, $dns_redirect = FALSE)
 		{
 			$RetVal = -1;
-			$query = sprintf("select * from organization join users on users.login_name='%s' and organization.organization_id=users.organization_id",$login_name);
+			$query = "";
+			
+			if($dns_redirect)
+			{
+				$query = sprintf("select * from organization where dns_redirect_url='%s'", $login_name);
+			}
+			else {
+				$query = sprintf("select * from organization join users on users.login_name='%s' and organization.organization_id=users.organization_id", $login_name);
+			}
+			
+			/*echo("<pre>");
+			print_r($query);
+			echo("</pre>");*/
 			
 		  	$result = mysql_query($query, $this->db_link_id);//,$this->db_link_id) or die ("Error during getting org info :".mysql_error($this->db_link_id));
 		  	

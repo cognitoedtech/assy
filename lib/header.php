@@ -8,6 +8,29 @@
 	
 	$login_name = CSessionManager::Get(CSessionManager::STR_LOGIN_NAME);
 	
+	// ------------------------------------------------------------------------------------------------
+	$bDNS_Redirected = FALSE;
+	if(strcasecmp($_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'], CSiteConfig::STICKY_URL) != 0)
+	{
+		$bDNS_Redirected = TRUE;
+	
+		/*echo("<pre>");
+		print_r($_SERVER);
+		echo("</pre>");*/
+		if(strcasecmp($_SERVER['HTTP_HOST'], "localhost") != 0)
+		{
+			runkit_constant_redefine("CSiteConfig::ROOT_URL", $_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST']);
+		}
+		else
+		{
+			runkit_constant_redefine("CSiteConfig::ROOT_URL", $_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'].CSiteConfig::LOCALHOST_PROJECT);
+		}
+		
+		$login_name = CSiteConfig::ROOT_URL;
+		//echo(CSiteConfig::ROOT_URL);
+	}
+	// ------------------------------------------------------------------------------------------------
+	
 	// -----------------------------------------------------------------------------
 	// By default show CKEditor, on pages it's not required make this variable FALSE
 	// -----------------------------------------------------------------------------
@@ -24,7 +47,7 @@
 	if($login_name != null)
 	{
 		$objUM = new CUserManager();
-		$OrgInfo = $objUM->GetOrgInfoFromLoginName($login_name);
+		$OrgInfo = $objUM->GetOrgInfoFromLoginName($login_name, TRUE);
 		
 		if($OrgInfo != -1 && !empty($OrgInfo['logo_image']))
 		{
@@ -42,11 +65,6 @@
 	{
 		$logged_in = true;
 	}
-	
-	/*if(strcasecmp($_SERVER['HTTP_HOST'], CSiteConfig::STICKY_URL) != 0)
-	{
-		runkit_constant_redefine("CSiteConfig::ROOT_URL", $_SERVER['HTTP_HOST']);
-	}*/
 ?>
 	<script type="text/javascript">
 	<?php 
@@ -143,8 +161,12 @@
     			<?php 
 				if(!$logged_in)
 				{
+					if(!$bDNS_Redirected) {
 				?>
 					<li><a href="<?php echo CSiteConfig::ROOT_URL;?>/login/register-org.php" class="btn btn-primary">Free Sign-up!</a></li>
+					<?php 
+					}
+					?>
 					<li><a href="<?php echo CSiteConfig::ROOT_URL;?>/signin.php" class="btn btn-danger">Sign-in</a></li>
 				<?php 
 				}

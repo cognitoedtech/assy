@@ -7,6 +7,12 @@ include_once (dirname ( __FILE__ ) . "/lib/utils.php");
 include_once (dirname ( __FILE__ ) . "/database/config.php");
 include_once (dirname ( __FILE__ ) . "/3rd_party/recaptcha/recaptchalib.php");
 
+// Redirect to signin.php, if it's a DNS Redirect (i.e. client url)
+if(strcasecmp($_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'], CSiteConfig::STICKY_URL) != 0)
+{
+	CUtils::Redirect("signin.php");
+}
+
 $page_id = CSiteConfig::HF_INDEX_ID;
 $login = CSessionManager::Get ( CSessionManager::BOOL_LOGIN );
 
