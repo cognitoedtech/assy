@@ -7,7 +7,7 @@
 		//const ROOT_URL = "http://www.ezeeassess.com" ;
 		//const ROOT_URL = "http://mcat.mastishka.com" ;
 
-		const STICKY_URL = "http://localhos" ;
+		const STICKY_URL = "http://localhost" ;
 		const LOCALHOST_PROJECT = "/mipcat";
 		
 		const ROOT_URL = "http://localhost/mipcat" ;

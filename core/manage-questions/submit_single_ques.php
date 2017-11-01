@@ -465,6 +465,18 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 						</div>
 					</div>
 				</div>
+				
+				<div class="form-group" id="tag_text">
+					<div class="col-lg-2 col-md-2 col-sm-2">
+						<label><b>Tag Question Set(Optional):</b></label>
+					</div>
+					<div class="form-group">
+					    <div class="col-lg-4 col-md-4 col-sm-4">
+					  		<input class="form-control input-sm" data-provide="typeahead"  type="text" onkeypress="GetTagHints();" id="ques_tag" name="ques_tag">
+						</div>
+					</div>
+				</div>
+				
 				<div class="form-group">
 			      <div class="col-lg-6 col-md-6 col-sm-6 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
 			        <button id='submit_button' type="submit" class="btn btn-primary">Submit</button>
@@ -480,6 +492,14 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 	<script type="text/javascript">
 		var optCounter  = 3;
 
+		function GetTagHints()
+		{
+			$('#ques_tag').typeahead('destroy');
+			$.getJSON("../ajax/ajax_get_ques_tags.php",{term: encodeURIComponent($("#ques_tag").val())}, function(data){
+				$("#ques_tag").typeahead({ source:data });
+			});
+		}
+		
 		function GetHints()
 		{
 			$('#subject').typeahead('destroy');

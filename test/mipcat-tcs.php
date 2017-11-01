@@ -533,6 +533,7 @@ span.username {
 	
 	#dir-para {
 		overflow-y: auto;
+		overflow-x: auto;
 		display: <?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "none" : "block");?> !important;
 		position: relative;
 		border:1px solid #aaa;
@@ -612,6 +613,7 @@ span.username {
 		background-color: #fff;
 		z-index: 100;
 		overflow-y: auto;
+		overflow-x: auto;
 		border:1px solid #aaa;
 	}
 	

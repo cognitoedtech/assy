@@ -172,9 +172,17 @@
 		$mca = $objDB->IsMCAQuestion($data_row);
 	}
 	ksort($data_row);
+	
+	$tag = NULL;
+	if(!empty($_POST['ques_tag']))
+	{
+		$tag = trim($_POST['ques_tag']);
+	}
+	
 	if(empty($code_error)) 
 	{
-		$objDB->InsertQuestion($data_row, $user_id, $mca, $ques_type, NULL, NULL, $linked_to);
+		$tag_id = $objDB->GetTagId($tag);
+		$objDB->InsertQuestion($data_row, $user_id, $mca, $ques_type, NULL, $tag_id, $linked_to);
 	}
 	else 
 	{
