@@ -532,13 +532,13 @@ span.username {
 	}
 	
 	#dir-para {
-		overflow-y: auto;
-		overflow-x: auto;
+		resize: both;
+    	overflow: auto;
 		display: <?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "none" : "block");?> !important;
 		position: relative;
 		border:1px solid #aaa;
 	}
-	
+		
 	#legend-and-question {
 		overflow-y: auto;
 		display: block !important;
@@ -1076,6 +1076,9 @@ body {
 		
 		OnTransChoiceChange();
 
+		var dir_img_nwidth, dir_img_width;
+		var dir_img_nheight, dir_img_height;
+		
 		$(document).ready(function() {
 			TestTimer();
 			HeartBeat();
