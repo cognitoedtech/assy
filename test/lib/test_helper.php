@@ -885,7 +885,7 @@
                 }
                 else
                 {
-                	$sRet = sprintf("<img class='para_img' src='lib/print_image.php?para_id=%s&ques_type=%s'>",$row[0],$ques_type);
+                    $sRet = sprintf("<img src='lib/print_image.php?para_id=%s&ques_type=%s'>",$row[0],$ques_type);
                 }
             }
             
