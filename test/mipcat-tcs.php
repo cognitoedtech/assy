@@ -396,17 +396,7 @@ span.username {
 		$objIncludeJsCSS->IncludeJqueryUI_1_12_1_JS ( "../" );
 		
 		?>
-		<script type="text/javascript">
-		 /* var _gaq = _gaq || [];
-		  _gaq.push(['_setAccount', 'UA-2246912-13']);
-		  _gaq.push(['_trackPageview']);
-		
-		  (function() {
-		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		  })(); */
-		</script> 
+
 <script type="text/javascript" src="../js/mipcat/utils.js"></script>
 <style type="text/css">
 .selected_sec_name {
@@ -986,7 +976,7 @@ body {
 					?>
 				</div>
 				<div class="col-sm-3 border text-center" style="padding-top: 10px;">
-					<input type="button" id="btn_end_exam" class="btn btn-danger" value="Submit & Close Test">
+					<input type="button" id="btn_end_exam" class="btn btn-danger" value="Submit & End Test">
 					</input>
 				</div>
 			</div>
@@ -1005,7 +995,7 @@ body {
 					?>
 				</div>
 				<div class="col-xs-12 border" style="padding: 5px;">
-					<input type="button" id="btn_end_exam_m" class="btn btn-danger btn-sm pull-left" value="Submit & Close Test"></input>
+					<input type="button" id="btn_end_exam_m" class="btn btn-danger btn-sm pull-left" value="Submit & End Test"></input>
 					<?php
 						if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
 							$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
@@ -1666,7 +1656,7 @@ body {
 				{
 					$("#trans_para").show();
 				}
-				bShowPara = false;
+				bShowPara = false; 
 			}
 			else
 			{

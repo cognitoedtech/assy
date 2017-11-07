@@ -16,6 +16,8 @@
 	
 	$objReader = null;
 	
+	//echo  print_r($_FILES);
+	
 	if($_FILES['csv']['size'] > 0)
 	{
 		if(isset($_POST['eq_choice']) && $_POST['eq_choice'] == "yes" && $user_type == CConfig::UT_SUPER_ADMIN)

@@ -1479,7 +1479,189 @@
 			}
 			$pdf->Output($file_name);
 		}
+		
+		
+		public function GenerateResultInspectionPDFShort($test_pnr, $file_name='', $candidate_name, $candidate_email, $time_zone)
+		{
+			$objDB = new CMcatDB();
+				
+			$unpreparedResultAry = $this->objResult->GetUnpreparedResultFromPNR($test_pnr);
+				
+			$org_id = "";
+				
+			if($unpreparedResultAry['tschd_id'] != -100 && $unpreparedResultAry['tschd_id'] != CConfig::FEUC_TEST_SCHEDULE_ID)
+			{
+				$scheduled_test_ary = $objDB->GetScheduledTest($unpreparedResultAry['tschd_id']);
+				$org_id = $objDB->GetOrgIdByUserId($scheduled_test_ary['scheduler_id']);
+			}
+			else
+			{
+				$org_id = $objDB->GetOrgIdByTestId($unpreparedResultAry['test_id']);
+			}
+				
+			$org_logo = $objDB->GetOrgLogoImage($org_id);
+				
+			if(empty($org_logo))
+			{
+				$org_logo = $objDB->GetOrganizationName($org_id);
+			}
+				
+			$objTestHelper = new CTestHelper();
+			$sectional_details = $objTestHelper->GetSectionDetails($unpreparedResultAry['test_id']);
+		
+			$dtzone = new DateTimeZone($this->objResult->tzOffsetToName($time_zone));
+		
+			$dtTime  = new DateTime();
+			$dtTime->setTimestamp(strtotime($unpreparedResultAry['test_date']));
+			$dtTime->setTimezone($dtzone);
+		
+			$assessment_date = $dtTime->format("F d, Y");
+				
+			$hours_taken 	= floor($unpreparedResultAry['time_taken'] / 3600);
+			$mitutes_taken 	= floor(($unpreparedResultAry['time_taken'] % 3600) / 60);
+			$seconds_taken  = ($unpreparedResultAry['time_taken'] % 3600) % 60;
+		
+			$time_taken = str_pad($hours_taken, 2, "0", STR_PAD_LEFT).":".str_pad($mitutes_taken, 2, "0", STR_PAD_LEFT).":".str_pad($seconds_taken, 2, "0", STR_PAD_LEFT);
+				
+			$pdf = new PDF_MemImage('P','mm','A4', $org_logo, $candidate_name, $candidate_email, $assessment_date, $time_taken);
+			$pdf->SetProtection(array('print'));
+			$pdf->AliasNbPages();
+			$pdf->AddPage();
+			//$pdf->SetFont('Times','',12);
+				
+			$ResultAry = $this->objResult->GetResultInspectionFromPNR($test_pnr);
+				
+			$qIndex = 0;
+			$secIndex = 0;
+			$secQuesIndex = 0;
+				
+			$topMargin = 20;
+				
+			$header = array('S. No.', 'QID', 'CORRECT OPTION', 'YOUR SELECTION','CONCLUSION');
+			$pdf->SetFont('Arial','',14);			
+			$pdf->MultiCell(190,5, "Section - ".$sectional_details[$secIndex]['name']);
+			//$pdf->Ln(10);
+			
+			//$pdf->SetFont('Times','',10);
+			
+			$data = array();
+			//$pdf->Ln(5);
+			
+			$correct_count = 0;
+			$unans_count =0;
+			
+			while($qIndex < count($ResultAry))
+			{
+				$s_no = $secQuesIndex + 1;
+				if($secQuesIndex == $sectional_details[$secIndex]['questions'])
+				{
+					
+					$pdf->Ln(5);														
+					$this->ImprovedTable($header,$data,$pdf);
+					//$pdf->MultiCell(190, 5, "Summary: Correct->".$correct_count." Wrong->".$s_no -($correct_count + $unans_count)."Unans->".$unans_count);
+					$pdf->Ln(2);
+					$wrong = $s_no - ($correct_count + $unans_count);
+					$summary = "Summary-> Correct:".$correct_count . " Wrong:".$wrong . " Un Answered:".$unans_count;
+					$pdf->Cell(190, 5,$summary);
+					
+					$pdf->Ln(10);
+					$data = array();
+					$secQuesIndex = 0;
+					$correct_count= 0;
+					$unans_count = 0;
+					$pdf->Ln(5);
+					$pdf->MultiCell(190,5, "Section - ".$sectional_details[++$secIndex]['name']);																				
+				}
+		
+				//$pdf->SetFont('Times','',12);
+				
+				$s_no = $secQuesIndex + 1;
+				$qid = $ResultAry[$qIndex]['ques_id'];
+			 
+				$ansAry = array();
+				for($opt_idx = 0; $opt_idx < count($ResultAry[$qIndex]['options']); $opt_idx++)
+				{
+		
+				if($ResultAry[$qIndex]['options'][$opt_idx]['answer'] == 1)
+				{
+					array_push($ansAry, ($opt_idx + 1));
+				}
+				}
+				
+				$correct_options = implode(",", $ansAry);
+				$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+				$conclusion = "Wrong";
+				if(strcasecmp($correct_options, $selected_answer) == 0)
+				{
+					$conclusion = "Correct";
+					$correct_count++;
+				}
+				
+				if(in_array(-1, $ResultAry[$qIndex]['selected']) || in_array(-2, $ResultAry[$qIndex]['selected']) || in_array(-3, $ResultAry[$qIndex]['selected']))
+				{
+					$selected_answer = "Not Answered";
+					$conclusion = "Not Answered";
+					$unans_count++;
+				}
+
+				//$pdf->MultiCell(190,5, "S. No. |    QID     |  CORRECT OPTION  | YOUR SELECTION | CONCLUSION");
+				//$pdf_line = $s_no . "       |   ". $qid."       |  ".$correct_options."            | ".$selected_answer."               |  ".$conclusion;
+				//$pdf->MultiCell(190,5, $pdf_line);	
+				
+				$data[$qIndex] = array($s_no, $qid, $correct_options, $selected_answer, $conclusion);
+				
+				$qIndex++;
+				$secQuesIndex++;
+				$topMargin += 80;
+				//$pdf->Ln(5);
+			}
+			
+			if($secIndex > 0 && !empty($data))
+			{
+				$pdf->Ln(5);				
+				$this->ImprovedTable($header,$data,$pdf);
+				$wrong = $s_no - ($correct_count + $unans_count);
+				$summary = "Summary-> Correct:".$correct_count . " Wrong:".$wrong . " Un Answered:".$unans_count;
+				$pdf->Ln(2);
+				$pdf->Cell(590, 5,$summary);
+				//$pdf->MultiCell(190, 5, "Summary: Correct->".$correct_count." Wrong->".$s_no -($correct_count + $unans_count)."Unans->".$unans_count);
+			}
+			
+			
+			
+			$pdf->Output($file_name);
+			}
+			
+			function ImprovedTable($header, $data,$pdf,$section_name)
+			{
+				// Column widths
+				$w = array(15, 35, 50, 45,50);
+				
+				
+				
+				// Header
+				for($i=0;$i<count($header);$i++)
+					$pdf->Cell($w[$i],7,$header[$i],1,0,'C');
+				
+					$pdf->Ln();
+					// Data
+					foreach($data as $row)
+					{
+					$pdf->Cell($w[0],6,$row[0],'LR');
+					$pdf->Cell($w[1],6,$row[1],'LR');
+					$pdf->Cell($w[2],6,$row[2],'LR',0,'R');
+					$pdf->Cell($w[3],6,$row[3],'LR',0,'R');
+					$pdf->Cell($w[4],6,$row[4],'LR',0,'R');
+					$pdf->Ln();
+					}
+					// Closing line
+					$pdf->Cell(array_sum($w),0,'','T');
+			}
+		
 	}
+	
+	
+	
 	
 	
 	//$objCreatePDF = new CCreateResultPDF();

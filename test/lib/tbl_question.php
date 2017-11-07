@@ -181,9 +181,15 @@
 			}
 			
 			$tag_cond = "";
+			$order_by = " rand()";
 			if(!empty($objMCPAParam['tag_id']))
 			{
 				$tag_cond = sprintf("AND tag_id='%s'", $objMCPAParam['tag_id']);
+				
+				if($objMCPAParam['shuffle'] == 0)
+				{
+					$order_by = " ques_id";
+				}
 			}
 			
 			$aryQuesIndex = array();
@@ -195,11 +201,11 @@
 					$aryQuesIndex[$nSecIndex] = 0;
 				}
 				
-				$query = sprintf("(select * from %s where %s AND subject_id='%s' AND topic_id='%s' AND difficulty_id='1' AND language='%s' %s order by rand() limit %d)", $ques_table, $sUser, $objTopic['subject_id'], $objTopic['topic_id'], $language, $tag_cond, $objTopic['easy_questions']);
+				$query = sprintf("(select * from %s where %s AND subject_id='%s' AND topic_id='%s' AND difficulty_id='1' AND language='%s' %s order by %s limit %d)", $ques_table, $sUser, $objTopic['subject_id'], $objTopic['topic_id'], $language, $tag_cond,$order_by, $objTopic['easy_questions']);
 				$query .= " UNION ";
-				$query .= sprintf("(select * from %s where %s AND subject_id='%s' AND topic_id='%s' AND difficulty_id='2' AND language='%s' %s order by rand() limit %d)", $ques_table, $sUser, $objTopic['subject_id'], $objTopic['topic_id'], $language, $tag_cond, $objTopic['modr_questions']);	
+				$query .= sprintf("(select * from %s where %s AND subject_id='%s' AND topic_id='%s' AND difficulty_id='2' AND language='%s' %s order by %s limit %d)", $ques_table, $sUser, $objTopic['subject_id'], $objTopic['topic_id'], $language, $tag_cond, $order_by, $objTopic['modr_questions']);	
 				$query .= " UNION ";
-				$query .= sprintf("(select * from %s where %s AND subject_id='%s' AND topic_id='%s' AND difficulty_id='3' AND language='%s' %s order by rand() limit %d)", $ques_table, $sUser, $objTopic['subject_id'], $objTopic['topic_id'], $language, $tag_cond, $objTopic['diff_questions']);
+				$query .= sprintf("(select * from %s where %s AND subject_id='%s' AND topic_id='%s' AND difficulty_id='3' AND language='%s' %s order by %s limit %d)", $ques_table, $sUser, $objTopic['subject_id'], $objTopic['topic_id'], $language, $tag_cond, $order_by, $objTopic['diff_questions']);
 				
 				//echo $query."<br/><br/><br/><br/>";
 				

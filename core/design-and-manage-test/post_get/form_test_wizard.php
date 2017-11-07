@@ -99,12 +99,18 @@
     $TopicDifficultQues     		= $_POST['TopicDifficultQues'];
     $TopicId						= $_POST['TopicId'];
     $TagId							= $_POST['tag'];
+    $shuffle                       = 1;
     
-    /*echo "<pre>";
+    if(!isset($_POST["shuffle"]))
+    	$shuffle = 0;
+    
+  /* echo "<pre>";
     print_r($_POST);
-    echo "</pre>";*/
+    echo "</pre>";
+    */
+   
     
-    $test_id = $objDB->InsertIntoTest($user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, $test_expiration, $attempts, $mcq_type, $pref_lang, $allow_trans, $test_nature, $TagId);
+    $test_id = $objDB->InsertIntoTest($user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, $test_expiration, $attempts, $mcq_type, $pref_lang, $allow_trans, $test_nature, $TagId,  CConfig::TT_DEFAULT, $shuffle);
     
     if($test_id !== FALSE)
     {

@@ -401,16 +401,27 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 					<div class="row fluid">
 						<div class="col-sm-3 col-md-3 col-lg-3">
 							<label id="tag_label">Question Set (Tag): </label>
-							<select class="form-control input-sm" id="tag" name="tag">
+							<select class="form-control input-sm" id="tag" name="tag" OnChange="ShowShuffleOption(this)">
 							</select>
 						</div>
 						<script type="text/javascript">
 							$("#tag").bind( "change", function() { pageDirty.SetDirty(1); } );
 						</script>
 					</div>
+					
+					<div class="row fluid" id="div_shuffle" style="display:none">
+						<div class="col-sm-3 col-md-3 col-lg-3"  >
+							<label id="tag_label">Shuffe Questions:
+							<input type ="checkbox"  id="shuffle" name="shuffle" checked="true" />
+							 </label>
+						</div>
+						<script type="text/javascript">
+							$("#tag").bind( "change", function() { pageDirty.SetDirty(1); } );
+						</script>
+					</div>
 					<hr />
-					<div class="row fluid">
-						<div class="col-sm-6 col-md-6 col-lg-6">
+					<div class="row fluid" >
+						<div class="col-sm-6 col-md-6 col-lg-6" >
 							<label>* <span style="color: blue">MCPA</span> stands for <span
 								style="color: blue">Mastishka Cheating Prevention Algorithm &copy; <?php echo(date('Y')); ?></span>.
 							</label>
@@ -1744,14 +1755,15 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 			sPreview += "<th>Flash Questions</th>";
 			sPreview += "<th>Lock Questions</th>";
 			sPreview += "<th>Test Expiration</th>";
-			sPreview += "<th>Attempts Allowed</th></tr>";
+			sPreview += "<th>Attempts Allowed</th><th>Shuffle Questions</th></tr>";
 			sPreview += "<tr style='color:blue'>";
 			sPreview += "<th>"+($('input[name="flash_ques"]:checked').val()==1?"Yes":"No")+"</th>";
 			sPreview += "<th>"+($('input[name="lock_ques"]:checked').val()==1?"Yes":"No")+"</th>";
 			var test_expr = $('#test_expiration').val();
 			sPreview += "<th>"+(test_expr==-1?"Never":((test_expr*24)+" HRS"))+"</th>";
 			var attempts = $('#attempts').val();
-			sPreview += "<th>"+(attempts==-1?"Unlimited":attempts)+"</th></tr>";
+			var shuffle = $('#shuffle').is(':checked')?'Yes':'No';
+			sPreview += "<th>"+(attempts==-1?"Unlimited":attempts)+"</th><th>" +shuffle  +" </th> </tr>";
 			sPreview += "</table><br/>";
 			
 			// Section Details
@@ -2054,6 +2066,27 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 
 			$("#id_add_cust_instr").removeAttr("disabled"); 
 		}
+		
+		function ShowShuffleOption(objselect)
+		{
+			
+			if(objselect.value != "")
+			{
+			 $("#div_shuffle").attr("style", "display:inline");
+			}
+			else
+			{
+				if(!$("#shuffle").is(':checked'))
+				{
+					$('#shuffle').prop('checked',true)
+				}
+				
+				$("#div_shuffle").attr("style", "display:none");
+				//alert($("#shuffle").is(':checked'));
+			}
+			
+		}
+		
 		</script>
 </body>
 </html>

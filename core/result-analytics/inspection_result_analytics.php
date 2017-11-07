@@ -141,6 +141,13 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 				<div class="col-lg-12 col-md-12 col-sm-12">
 					<br />
 					<a href="#" target="_blank" id="download_pdf" style="display:none;float: right;" onclick="DownloadPDF(this);"><img width="70" align="top" height="70" src="../../images/export_pdf.jpg" title="Export Result In PDF"/></a>
+					<a href="#" target="_blank" id="download_shortpdf" style="display:none;float: right;" onclick="DownloadShortPDF(this);"><img width="70" align="top" height="70" src="../../images/export_pdf.jpg" title="Answersheet In PDF"/></a>
+				</div>
+			</div>
+			<div class="row fluid">
+				<div class="col-lg-12 col-md-12 col-sm-12">
+					<br />
+					
 				</div>
 			</div>
 			<?php 
@@ -197,6 +204,8 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 			{
 			?>
 			$("#download_pdf").hide();
+			$("#download_shortpdf").hide();
+			
 			<?php 
 			}
 			?>
@@ -218,6 +227,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 			{
 			?>
 			$("#download_pdf").hide();
+			$("#download_shortpdf").hide();
 			<?php 
 			}
 			?>
@@ -281,6 +291,14 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 			var test_pnr = $('#ri_candidate_id').val();
 			$(obj).attr("href", "ajax/ajax_download_result_pdf.php?test_pnr="+test_pnr+"&inspect_result=1");
 		}
+
+		function DownloadShortPDF(obj)
+		{
+			var test_pnr = $('#ri_candidate_id').val();
+			$(obj).attr("href", "ajax/ajax_download_short_result_pdf.php?test_pnr="+test_pnr+"&inspect_result=1");
+		}
+		
+		
 		<?php 
 		}
 		?>
@@ -293,6 +311,8 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 			{
 			?>
 			$("#download_pdf").hide();
+			$("#download_shortpdf").hide();
+			
 			<?php 
 			}
 			?>
@@ -322,10 +342,15 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 			if(test_pnr)
 			{
 				$("#download_pdf").show();
+				$("#download_shortpdf").show();
+				
+				
 			}
 			else
 			{
 				$("#download_pdf").hide();
+				$("#download_shortpdf").hide();
+				
 			}
 			<?php 
 			}
