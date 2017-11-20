@@ -1,5 +1,4 @@
 <?php
-	
 	include_once(dirname(__FILE__)."/../../../database/mcat_db.php");
 	include_once(dirname(__FILE__)."/../../../lib/session_manager.php");
 	include_once(dirname(__FILE__)."/../../../lib/utils.php");
@@ -42,7 +41,11 @@
 	$ans_ary = array();
 	for($opt_index = CConfig::$QUES_XLS_HEADING_ARY["Option 1"], $opt_count = 1; $opt_count <= intval($_POST['options_count']); $opt_count++, $opt_index++)
 	{
-		if($_POST['option'.$opt_count.'_choice'] == "text")
+		if($ques_type == CConfig::QT_MATRIX)
+		{
+			$data_row[$opt_index] = $_POST['option'.$opt_count.'_choice_select'];
+		}
+		else if($_POST['option'.$opt_count.'_choice'] == "text")
 		{
 			$data_row[$opt_index] = trim($_POST['option'.$opt_count.'_choice_text']);
 			
@@ -86,7 +89,7 @@
 	}
 	
 	$linked_to = NULL;
-	$mca	   = 0;
+	$mca	   = (isset($_POST['mca']) && $_POST['mca'] == 1) ? 1 : 0;
 	if($ques_type == CConfig::QT_READ_COMP || $ques_type ==  CConfig::QT_DIRECTIONS)	
 	{
 		if($_POST['rc_dir_existing_choice'] == "yes")
@@ -101,7 +104,9 @@
 			
 			$data_row[CConfig::$QUES_XLS_HEADING_ARY["Language"]] = $para_info_ary[3];
 			
-			$mca = $objDB->IsMCAQuestion($data_row);
+			if($mca == 0) {
+				$mca = $objDB->IsMCAQuestion($data_row);
+			}
 		}
 		else 
 		{
@@ -119,7 +124,10 @@
 			
 			if($ques_type == CConfig::QT_READ_COMP)
 			{
-				$mca = $objDB->IsMCAQuestion($data_row);
+				if($mca == 0) {
+					$mca = $objDB->IsMCAQuestion($data_row);
+				}
+				
 				if($_POST['rc_dir_type'] == "text")
 				{
 					if(!$objDB->IsProgrammingCodeValid(trim($_POST['para_text'])))
@@ -169,7 +177,15 @@
 		$data_row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]]    = trim($_POST['topic']);
 		$data_row[CConfig::$QUES_XLS_HEADING_ARY["Subject"]]  = trim($_POST['subject']);
 		$data_row[CConfig::$QUES_XLS_HEADING_ARY["Language"]] = $_POST['language'];
-		$mca = $objDB->IsMCAQuestion($data_row);
+		
+		if($ques_type == CConfig::QT_NORMAL && $mca == 0)
+		{
+			$mca = $objDB->IsMCAQuestion($data_row);
+		}
+		else 
+		{
+			$mca = 0;
+		}
 	}
 	ksort($data_row);
 	
@@ -181,7 +197,7 @@
 	
 	if(empty($code_error)) 
 	{
-		$tag_id = $objDB->GetTagId($tag);
+		$tag_id = ($tag == NULL) ? NULL : $objDB->GetTagId($tag);
 		$objDB->InsertQuestion($data_row, $user_id, $mca, $ques_type, NULL, $tag_id, $linked_to);
 	}
 	else 

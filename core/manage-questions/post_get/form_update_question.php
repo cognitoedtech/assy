@@ -17,6 +17,9 @@
 	
 	$code_error = array();
 	
+	$ques_type = $_POST['ques_type'];
+	$ques_tag  = $_POST['ques_tag'];
+	
 	$data_row[CConfig::$QUES_XLS_HEADING_ARY["S No"]] 			  = -1;
 	$data_row[CConfig::$QUES_XLS_HEADING_ARY["Para Description"]] = "Not required here because it is not bulk upload";
 	$data_row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]]    		  = "No need to be updated";
@@ -26,7 +29,7 @@
 	
 	if(isset($_POST['question_edit_choice']))
 	{
-		echo $_POST['question_edit_choice']." hello";
+		//echo $_POST['question_edit_choice']." hello";
 		if($_POST['question_edit_choice'] == "1")
 		{
 			if($_POST['question_choice'] == "text")
@@ -101,7 +104,11 @@
 		}
 		else 
 		{
-			if($_POST['option'.$opt_count.'_choice'] == "text")
+			if($ques_type == CConfig::QT_MATRIX)
+			{
+				$data_row[$opt_index] = $_POST['option'.$opt_count.'_choice_select'];
+			}
+			else if($_POST['option'.$opt_count.'_choice'] == "text")
 			{
 				$data_row[$opt_index] = trim($_POST['option'.$opt_count.'_choice_text']);
 			
@@ -134,7 +141,8 @@
 	
 	if(empty($code_error))
 	{
-		$objDB->UpdateQuestion($data_row, $_POST['ques_id'], $mca);
+		$tag_id = ($ques_tag == NULL) ? NULL : $objDB->GetTagId($ques_tag);
+		$objDB->UpdateQuestion($data_row, $_POST['ques_id'], $mca, $tag_id);
 		
 		CUtils::Redirect("../dt_reconcile_questions.php?ques_updated=1");
 	}

@@ -1382,9 +1382,18 @@
 			return $query;
 		}*/
 		
-		public function UpdateQuestion($data_row, $ques_id, $mca)
+		public function UpdateQuestion($data_row, $ques_id, $mca, $tag_id = -1)
 		{
-			$query = sprintf("update question set question = '%s' , mca = '%s' where ques_id = '%s'", mysql_real_escape_string($data_row[CConfig::$QUES_XLS_HEADING_ARY["Question"]]), $mca, $ques_id);
+			$query = "";
+			
+			if($tag_id != -1)
+			{
+				$query = sprintf("update question set question = '%s' , mca = '%s', tag_id = '%s' where ques_id = '%s'", mysql_real_escape_string($data_row[CConfig::$QUES_XLS_HEADING_ARY["Question"]]), $mca, $tag_id, $ques_id);
+			}
+			else
+			{
+				$query = sprintf("update question set question = '%s' , mca = '%s' where ques_id = '%s'", mysql_real_escape_string($data_row[CConfig::$QUES_XLS_HEADING_ARY["Question"]]), $mca, $ques_id);
+			}
 			
 			mysql_query($query, $this->db_link) or die("Update Question Error :".mysql_error());
 			

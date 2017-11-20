@@ -393,8 +393,8 @@
 					foreach ($cellIterator as $cell)
 					{
 						$cell_value = trim($cell->getValue());
-						$pos = stripos($cell_value, "#@MIPCAT_Img[");
-						$ea_pos = stripos($cell_value, "#@EZEEASSESS_Img[");
+						$pos = stripos($cell_value, CConfig::OPER_IMG."[");
+						$ea_pos = stripos($cell_value, CConfig::EA_OPER_IMG."[");
 							
 						if($pos !== false)
 						{
@@ -607,8 +607,12 @@
 						foreach ($cellIterator as $cell)
 						{
 							$cell_val = str_replace("’", "'", trim($cell->getValue()));
-							$pos = stripos($cell_val, "#@MIPCAT_Img[");
-							$ea_pos = stripos($cell_value, "#@EZEEASSESS_Img[");
+							$pos = stripos($cell_val, CConfig::OPER_IMG."[");
+							$ea_pos = stripos($cell_val, CConfig::EA_OPER_IMG."[");
+							
+							$mat_opt_pos = stripos($cell_val, CConfig::OPER_QT_MATRIX."[");
+							$mat_opt_ea_pos = stripos($cell_val, CConfig::EA_OPER_QT_MATRIX."[");
+							
 							$img_content = "";
 							$img_type = "";
 								

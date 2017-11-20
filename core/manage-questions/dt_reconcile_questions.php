@@ -64,6 +64,8 @@ $objIncludeJsCSS->IncludeJquerySnippetJS("../../");
 $objIncludeJsCSS->IncludeBootStrapFileUploadMinJS("../../");
 $objIncludeJsCSS->IncludeUtilsJS("../../");
 $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
+$objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
+$objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 ?>
 <style type="text/css">
 	.modal, .modal.fade.in {
@@ -101,6 +103,11 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 		padding:5px;
 		margin: 10px;
 	}
+	
+	.hide_div {
+		display: none;
+	}
+}
 </style>
 </head>
 <body>
