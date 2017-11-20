@@ -12,6 +12,7 @@
 		public function __construct() 
 		{
 			$this->db_link = mysql_connect(CConfig::HOST, CConfig::USER_NAME, CConfig::PASSWORD);
+			
 			mysql_select_db(CConfig::DB_MCAT, $this->db_link);
 		}
 	
@@ -349,7 +350,7 @@
 			return $nCount;
 		}
 		
-		private function IsEmailExists($email, $user_id, &$status, $batch_id)
+		public function IsEmailExists($email, $user_id, &$status, $batch_id)
 		{
 			$nRet = false;
 			$query = "select * from users where email='".$email."'";
@@ -505,7 +506,7 @@
 			
 			if(!empty($row['tag']))
 			{
-				$row['tag']     = $row['tag_id'];
+				$row['tag']     = $this->GetQuestionTag($row['tag_id']);
 			}
 			
 			return $row;
@@ -618,16 +619,16 @@
 			return $nRet;
 		}
 		
-		public function InsertQuestion($row, $user_id, $mca, $ques_type = 0, $group_title=NULL, $tag_id = NULL, $linked_to = NULL)
+		public function InsertQuestion($row, $user_id, $mca, $ques_type = 0, $group_title=NULL, $tag_id = NULL, $linked_to = NULL, $is_eq = false)
 		{
 			$query = "";
 			if(empty($tag_id) || $tag_id == 0)
 			{
-				$query = sprintf("insert into question(ques_type, linked_to, language, mca, user_id, question, subject_id, topic_id, difficulty_id, explanation) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')", $ques_type, $linked_to, mysql_real_escape_string(strtolower($row[CConfig::$QUES_XLS_HEADING_ARY["Language"]])), $mca, $user_id, mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Question"]]), $this->GetSubjectId(mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Subject"]])), $this->GetTopicId(mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]]),mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Subject"]])), $row[CConfig::$QUES_XLS_HEADING_ARY["Difficulty"]], mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Explanation"]]));
+				$query = sprintf("insert into question(ques_type, linked_to, language, mca, user_id, question, subject_id, topic_id, difficulty_id, explanation) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')", $ques_type, ($linked_to=='')?0:$linked_to, mysql_real_escape_string(strtolower($row[CConfig::$QUES_XLS_HEADING_ARY["Language"]])), $mca, $user_id, mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Question"]]), $this->GetSubjectId(mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Subject"]])), $this->GetTopicId(mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]]),mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Subject"]])), $row[CConfig::$QUES_XLS_HEADING_ARY["Difficulty"]], mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Explanation"]]));
 			}
 			else
 			{
-				$query = sprintf("insert into question(ques_type, linked_to, language, mca, tag_id, user_id, question, subject_id, topic_id, difficulty_id, explanation) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')", $ques_type, $linked_to, mysql_real_escape_string(strtolower($row[CConfig::$QUES_XLS_HEADING_ARY["Language"]])), $mca, $tag_id, $user_id, mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Question"]]), $this->GetSubjectId(mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Subject"]])), $this->GetTopicId(mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]]),mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Subject"]])), $row[CConfig::$QUES_XLS_HEADING_ARY["Difficulty"]], mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Explanation"]]));
+				$query = sprintf("insert into question(ques_type, linked_to, language, mca, tag_id, user_id, question, subject_id, topic_id, difficulty_id, explanation) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')", $ques_type, ($linked_to=='')?0:$linked_to, mysql_real_escape_string(strtolower($row[CConfig::$QUES_XLS_HEADING_ARY["Language"]])), $mca, $tag_id, $user_id, mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Question"]]), $this->GetSubjectId(mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Subject"]])), $this->GetTopicId(mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]]),mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Subject"]])), $row[CConfig::$QUES_XLS_HEADING_ARY["Difficulty"]], mysql_real_escape_string($row[CConfig::$QUES_XLS_HEADING_ARY["Explanation"]]));
 			}
            
             //echo $query;
@@ -648,7 +649,14 @@
             }
             $this->UpdateQuesGrpTitle($ques_id, $group_title);
 
-            $this->InsertOptions($row, $ques_id);
+            if(!$is_eq)
+            {
+            	$this->InsertOptions($row, $ques_id);
+            }
+            else 
+            {
+            	$this->InsertOptionsWithWeightage($row, $ques_id);
+            }
                
             return $group_title;
 		}
@@ -751,6 +759,10 @@
 			$user_id = CUtils::uuid() ;
 			$login_name = uniqid();
 			$query = "insert into users(user_id,owner_id,user_type,login_name,firstname,lastname,gender,dob,contact_no,email,city,state,country, batch) VALUES ('".$user_id."', '".$owner_id."',".CConfig::UT_INDIVIDAL.",'".$login_name."','".mysql_real_escape_string($row[0])."','".mysql_real_escape_string($row[1])."','".mysql_real_escape_string($row[2])."','".mysql_real_escape_string($row[3])."','".mysql_real_escape_string($row[4])."','".mysql_real_escape_string($row[5])."','".mysql_real_escape_string($row[6])."','".mysql_real_escape_string($row[7])."','".$this->GetCountryCode(mysql_real_escape_string($row[8]))."','".mysql_real_escape_string($row[9])."')";
+			if(!empty($row[10]))
+			{
+				$query = "insert into users(user_id,owner_id,user_type,login_name,firstname,lastname,gender,dob,contact_no,email,city,state,country, batch, passwd, reg_status, isvalid) VALUES ('".$user_id."', '".$owner_id."',".CConfig::UT_INDIVIDAL.",'".$login_name."','".mysql_real_escape_string($row[0])."','".mysql_real_escape_string($row[1])."','".mysql_real_escape_string($row[2])."','".mysql_real_escape_string($row[3])."','".mysql_real_escape_string($row[4])."','".mysql_real_escape_string($row[5])."','".mysql_real_escape_string($row[6])."','".mysql_real_escape_string($row[7])."','".$this->GetCountryCode(mysql_real_escape_string($row[8]))."','".mysql_real_escape_string($row[9])."', '".mysql_real_escape_string(md5($row[10]))."', 1, 0)";
+			}
 			
 			//echo $query."<br/><br/><br/><br/>";
 			mysql_query($query) or die('Insert into question error : ' . mysql_error());
@@ -772,7 +784,7 @@
 							"Email-ID is already registered under your ownership",
 							"Email-ID is already registered with us, we have added you as administrator of user",
 							"Cell is empty");
-			if($cell_index < 2 || $cell_index > 5)
+			if(($cell_index < 2 || $cell_index > 5) && $cell_index != 9)
 			{
 				if(!ctype_alpha(str_replace(' ', '', $cell_value)))
 				{
@@ -815,7 +827,7 @@
 				if(!eregi("^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$", $cell_value))
 				{
 					$nRet = false;
-					$err_msg = "{Cell Value : ".$cell_value."} ".$error_ary[4].$cell_type[$cell_index];
+					$err_msg = "{Cell Value : ".$cell_value."} ".$error_ary[4];
 				}
 				else if($this->IsEmailExists($cell_value, $owner_id, $status, $batch_id))
 				{
@@ -833,6 +845,21 @@
 			}
 			
 			return $nRet;
+		}
+		
+		public function IsLoginNameExists($login_name)
+		{
+			$bRet = false;
+			
+			$query = sprintf("select email from users where login_name='%s'", $login_name);
+			
+			$result = mysql_query($query, $this->db_link) or die('Is Login Name Exists error : ' . mysql_error());
+			
+			if(mysql_num_rows($result) > 0)
+			{
+				$bRet = true;
+			}
+			return $bRet;
 		}
 		
 		public function PopulateQuestionsForCitation($user_id, $user_type)
@@ -1324,7 +1351,14 @@
 				echo "<td>".$row['dob']."</td>";
 				echo "<td>".$row['contact_no']."</td>";
 				echo "<td>".$row['email']."</td>";
-				echo "<td>".$row['city'].", ".$row['state'].", ".$row['country']."</td>";
+				if(!empty($row['city']))
+				{
+					echo "<td>".$row['city'].", ".$row['state'].", ".$row['country']."</td>";
+				}
+				else 
+				{
+					echo "<td></td>";
+				}
 				echo "<td>".($row['reg_status']==1?"Activated":"Pending")."</td>";
 				
 				$dtime  = new DateTime($row['signupdate']);
@@ -1384,9 +1418,9 @@
 			else 
 			{
 				$query  = sprintf("update users set owner_id=replace(owner_id, '%s', ''),batch = CASE\n", $owner_id);
-				$query .= sprintf("WHEN batch like '[%s,%%' THEN replace(batch, '[%s,', '[')\n", $old_batch_id, $old_batch_id);
-				$query .= sprintf("WHEN batch like '%%,%s,%%' THEN replace(batch, ',%s,', ',')\n", $old_batch_id, $old_batch_id);
-				$query .= sprintf("WHEN batch like '%%,%s]' THEN replace(batch, ',%s]', ']')\n", $old_batch_id, $old_batch_id);
+				$query .= sprintf("WHEN batch like '[%s,%%' THEN replace(batch, '[%s,', '[')\n", $batch_id, $batch_id);
+				$query .= sprintf("WHEN batch like '%%,%s,%%' THEN replace(batch, ',%s,', ',')\n", $batch_id, $batch_id);
+				$query .= sprintf("WHEN batch like '%%,%s]' THEN replace(batch, ',%s]', ']')\n", $batch_id, $batch_id);
 				$query .= sprintf("END\n");
 				$query .= sprintf("where locate('%s', owner_id) and user_id in (%s)", $owner_id, $user_ids);
 			}
@@ -1654,7 +1688,7 @@
 		
 		public function PopulateTests($owner_id, $time_zone)
 		 {
-			$query = sprintf("select * from test where owner_id='%s' and deleted is null", $owner_id);
+			$query = sprintf("select test.*,ta.allocation_id from test left join test_allocation ta on ta.test_id = test.test_id  where owner_id='%s' and deleted is null or (ta.suspended = 0 and ta.assignee_id = '%s')", $owner_id,$owner_id);
 				
 			$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
 			
@@ -1663,11 +1697,19 @@
 			//date_default_timezone_set($this->tzOffsetToName($time_zone));
 			while($row = mysql_fetch_array($result))
 			{
+				$ea_test = $row['allocation_id']==null?"":"  <i class='fa fa-external-link' aria-hidden='true'></i>";
+				
+				
 				$test_static_ary = NULL;
 				$test_dynamic_ary = NULL;
 				$last_edited      = NULL;
-				echo "<tr id='".$row['test_id']."'>";
-				echo "<td>".$row['test_name']."</td>";
+				
+				if($row['allocation_id']==null)
+					echo "<tr id='".$row['test_id']."'>";
+				else
+					echo "<tr>";
+				
+				echo "<td>".$row['test_name']. $ea_test."</td>";
 				if($row['is_static'] == CConfig::TEST_NATURE_STATIC)
 				{
 					$test_static_ary = $this->GetStaticTest($row['test_id']);
@@ -1695,11 +1737,13 @@
 				//echo(($row['is_static'] == CConfig::TEST_NATURE_STATIC)?"<td>".date("F d, Y [H:i:s]", strtotime($test_static_ary['last_edited']))."</td>":"<td>".date("F d, Y [H:i:s]", strtotime($test_dynamic_ary['last_edited']))."</td>");
 				printf("<td><a href='javascript:' onclick=\"ShowOverlay('%s/test/test.php?test_id=%d&tschd_id=-100','st_x');\">Preview Test</a></td>", CSiteConfig::ROOT_URL, $row['test_id']);
 				echo "<td><input type='button' class='btn btn-sm btn-primary' onclick='OnTestDetails(".$row['test_id'].");' value='Test Details'/></td>";
+				/*
 				$isChecked = ($row['is_published'] == 1)?"checked='checked'":"";
 				$isHidden = ($row['is_published'] == 0)?"style=display:none;":"";
 				$keywords  = !empty($row['keywords'])?$row['keywords']:"";
 				$description  = !empty($row['description'])?$row['description']:"";
-				echo "<td style='text-align: center;'><input type='checkbox' made_publish='0' id='".$row['test_id']."_checkbox' class='publish' test_id='".$row['test_id']."' test_name='".$row['test_name']."' onclick='OnPublish(this);' ".$isChecked."><br /><br /><input type='button' test_name='".$row['test_name']."' data-clipboard-text='".CSiteConfig::FREE_ROOT_URL."/".$row['test_id']."-".date("d")."-".substr($owner_id, 0, 2)."' class='btn btn-sm btn-success' id='".$row['test_id']."_copy' value='Copy Test Link' ".$isHidden."/><div style='display:none;'><span id='".$row['test_id']."_keywords'>".$keywords."</span><span id='".$row['test_id']."_description'>".$description."</span></div></td>";
+				echo "<td style='text-align: center;'><input type='checkbox' made_publish='0' id='".$row['test_id']."_checkbox' class='publish' test_id='".$row['test_id']."' test_name='".$row['test_name']."' onclick='OnPublish(this);' ".$isChecked."><br /><br /><input type='button' test_name='".$row['test_name']."' data-clipboard-text='".CSiteConfig::FREE_ROOT_URL."/".$row['test_id']."-".date("d")."-".substr($owner_id, 0, 2)."' class='btn btn-sm btn-success btn-copy-link' id='".$row['test_id']."_copy' value='Copy Test Link' ".$isHidden."/><div style='display:none;'><span id='".$row['test_id']."_keywords'>".$keywords."</span><span id='".$row['test_id']."_description'>".$description."</span></div></td>";
+				*/
 				echo "</tr>";
 			}
 			//date_default_timezone_set($reset);
@@ -1737,15 +1781,36 @@
 		
 		public function PrepareTestCombo($owner_id)
 		{
-			$query = "select * from test where owner_id='".$owner_id."' and submitted=0 and deleted is null";
+			//$query = "select test.*, test_dynamic.ques_source from test, test_dynamic where test_dynamic.test_id = test.test_id and test.owner_id='".$owner_id."' and test.submitted=0 and test.deleted is null";
+			
+			$query = sprintf("select test.*, test_dynamic.ques_source, assigned_packages.package_id from test join test_dynamic  on test.test_id=test_dynamic.test_id left join assigned_packages on test.test_id = assigned_packages.test_id  where  (test.owner_id='%s' or (test.public=1 and assigned_packages.user_id='%s')) and test.submitted=0 and test.deleted is null", $owner_id, $owner_id);
 			
 			$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
 			
+			$package_name_ary = array();
 			if(mysql_num_rows($result) > 0)
 			{
 				while($row = mysql_fetch_array($result))
 				{
-					echo "<option value='".$row['test_id']."'>".$row['test_name']."</option>";
+					$class = "personal_ques_source";
+					$ques_source = "Personal";
+					if($row['ques_source'] == "mipcat")
+					{
+						$class = "mipcat_ques_source";
+						$ques_source = CConfig::SNC_SITE_NAME;
+					}
+					if($row['public'] == 1 && $owner_id != $row['owner_id'])
+					{
+						if(!isset($package_name_ary[$row['package_id']]))
+						{
+							$package_name_ary[$row['package_id']] = $this->GetAssignedPackageName($row['package_id']);
+						}
+						echo "<option value='".$row['test_id']."' class='".$class."'>".$row['test_name']." (Package : ".$package_name_ary[$row['package_id']].")</option>";
+					}
+					else 
+					{
+						echo "<option value='".$row['test_id']."' class='".$class."'>".$row['test_name']." (".$ques_source.")</option>";
+					}
 				}
 			}
 			else 
@@ -1753,6 +1818,56 @@
 				echo "<option value=''>No Test Available</option>";
 			}
 		}
+		
+		
+		
+		
+		
+		
+		public function GetAssignedPackageName($package_id)
+		{
+			$retVal = null;
+			
+			$query = sprintf("select package_name from package where package_id='%s'", $package_id);
+			
+			$result = mysql_query($query, $this->db_link) or die('Get Assigned Package Name : ' . mysql_error());
+			
+			if(mysql_num_rows($result) > 0)
+			{
+				$row = mysql_fetch_array($result);
+				
+				$retVal = $row["package_name"];
+			}
+			
+			return $retVal;
+		}
+		
+		public function IsTestAssignedFromPackage($test_id, $user_id)
+		{
+			$bRet = false;
+			
+			$query = sprintf("select package_id from assigned_packages where test_id='%s' and user_id='%s'", $test_id, $user_id);
+			
+			$result = mysql_query($query, $this->db_link) or die('Is Test Assigned From Package error : ' . mysql_error());
+			
+			if(mysql_num_rows($result) > 0)
+			{
+				$bRet = true;
+			}
+			return $bRet;
+		}
+		
+		/*public function PrepareAssignedPackageTestCombo($user_id)
+		{
+			$query = sprintf("select test.* from test, assigned_packages where assigned_packages.test_id = test.test_id and test.public=1 and test.submitted=0 and test.deleted is null and assigned_packages.user_id='%s'", $user_id);
+			
+			$result = mysql_query($query, $this->db_link) or die('Prepare Assigned Package Test Combo error : ' . mysql_error());
+			
+			while($row = mysql_fetch_array($result))
+			{
+				echo "<option value='".$row['test_id']."'>".$row['test_name']." (Package)</option>";
+			}
+		}*/
 		
 		public function PrepareUserCombo($owner_id)
 		{
@@ -1814,7 +1929,7 @@
 			$totalCount  = 0;
 			$batch_id_array = array_keys($this->GetBatches($owner_id));
 			
-			$query = sprintf("select * from users where locate('".$owner_id."',owner_id) AND user_type=%d", CConfig::UT_INDIVIDAL);
+			$query = sprintf("select * from users where locate('".$owner_id."',owner_id) AND user_type=%d ORDER BY firstname ASC", CConfig::UT_INDIVIDAL);
 			
 			$result = mysql_query($query, $this->db_link) or die('Select from user error : ' . mysql_error());
 			
@@ -1869,10 +1984,10 @@
 		}
 		
 		public function InsertIntoTest($user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, $test_expiration, 
-									$attempts, $mcq_type, $pref_lang, $allow_trans, $test_nature, $tag_id)
+									$attempts, $mcq_type, $pref_lang, $allow_trans, $test_nature, $tag_id, $test_type = CConfig::TT_DEFAULT, $shuffle=1)
 		{
 			$nRet = FALSE;
-			$query = sprintf("insert into test (owner_id, test_name, mcpa_flash_ques, mcpa_lock_ques, expire_hrs, attempts, tag_id, is_static,  mcq_type,  pref_lang, allow_trans) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s','%s')",$user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, ($test_expiration==-1)?-1:($test_expiration*24), $attempts, $tag_id, $test_nature, $mcq_type, $pref_lang, $allow_trans);
+			$query = sprintf("insert into test (owner_id, test_name, mcpa_flash_ques, mcpa_lock_ques, expire_hrs, attempts, tag_id, is_static,  mcq_type,  pref_lang, allow_trans, test_type,shuffle) values ('%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s','%s', '%s','%s')",$user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, ($test_expiration==-1)?-1:($test_expiration*24), $attempts, $tag_id, ($test_nature=='')?0:$test_nature, $mcq_type, $pref_lang, $allow_trans, $test_type,$shuffle);
 			
 			//echo $query."<br />";
 			$result = mysql_query($query, $this->db_link) or die('Insert into test error : ' . mysql_error());
@@ -1892,7 +2007,7 @@
 		    							  $sec_count, $ques_source, $section_details,
 		    							  $subject_in_section, $topic_in_subject, $ques_source, $visibility)
 		{
-			$query = sprintf("insert into test_dynamic (test_id, section_count, section_details, subject_in_section, topic_in_subject, criteria, cutoff_min, cutoff_max, top_result, test_duration, marks_for_correct, negative_marks, max_question, ques_source, visibility) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $test_id, $sec_count, $section_details, $subject_in_section, $topic_in_subject, $criteria, $cutoff_min, $cutoff_max, $top, $duration, $r_marks, $w_marks, $max_ques, $ques_source, $visibility);
+			$query = sprintf("insert into test_dynamic (test_id, section_count, section_details, subject_in_section, topic_in_subject, criteria, cutoff_min, cutoff_max, top_result, test_duration, marks_for_correct, negative_marks, max_question, ques_source, visibility) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $test_id, $sec_count, $section_details, $subject_in_section, $topic_in_subject, ($criteria=='')?0:$criteria, $cutoff_min, $cutoff_max, ($top=='')?0:$top, $duration, $r_marks, $w_marks, $max_ques, $ques_source, $visibility);
 			
 			//echo $query."<br/>";
 			
@@ -1979,24 +2094,30 @@
 			return $bRet;
 		}
 		
-		public function InsertIntoTestSchedule($test_id, $user_id, $scheduled_on, $hours, $minutes, $candidate_list, $time_zone, $bRetSchdID = false)
+		public function InsertIntoTestSchedule($test_id, $user_id, $scheduled_on, $hours, $minutes, $expire_on, $expire_hours, $expire_minutes, $candidate_list, $time_zone, $schd_type, &$schd_id)
 		{
 			$sTestName = $this->GetTestName($test_id);
 			
-			date_default_timezone_set($this->tzOffsetToName($time_zone));
+			//date_default_timezone_set($this->tzOffsetToName($time_zone));
 			$test_date  = date("Y-m-d", strtotime($scheduled_on));
 			$test_date .= " ".$hours.":".$minutes.":00";
 			//$test_date  = date( 'D, d M Y 00:00:00', strtotime($scheduled_on))." GMT";
 			
-			$query = sprintf("insert into test_schedule (test_id, scheduler_id, scheduled_on, time_zone, user_list) values('%s', '%s', '%s', '%s', '%s')", $test_id, $user_id, $test_date, $time_zone, $candidate_list);
+			if(empty($expire_on))
+			{
+				$query = sprintf("insert into test_schedule (test_id, scheduler_id, scheduled_on, time_zone, user_list, schedule_type) values('%s', '%s', '%s','%s', '%s', '%s')", $test_id, $user_id, $test_date, $time_zone, $candidate_list, $schd_type);
+			}
+			else 
+			{	
+				$test_end_date = date("Y-m-d", strtotime($expire_on));
+				$test_end_date .= " ".$expire_hours.":".$expire_minutes.":00";
+			
+				$query = sprintf("insert into test_schedule (test_id, scheduler_id, scheduled_on,expire_on, time_zone, user_list, schedule_type) values('%s', '%s', '%s', '%s', '%s', '%s', '%s')", $test_id, $user_id, $test_date, $test_end_date, $time_zone, $candidate_list, $schd_type);
+			}
 			
 			$result = mysql_query($query, $this->db_link) or die('Insert into test schedule error : ' . mysql_error());
 			
-			if($bRetSchdID == true)
-			{
-				// If set return just insterted schd_id instead.
-				$sTestName = mysqli_insert_id($this->db_link);
-			}
+			$schd_id = mysql_insert_id($this->db_link);
 			
 			return $sTestName;
 		}
@@ -2038,10 +2159,14 @@
 			
 			return $row;
 		}
-		public function GetUserIdByEmail($userInfo)
+		
+		public function GetUserIdByEmail($userInfo, $email="")
 		{
 			$user_id = null;
-			$email = substr($userInfo, stripos($userInfo,"(")+1,-1);
+			if(empty($email))
+			{
+				$email = substr($userInfo, stripos($userInfo,"(")+1,-1);
+			}
 			
 			$query = sprintf("select user_id from users where email='%s'",trim($email));
 			$result = mysql_query($query, $this->db_link) or die('Error : ' . mysql_error());
@@ -2095,6 +2220,23 @@
 			$row = mysql_fetch_array($result);
 			
 			return $row['user_type'];	
+		}
+		
+		public function GetUserTypeByEmail($email)
+		{
+			$retVal = null;
+			
+			$query = sprintf("select user_type from users where email='%s'", $email);
+				
+			$result = mysql_query($query, $this->db_link) or die('Get UserType By Email error : ' . mysql_error());
+
+			if(mysql_num_rows($result) > 0)
+			{
+				$row = mysql_fetch_array($result);
+				$retVal = $row['user_type'];
+			}
+				
+			return $retVal;
 		}
 		
 		public function GetUserPANNumber($user_id)
@@ -2171,7 +2313,7 @@
 			return $row['email'];	
 		}
 		
-		private function IsTestFinished2($user_id, $user_type, $user_list, $tschd_id)
+		public function IsTestFinished2($user_id, $user_type, $user_list, $tschd_id)
 		{
 			$bRet = false;
 			
@@ -2346,22 +2488,39 @@
 			}
 			$userIn = implode(",", $userAry);
 			
-			$query = sprintf("select * from users where user_id in (%s)", $userIn);
-			//echo $query."<br/>";
-			$result = mysql_query($query, $this->db_link) or die('Get candidate name from schedule error_2 : ' . mysql_error());
-			
-			while($row = mysql_fetch_array($result))
+			if(!empty($userIn))
 			{
-				/*$hash = $row['firstname']." ".$row['lastname']." (Login: ".$row['login_name'].")";
+				$query = sprintf("select * from users where user_id in (%s)", $userIn);
+				//echo $query."<br/>";
+				$result = mysql_query($query, $this->db_link) or die('Get candidate name from schedule error_2 : ' . mysql_error());
+					
+				while($row = mysql_fetch_array($result))
+				{
+					/*$hash = $row['firstname']." ".$row['lastname']." (Login: ".$row['login_name'].")";
 				
-				$RetAry[$hash] = $TestCmplAry[$row['user_id']];*/
+					$RetAry[$hash] = $TestCmplAry[$row['user_id']];*/
 				
-				$RetAry[$row['user_id']]['name'] 			= $row['firstname']." ".$row['lastname'];
-				$RetAry[$row['user_id']]['email'] 			= $row['email'];
-				$RetAry[$row['user_id']]['login_name'] 		= $row['login_name'];
-				$RetAry[$row['user_id']]['contact_no'] 		= $row['contact_no'];
-				$RetAry[$row['user_id']]['location'] 		= $row['city'].', '.$row['state'].' ('.$this->GetCountryName($row['country']).')';
-				$RetAry[$row['user_id']]['test_finished'] 	= $TestCmplAry[$row['user_id']];
+					if(($key = array_search("'".$row['user_id']."'", $userAry)) !== false) {
+						unset($userAry[$key]);
+					}
+				
+					$RetAry[$row['user_id']]['name'] 			= $row['firstname']." ".$row['lastname'];
+					$RetAry[$row['user_id']]['email'] 			= $row['email'];
+					$RetAry[$row['user_id']]['login_name'] 		= $row['login_name'];
+					$RetAry[$row['user_id']]['contact_no'] 		= $row['contact_no'];
+					$RetAry[$row['user_id']]['location'] 		= $row['city'].', '.$row['state'].' ('.$this->GetCountryName($row['country']).')';
+					$RetAry[$row['user_id']]['test_finished'] 	= $TestCmplAry[$row['user_id']];
+				}	
+			}
+			
+			foreach($userAry as $tpin)
+			{
+				$RetAry[$tpin]['name'] 			= " ";
+				$RetAry[$tpin]['email'] 		= rtrim(ltrim($tpin, "'"), "'");
+				$RetAry[$tpin]['login_name'] 	= " ";
+				$RetAry[$tpin]['contact_no'] 	= " ";
+				$RetAry[$tpin]['location'] 		= " ";
+				$RetAry[$tpin]['test_finished'] = 0;
 			}
 			
 			return $RetAry;
@@ -2440,20 +2599,22 @@
 			$query = "";
 			if($user_id == null)
 			{
-				$query = sprintf("select test_schedule.*, test.test_name, test.owner_id from test_schedule, test where test.test_id=test_schedule.test_id and test.deleted is null");
+				$query = sprintf("select test_schedule.*, test.test_name, test.owner_id,ta.allocation_id from test_schedule inner join test on test_schedule.test_id = test.test_id left joion test_allocation ta on ta.test_id = test.test_id where test.deleted is null");
 			}
 			else 
 			{
-				$query = sprintf("select test_schedule.*, test.test_name from test_schedule, test where test.owner_id='%s' AND test.test_id=test_schedule.test_id and test.deleted is null", $user_id);
+				$query = sprintf("select test_schedule.*, test.test_name,ta.allocation_id from test_schedule join test on test.test_id = test_schedule.test_id left join assigned_packages on test.test_id=assigned_packages.test_id left join test_allocation ta on test.test_id=ta.test_id where (test.owner_id='%s' or (test.public = 1 AND assigned_packages.user_id = '%s') or (ta.assignee_id = '%s')) AND test_schedule.scheduler_id='%s' and test.deleted is null", $user_id, $user_id, $user_id,$user_id);
 			}
 			
 			$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
 			
 			while($row = mysql_fetch_array($result))
 			{
+				$ea_test = $row['allocation_id']==null?"":"  <i class='fa fa-external-link' aria-hidden='true'></i>";
+				
 				echo "<tr id='".$row['test_id']."'>";
 				echo "<td>".$row['schd_id']."_mip</td>";
-				echo "<td>".$row['test_name']."</td>";
+				echo "<td>".$row['test_name'].$ea_test."</td>";
 				if($user_id == null)
 				{
 					echo "<td>".$this->GetUserName($row['owner_id'])."</td>";
@@ -2487,7 +2648,7 @@
 				//date_default_timezone_set($this->tzOffsetToName($row['time_zone']));
 				//date_default_timezone_set($reset);
 				
-				$RetAry = $this->GetCandidateNameFromSchedule2($row['user_list'],$row['schd_id']);
+				//$RetAry = $this->GetCandidateNameFromSchedule2($row['user_list'],$row['schd_id']);
 				
 				$user_list = "";
 				$finished_list = "";
@@ -2498,7 +2659,7 @@
 				echo "<td><input type='button' class='btn btn-sm btn-primary' schd_id='".$row['schd_id']."' test_schedule_type='".$test_schedule_type."' value='View Details' onclick='ShowCandidateDetails(this)'/></td>";
 				//echo "<td>".$finished_list."</td>";
 				
-				$export_test_button = ($test_schedule_type == CConfig::TST_OFFLINE)?"<br /><br /><a href='ajax/ajax_download_offline_test.php?schd_id=".$row['schd_id']."' target='_blank' class='btn btn-sm btn-success'>Export Test</a>":"";
+				$export_test_button = ($test_schedule_type == CConfig::TST_OFFLINE)?"<br /><br /><a href='ajax/ajax_download_offline_test.php?schd_id=".$row['schd_id']."' target='_blank' class='btn btn-sm btn-success'>Export Test</a>":(($row['schedule_type'] == CConfig::TST_OFFLINE)?" (Finished)":"");
 				echo "<td style='text-align: center;'>".$test_schedule_type2.$export_test_button."</td>";
 				echo "</tr>";
 			}
@@ -2755,7 +2916,7 @@
 			}
 			else 
 			{
-				$query = sprintf("select * from test, test_schedule where locate('%s', test_schedule.user_list) AND test.test_id=test_schedule.test_id  and deleted is null", $user_id);
+				$query = sprintf("select * from test, test_schedule where locate('%s', test_schedule.user_list) AND test.test_id=test_schedule.test_id  and deleted is null and test_schedule.schedule_type != '%s'", $user_id, CConfig::TST_OFFLINE);
 			}
 			
 			$result = mysql_query($query, $this->db_link) or die('Load Test error : ' . mysql_error());
@@ -2768,7 +2929,7 @@
 				$opHTML = "";
 				if($this->IsTestFinished2($user_id, $user_type, $row['user_list'], $row['schd_id']) == false)
 				{
-					$scheduler = $this->GetUserName($row['owner_id']);
+					$scheduler = $this->GetUserName($row['scheduler_id']);
 					
 					$bgColor = "#FFFFD6";
 					$sResumeMsg = "";
@@ -2778,18 +2939,33 @@
 						$bgColor = "#E6E6B8";
 						$sResumeMsg = "<span style='color:red;font-weight:bold;'>(Unfinished Test!)</span>";
 					}
-					
-					if($user_type == CConfig::UT_INDIVIDAL && strtotime($row['scheduled_on']) <= strtotime(date("Y-m-d H:i:s")))
+					if($user_type == CConfig::UT_INDIVIDAL && strtotime($row['scheduled_on']) <= strtotime(date("Y-m-d H:i:s")) && empty($row["expire_on"]))
 					{
                                                 printf("<div id='st_%s' style='background-color:%s;border:1px solid #aaa;padding:5px;'>", $stIndex, $bgColor);
 						printf("Test <b><a style='color:blue;text-decoration:underline' href='javascript:' onclick=ShowOverlay('%s/test/test.php?test_id=%d&tschd_id=%d','st_%s')>%s</a> (xID: %s_mip)</b> is scheduled on <b>%s</b> (%s), by %s. %s<br/>", CSiteConfig::ROOT_URL, $row['test_id'], $row['schd_id'], $stIndex, $row['test_name'], $row['schd_id'], date("F d, Y [H:i]", strtotime($row['scheduled_on'])), date_default_timezone_get(), $scheduler, $sResumeMsg);
                                                 printf("</div>");
+						$bTestScheduled = true;	
 					}
-					else if($user_type == CConfig::UT_INDIVIDAL && strtotime($row['scheduled_on']) > strtotime(date("Y-m-d H:i:s")))
+					else if($user_type == CConfig::UT_INDIVIDAL && strtotime($row['scheduled_on']) <= strtotime(date("Y-m-d H:i:s")) && !empty($row["expire_on"]) &&  strtotime(date("Y-m-d H:i:s")) < strtotime($row["expire_on"]))
+					{
+                       	printf("<div id='st_%s' style='background-color:%s;border:1px solid #aaa;padding:5px;'>", $stIndex, $bgColor);
+						printf("Test <b><a style='color:blue;text-decoration:underline' href='javascript:' onclick=ShowOverlay('%s/test/test.php?test_id=%d&tschd_id=%d','st_%s')>%s</a> (xID: %s_mip)</b> is scheduled on <b>%s</b> and will expire on <b>%s</b> (%s), by %s. %s<br/>", CSiteConfig::ROOT_URL, $row['test_id'], $row['schd_id'], $stIndex, $row['test_name'], $row['schd_id'], date("F d, Y [H:i]", strtotime($row['scheduled_on'])),date("F d, Y [H:i]", strtotime( $row["expire_on"])), date_default_timezone_get(), $scheduler, $sResumeMsg);
+                       	printf("</div>");
+                       	$bTestScheduled = true;
+					}
+					else if($user_type == CConfig::UT_INDIVIDAL && strtotime($row['scheduled_on']) > strtotime(date("Y-m-d H:i:s")) && empty($row["expire_on"]))
 					{
 						printf("<div id='st_%s' style='background-color:%s;border:1px solid #aaa;padding:5px;'>", $stIndex, $bgColor);
 						printf("Test <b>%s (xID: %s_mip)</b> is scheduled on <b>%s</b> (%s), by %s. %s<br/>", $row['test_name'], $row['schd_id'], date("F d, Y [H:i]", strtotime($row['scheduled_on'])), date_default_timezone_get(), $scheduler, $sResumeMsg);
 						printf("</div>");
+						$bTestScheduled = true;
+					}
+					else if($user_type == CConfig::UT_INDIVIDAL && strtotime($row['scheduled_on']) > strtotime(date("Y-m-d H:i:s")) && !empty($row["expire_on"]) &&  strtotime(date("Y-m-d H:i:s")) < strtotime($row["expire_on"]))
+					{
+						printf("<div id='st_%s' style='background-color:%s;border:1px solid #aaa;padding:5px;'>", $stIndex, $bgColor);
+						printf("Test <b>%s (xID: %s_mip)</b> is scheduled on <b>%s</b> and will expire on <b>%s</b>  (%s), by %s. %s<br/>", $row['test_name'], $row['schd_id'], date("F d, Y [H:i]", strtotime($row['scheduled_on'])), date("F d, Y [H:i]", strtotime( $row["expire_on"])),date_default_timezone_get(), $scheduler, $sResumeMsg);
+						printf("</div>");
+						$bTestScheduled = true;
 					}
 					else if($user_type != CConfig::UT_INDIVIDAL)
 					{
@@ -2801,9 +2977,10 @@
 						print_r($row);
 						echo("</pre>");*/
                                                 printf("</div>");
+                                                $bTestScheduled = true;
 					}
 					
-					$bTestScheduled = true;
+					
 					$stIndex++;
 				}
 			}
@@ -2863,6 +3040,21 @@
 			return $row['organization_name'];
 		}
 		
+		public function GetOrganizationNameByTestID($test_id)
+		{
+			$sOrgName = "";
+			$query = sprintf("select * FROM organization where organization_id = (select organization_id from users left join test on users.user_id = test.owner_id WHERE test.test_id = %d)",$test_id);
+				
+			$result = mysql_query($query, $this->db_link) or die('Get Organization Name By TestID Error : ' . mysql_error());
+			
+			if(mysql_num_rows($result) > 0)
+			{
+				$row = mysql_fetch_array($result);
+				$sOrgName = $row['organization_name'];
+			}	
+			return $sOrgName;
+		}
+		
 		public function GetOrgLogoImage($org_id)
 		{
 			$query = sprintf("select logo_image from organization where organization_id='%s'",$org_id);
@@ -2883,7 +3075,7 @@
 			}
 		}
 		
-		public function EmailTestScheduleNotification($user_id, $test_name, $candidate_list, $date, $hours, $minutes, $time_zone)
+		public function EmailTestScheduleNotification($user_id, $test_name, $candidate_list, $date, $hours, $minutes, $expire_on, $expire_hours, $expire_minutes,$time_zone)
 		{
 			$query = sprintf("select * from users, organization where user_id='%s' AND users.organization_id=organization.organization_id", $user_id);
 			
@@ -2914,13 +3106,23 @@
 					if(mysql_num_rows($result) > 0)
 					{
 						$row = mysql_fetch_array($result);
-						$candidate_email = $row['email'];
-						$candidate_name  = $row['firstname']." ".$row['lastname'];
 						
-						mysql_free_result($result);
-						
-						$objMail->PrepAndSendTestScheduleMail($test_name, $candidate_email, $candidate_name, $organization_name, $user_email, $user_name, $date, $hours, $minutes, $time_zone_name, $this);
-					 	//CEMail::PrepAndSendTestScheduleMail($test_name, $candidate_email, $candidate_name, $organization_name, $user_email, $user_name, $date, $this);
+						if($row['isvalid'] == 1)
+						{
+							$candidate_email = $row['email'];
+							$candidate_name  = $row['firstname']." ".$row['lastname'];
+							
+							mysql_free_result($result);
+							if(!empty($expire_on))
+							{
+								$objMail->PrepAndSendTestScheduleMail($test_name, $candidate_email, $candidate_name, $organization_name, $user_email, $user_name, $date, $hours, $minutes, $expire_on, $expire_hours, $expire_minutes,$time_zone_name, $this);
+								//CEMail::PrepAndSendTestScheduleMail($test_name, $candidate_email, $candidate_name, $organization_name, $user_email, $user_name, $date, $this);
+							}
+							else
+							{
+								$objMail->PrepAndSendTestScheduleMail($test_name, $candidate_email, $candidate_name, $organization_name, $user_email, $user_name, $date, $hours, $minutes,"", "", "",$time_zone_name, $this);
+							}
+						}
 					}
 				}
 			}
@@ -3468,7 +3670,7 @@
 						printf("<td>%s</td>", $dtTime->format("M d, Y [H:i:s]"));
 						
 						printf("<td>%s %s (%s)</td>", $value['name_ary']['firstname'], $value['name_ary']['lastname'], $value['name_ary']['email']);
-						printf("<td>%s / %s<br /><button id='%s;details' class='btn btn-success btn-sm' onclick='ShowSectionWisePerformance(this);' title='Section-Wise Details'><i class='icon-list'></i></button></td>", $value['marks'], $value['total_marks'], $key);
+						printf("<td style='text-align: center;'>%s out of %s<br /><br /><button id='%s;details' class='btn btn-success btn-sm' onclick='ShowSectionWisePerformance(this);' title='Section-Wise Details'><i class='icon-list'></i></button></td>", $value['marks'], $value['total_marks'], $key);
 						printf("<td>%01.2f</td>", $value['percentile']);
 						printf("<td>%s</td>", $rank);
 						
@@ -3629,21 +3831,24 @@
         
         public function PrepareScheduledTestCombo($owner_id, $test_id = 0)
         {
-            $query = sprintf("select DISTINCT ts.test_id, test.test_name from test_schedule ts join test on ts.test_id = test.test_id where test.owner_id='%s' and test.submitted=0 and test.deleted is null", $owner_id);
-       
+            $query = sprintf("select DISTINCT ts.test_id, test.test_name,ta.allocation_id from test_schedule ts join test on ts.test_id = test.test_id left join assigned_packages on assigned_packages.test_id = test.test_id left join test_allocation ta on test.test_id = ta.test_id where ((test.owner_id='%s' and ts.scheduler_id ='%s') or (ts.scheduler_id ='%s' and assigned_packages.user_id='%s') or  (ts.scheduler_id ='%s' and ta.assignee_id ='%s')) and test.submitted=0 and test.deleted is null and ts.scheduled_on is not null", $owner_id, $owner_id, $owner_id, $owner_id , $owner_id,$owner_id);
+       		
+            
             $result = mysql_query($query, $this->db_link) or die('Prepare scheduled test combo error : ' . mysql_error());
            
             if(mysql_num_rows($result) > 0)
             {
                 while($row = mysql_fetch_array($result))
                 {
+                	$ea_test = $row['allocation_id']==null?"":"(EzeeAssess)";
+                	
                     if($test_id != 0)
                     {
-                        echo (($test_id == $row['test_id'])?"<option value='".$row['test_id']."' selected>".$row['test_name']."</option>":"<option value='".$row['test_id']."'>".$row['test_name']."</option>");
+                        echo (($test_id == $row['test_id'])?"<option value='".$row['test_id']."' selected>".$row['test_name'].$ea_test."</option>":"<option value='".$row['test_id']."'>".$row['test_name'].$ea_test."</option>");
                     }
                     else
                     {
-                        echo "<option value='".$row['test_id']."'>".$row['test_name']."</option>";
+                        echo "<option value='".$row['test_id']."'>".$row['test_name'].$ea_test."</option>";
                     }
                 }
             }
@@ -3653,9 +3858,16 @@
             }
         }
        
-        public function PrepareScheduledTestDateCombo($test_id, $tschd_id = 0)
+        public function PrepareScheduledTestDateCombo($test_id, $scheduler_id = "", $tschd_id = 0)
         {
-            $query = sprintf("select * from test_schedule where test_id=%d", $test_id);
+        	
+        	$scheduler_id_cond = "";
+        	if(!empty($scheduler_id))
+        	{
+        		$scheduler_id_cond = sprintf("and scheduler_id='%s'", $scheduler_id);
+        	}
+        	
+            $query = sprintf("select * from test_schedule where test_id=%d and scheduled_on is not null %s", $test_id, $scheduler_id_cond);
     
             $result = mysql_query($query, $this->db_link) or die('prepare scheduled test date combo error: ' . mysql_error());
            
@@ -3758,7 +3970,17 @@
                         }
                         else
                         {
-                            $optionsAry["blue"][$rI++] = sprintf("<option value='%s' style='color:darkblue;'>%s - (%s)</option>", $candidate_ary[$index], $this->GetUserName($candidate_ary[$index]), $this->GetUserEmail($candidate_ary[$index]));
+                            //$optionsAry["blue"][$rI++] = sprintf("<option value='%s' style='color:darkblue;'>%s - (%s)</option>", $candidate_ary[$index], $this->GetUserName($candidate_ary[$index]), $this->GetUserEmail($candidate_ary[$index]));
+                            $cand_name = trim($this->GetUserName($candidate_ary[$index]));
+                            $cand_email = $this->GetUserEmail($candidate_ary[$index]);
+                            if(!empty($cand_name))
+                            {
+                            	$optionsAry["blue"][$rI++] = sprintf("<option value='%s' style='color:darkblue;'>%s - (%s)</option>", $candidate_ary[$index], $cand_name, $cand_email);
+                            }
+                            else
+                            {
+                            	$optionsAry["blue"][$rI++] = sprintf("<option value='%s' style='color:darkblue;'>TPIN - %s</option>", $candidate_ary[$index], $candidate_ary[$index]);
+                            }
                         }
                     }
                 }
@@ -3841,9 +4063,10 @@
                 printf("<tr>");
                 printf("<td id='name%s'>%s (%s)</td>", $row['user_id'], $this->GetUserName($row['user_id']), $this->GetUserEmail($row['user_id']));
                 printf("<td>%s</td>", $this->GetTestName($row['test_id']));
+                printf("<td>%s (xID: %s)</td>", date("F j, Y", strtotime($row['scheduled_on'])), $row['tschd_id']);
                 
                 $dtime  = new DateTime($row['session_created']);
-                //$dtime->setTimezone($dtzone);
+                $dtime->setTimezone($dtzone);
                 printf("<td>%s</td>", $dtime->format("F j, Y - H:i:s"));
                 printf("<td>%s/%s</td>", $attempted_questions, $total_questions);
                 printf("<td>%02d:%02d:%02d</td>", ($row['cur_chronological_time']/3600),($row['cur_chronological_time']/60%60), $row['cur_chronological_time']%60);
@@ -3970,6 +4193,38 @@
             $result =  mysql_query($query, $this->db_link) or die('Insert Options error : ' . mysql_error());
 
             return $result;
+        }
+        
+        public function InsertOptionsWithWeightage($row, $ques_id)
+        {
+        	$option_ary = array();
+        	$index      = 0;
+        		
+        	$weightage_ary = explode(",", $row[CConfig::$QUES_XLS_HEADING_ARY["Answer"]]);
+        		
+        	end($row);
+        	$last_key = key($row);
+        	for($opt_index = CConfig::$QUES_XLS_HEADING_ARY["Option 1"], $weight_index = 0; $opt_index <= $last_key; $opt_index++, $weight_index++)
+        	{
+        		$option_ary[$index]['option'] = base64_encode($row[$opt_index]);
+        	
+        		$option_ary[$index]['weightage'] = $weightage_ary[$weight_index];
+        	
+        		$index++;
+        	}
+        	
+        	$query = sprintf("update question set options = '%s' where ques_id = '%s'", json_encode($option_ary), $ques_id);
+        	
+        	$result =  mysql_query($query, $this->db_link) or die('Insert Options With Weightage error : ' . mysql_error());
+        	
+        	return $result;
+        }
+        
+        public function InsertEQRangeAnalysis($data_ary)
+        {
+        	$query = sprintf("insert into eq_range_analysis values %s", implode(",", $data_ary));
+        	
+        	$result =  mysql_query($query, $this->db_link) or die('Insert EQ Range Analysis error : ' . mysql_error());
         }
         
         public function PopulateRcdDirTitles($user_id, $question_type)
@@ -4398,8 +4653,6 @@
 	        	$query .= sprintf("where locate('%s', owner_id) and user_id in (%s)", $owner_id, $cand_ids);
         	}
         	
-        	echo $query;
-        	
         	$result = mysql_query($query, $this->db_link) or die('Shift candidate batch error: ' . mysql_error());
         }
         
@@ -4624,11 +4877,17 @@
         	return $result;
         }
         
-        public function IsValidOfflineSchedule($schd_id, $user_id)
+        public function IsValidOfflineSchedule($schd_id, $user_id, $bNullScheduledOnCond = true)
         {
         	$retVal = null;
         	
-        	$query = sprintf("select test_id from test_schedule where schd_id='%s' and scheduler_id='%s' and schedule_type='%s' and scheduled_on IS NULL and time_zone IS NULL", $schd_id, $user_id, CConfig::TST_OFFLINE);
+        	$nullScheduledCond = "";
+        	if($bNullScheduledOnCond)
+        	{
+        		$nullScheduledCond = sprintf("and scheduled_on IS NULL and time_zone IS NULL");
+        	}
+        	
+        	$query = sprintf("select test_id from test_schedule where schd_id='%s' and scheduler_id='%s' and schedule_type='%s' %s", $schd_id, $user_id, CConfig::TST_OFFLINE, $nullScheduledCond);
         
         	$result = mysql_query($query, $this->db_link) or die('Is Valid Offline Schedule error : ' . mysql_error());
         	
@@ -4642,6 +4901,270 @@
         	return $retVal;
         }
         
+        public function GetLatestOTFAForm($test_id)
+        {
+        	$retAry = array();
+        	 
+        	$query = sprintf("select firstname, lastname, gender, dob, contact_no, city, state, country, edu_qualification from otfa_user_form_info where test_id = '%s' order by otfa_id desc limit 1", $test_id);
+        	 
+        	$result = mysql_query($query, $this->db_link) or die('Get Latest OTFA Form error : ' . mysql_error());
+        	 
+        	if(mysql_num_rows($result) > 0)
+        	{
+        		$retAry = mysql_fetch_assoc($result);
+        	}
+        	 
+        	return $retAry;
+        }
+        
+        public function InsertOTFACandidatesWithEmail($email_ary, $user_id, $batch_id)
+        {
+        	$candIDAry = array();
+        	
+        	$insertValueStringAry = array();
+        	for($email_index = 0; $email_index < count($email_ary); $email_index++)
+        	{
+        		$status = "";
+        		
+        		$isEmailExists = $this->IsEmailExists($email_ary[$email_index], $user_id, $status, $batch_id);
+        		
+        		if($isEmailExists)
+        		{
+        			$cand_id = $this->GetUserIdByEmail("", $email_ary[$email_index]);
+        			
+        			if($status == 0)
+        			{
+        				$cand_batch_id_ary = $this->GetCandidateBatches($cand_id);
+        				
+        				$batch_array = $this->GetBatches($user_id);
+        				 
+        				$batch_id_array = array_keys($batch_array);
+        				
+        				$common_ary = array_intersect($batch_id_array, $cand_batch_id_ary);
+        				
+        				if(count($common_ary) > 0)
+        				{
+        					foreach($common_ary as $common_batch_id)
+        					{
+        						$this->ChangeCandidateBatch($common_batch_id, $batch_id, $user_id, "'".$cand_id."'");
+        					}
+        				}
+        			}
+        			array_push($candIDAry, $cand_id);
+        		}
+        		else 
+        		{
+        			$cand_id = CUtils::uuid() ;
+        			$login_name = uniqid();
+        			$insertValue = sprintf("('%s', '%s', '%s', '%s', '%s', '%s')", $cand_id, $user_id, CConfig::UT_INDIVIDAL, $login_name, $email_ary[$email_index], json_encode(array(CConfig::CDB_ID, intval($batch_id))));
+        			array_push($insertValueStringAry, $insertValue);
+        			array_push($candIDAry, $cand_id);
+        		}
+        	}
+        	
+        	if(!empty($insertValueStringAry))
+        	{
+        		$query = sprintf("insert into users(user_id,owner_id,user_type,login_name,email,batch) VALUES %s", implode(",", $insertValueStringAry));
+        		
+        		$result = mysql_query($query, $this->db_link) or die("Insert OTFA Candidates With Email Error: ".mysql_error($this->db_link));
+        	}
+        	return $candIDAry;
+        }
+        
+        public function InsertOTFAUserForm($test_id, $schd_id, $batch_id, $form_data, $tpin_list = null)
+        {
+        	$query = null;
+        	if(!empty($tpin_list))
+        	{
+        		$query = sprintf("insert into otfa_user_form_info(test_id, tschd_id, batch_id, firstname, lastname, gender, dob, contact_no, city, state, country, edu_qualification, tpin_list) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $test_id, $schd_id, $batch_id, 1, 1, (isset($form_data["GENDER"]) && $form_data["GENDER"] == 1)?1:0, (isset($form_data["DOB"]) && $form_data["DOB"] == 1)?1:0, (isset($form_data["CONTACT"]) && $form_data["CONTACT"] == 1)?1:0, (isset($form_data["CITY"]) && $form_data["CITY"] == 1)?1:0, (isset($form_data["STATE"]) && $form_data["STATE"] == 1)?1:0, (isset($form_data["COUNTRY"]) && $form_data["COUNTRY"] == 1)?1:0, (isset($form_data["EDU_QUA"]) && $form_data["EDU_QUA"] == 1)?1:0, $tpin_list);
+        	}
+        	else 
+        	{
+        		$query = sprintf("insert into otfa_user_form_info(test_id, tschd_id, batch_id, firstname, lastname, gender, dob, contact_no, city, state, country, edu_qualification) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $test_id, $schd_id, $batch_id, 1, 1, (isset($form_data["GENDER"]) && $form_data["GENDER"] == 1)?1:0, (isset($form_data["DOB"]) && $form_data["DOB"] == 1)?1:0, (isset($form_data["CONTACT"]) && $form_data["CONTACT"] == 1)?1:0, (isset($form_data["CITY"]) && $form_data["CITY"] == 1)?1:0, (isset($form_data["STATE"]) && $form_data["STATE"] == 1)?1:0, (isset($form_data["COUNTRY"]) && $form_data["COUNTRY"] == 1)?1:0, (isset($form_data["EDU_QUA"]) && $form_data["EDU_QUA"] == 1)?1:0);
+        	}
+        
+        	$result = mysql_query($query, $this->db_link) or die("Insert OTFA User Form Error: ".mysql_error($this->db_link));
+        }
+        
+        public function EmailOTFARegLink($email_ary, $user_id, $test_name, $tschd_id)
+        {
+        	$user_name = $this->GetUserName($user_id);
+        	$org_info_ary = $this->GetUserOrgInfo($user_id);
+        	$user_email = $this->GetUserEmail($user_id);
+        	$objMail = new CEMail(CConfig::OEI_SUPPORT, $this->GetPasswordFromOfficialEMail(CConfig::OEI_SUPPORT));
+        	
+        	foreach($email_ary as $email)
+        	{
+        		$objMail->PrepAndSendOTFARegLinkMail($email, $test_name, $tschd_id, $user_name, $user_email, $org_info_ary['organization_name']);
+        	}
+        }
+        
+        public function GetOTFAFormByTestSchdId($tschd_id)
+        {
+        	$retAry = array();
+        	
+        	$query = sprintf("select test_id, batch_id, firstname, lastname, gender, dob, contact_no, city, state, country, edu_qualification, tpin_list from otfa_user_form_info where tschd_id = '%s'", $tschd_id);
+        	
+        	$result = mysql_query($query, $this->db_link) or die('Get OTFA Form By Test Schd Id error : ' . mysql_error());
+        	
+        	if(mysql_num_rows($result) > 0)
+        	{
+        		$retAry = mysql_fetch_assoc($result);
+        	}
+        	
+        	return $retAry;
+        }
+        
+        public function UpdateTPINInTestScheduleUserList($tschd_id, $tpin, $user_id)
+        {
+        	$query = sprintf("update test_schedule set user_list = replace(user_list,'%s', '%s') where schd_id='%s'", $tpin, $user_id, $tschd_id);
+        	
+        	$result = mysql_query($query, $this->db_link) or die('Update TPIN In Test Schedule User List error : ' . mysql_error());
+        }
+        
+        public function IsValidEmail($user_id)
+        {
+        	$retVal = 0;
+        		
+        	$query = sprintf("select isvalid from users where user_id='%s'", $user_id);
+        	
+        	$result = mysql_query($query, $this->db_link) or die('Is Valid Email error : ' . mysql_error());
+        	
+        	if(mysql_num_rows($result) > 0)
+        	{
+        		$row = mysql_fetch_array($result);
+        		$retVal = $row['isvalid'];
+        	}
+        	
+        	return $retVal;
+        }
+        
+        public function UpdateTestScheduleUserList($tschd_id, $user_id)
+        {
+        	$query = sprintf("update test_schedule set user_list = CONCAT(user_list, '%s;') where schd_id='%s'", $user_id, $tschd_id);
+        
+        	$result = mysql_query($query, $this->db_link) or die('Update Test Schedule User List error : ' . mysql_error());
+        }
+        
+        public function FetchUsersTest($owner_id)
+        {
+        	$query = sprintf("select * from test where owner_id='%s' and deleted is null", $owner_id);
+        	
+        	$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
+        	
+        	while($row = mysql_fetch_array($result))
+        	{
+        		        	        		
+        		$retAry[$row['test_id']] = "<option style='color:darkblue;' value='".$row['test_id']."'>".$row['test_name']."</option>";
+        		
+        	}        	
+        	return $retAry;
+        	
+        }
+        
+        public function allocate_test($assigner_id, $assignee_id,$test_id)
+        {
+        	
+        	
+        	$query = sprintf("select * from test_allocation where assigner_id = '%s' and assignee_id = '%s' and test_id = '%s'", $assigner_id,$assignee_id,$test_id);
+        	//  
+        	$allocation_id = -1;
+        	
+        	$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
+        	$activity = ""; 
+        	$activity_array = array();
+        	$activity_array[0]["status"] = "active"; //
+        	$activity_array[0]["update_time"] = date("Y-m-d H:i:s");
+        	$existing_activity = "";
+        	while($row = mysql_fetch_array($result))
+        	{
+        	 $allocation_id =	$row["allocation_id"];  
+        	 $existing_activity = $row["activity"];
+        	}
+        	
+        	if($allocation_id == -1)
+        	{         		
+        		  
+        		$activity = json_encode($activity_array);  
+        		      		
+        		$query = sprintf("insert into test_allocation(assigner_id ,assignee_id, test_id,activity) VALUES ('%s', '%s', '%s','%s')", $assigner_id, $assignee_id, $test_id,$activity);        	
+        		$result = mysql_query($query, $this->db_link) or die("Insert Test Allocation Error: ".mysql_error($this->db_link));
+        	}
+        	else // existing row update the suspended and activity array
+        	{
+        		$existing_activity_array = json_decode($existing_activity,TRUE);        		
+        		$final_array = array_merge($existing_activity_array, $activity_array);        		
+        		$query = sprintf("update test_allocation set suspended = 0, activity = '%s' where allocation_id= '%s'", json_encode($final_array), $allocation_id);
+        		$result = mysql_query($query, $this->db_link) or die("Update Test Allocation Error: ".mysql_error($this->db_link));
+        	}        	
+        }
+        
+        
+        
+        
+        
+        public function PrepareAssignedTestCombo($owner_id)
+        {
+        	//$query = "select test.*, test_dynamic.ques_source from test, test_dynamic where test_dynamic.test_id = test.test_id and test.owner_id='".$owner_id."' and test.submitted=0 and test.deleted is null";
+        
+        	$query = sprintf("select test.*, test_dynamic.ques_source, assigned_packages.package_id from test join test_dynamic  on test.test_id=test_dynamic.test_id inner join test_allocation ta on test.test_id= ta.test_id
+        			left join assigned_packages on test.test_id = assigned_packages.test_id where  test.submitted=0 and test.deleted is null and ta.suspended = 0 and ta.assignee_id = '%s'", $owner_id);
+        
+        	$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
+        
+        	$package_name_ary = array();
+        	if(mysql_num_rows($result) > 0)
+        	{
+        		while($row = mysql_fetch_array($result))
+        		{
+        			$class = "personal_ques_source";
+        			$ques_source = "Personal";
+        			if($row['ques_source'] == "mipcat")
+        			{
+        				$class = "mipcat_ques_source";
+        				$ques_source = CConfig::SNC_SITE_NAME;
+        			}
+        			if($row['public'] == 1 && $owner_id != $row['owner_id'])
+        			{
+        				if(!isset($package_name_ary[$row['package_id']]))
+        				{
+        					$package_name_ary[$row['package_id']] = $this->GetAssignedPackageName($row['package_id']);
+        				}
+        				echo "<option value='".$row['test_id']."' class='".$class."'>".$row['test_name']." (Package : ".$package_name_ary[$row['package_id']].")</option>";
+        			}
+        			else
+        			{
+        				echo "<option value='".$row['test_id']."' class='".$class."'>".$row['test_name']."</option>";
+        			}
+        		}
+        	}
+        	else
+        	{
+        		echo "<option value=''>No Test Available</option>";
+        	}
+        }
+        
+        public function GetAssignedTestCount($owner_id)
+        {
+        	//$query = "select test.*, test_dynamic.ques_source from test, test_dynamic where test_dynamic.test_id = test.test_id and test.owner_id='".$owner_id."' and test.submitted=0 and test.deleted is null";
+        
+        	$query = sprintf("select count(*) as count from test join test_dynamic  on test.test_id=test_dynamic.test_id inner join test_allocation ta on test.test_id= ta.test_id
+        			left join assigned_packages on test.test_id = assigned_packages.test_id where  test.submitted=0 and test.deleted is null and ta.assignee_id = '%s'", $owner_id);
+        
+        	$result = mysql_query($query, $this->db_link) or die('Select from test error : ' . mysql_error());
+        
+        	$retVal = 0;
+        	
+        	if(mysql_num_rows($result) > 0)
+        	{
+        		$row = mysql_fetch_array($result);
+        		$retVal = $row['count'];
+        	}
+        
+        	return $retVal;
+        }
+        
+		       
         ////////////////////////////////
         /// 	Offline Functions	 ///
         ////////////////////////////////
@@ -4839,11 +5362,7 @@
         	return $retVal;
         }
         
-        public function UpdateTestScheduleUserList($tschd_id, $user_id)
-        {
-        	$query = sprintf("update test_schedule set user_list = CONCAT(user_list, '%s;') where schd_id='%s'", $user_id, $tschd_id);
-        	 
-        	$result = mysql_query($query, $this->db_link) or die('Update Test Schedule User List error : ' . mysql_error());
-        }
+      
+        
 	}
 ?>

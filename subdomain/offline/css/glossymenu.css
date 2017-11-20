@@ -1,0 +1,75 @@
+.glossymenu{
+margin: 1px 0;
+padding: 0;
+width: 170px; /*width of menu*/
+/*border: 1px solid #9A9A9A;*/
+border-bottom-width: 0;
+}
+
+.glossymenu a.menuitem{
+background: CornflowerBlue url(../images/acc_vmenu/glossyback.gif) repeat-x bottom left;
+font: 12px Helvetica, Arial, sans-serif;
+font-weight: bold;
+color: white;
+display: block;
+position: relative; /*To help in the anchoring of the ".statusicon" icon image*/
+width: auto;
+padding: 4px 0;
+padding-left: 10px;
+text-decoration: none;
+margin: 1px;
+-moz-border-top-left-radius: 5px;-webkit-border-top-left-radius: 5px;-khtml-border-top-left-radius: 5px;border-top-left-radius: 5px;
+-moz-border-bottom-left-radius: 5px;-webkit-border-bottom-left-radius: 5px;-khtml-border-bottom-left-radius: 5px;border-bottom-left-radius: 5px;
+}
+
+
+.glossymenu a.menuitem:visited, .glossymenu .menuitem:active{
+color: white;
+}
+
+.glossymenu a.menuitem .statusicon{ /*CSS for icon image that gets dynamically added to headers*/
+position: absolute;
+/*top: 2px;*/
+right: 5px;
+border: none;
+}
+
+.glossymenu a.menuitem:hover{
+background-image:  url(../images/acc_vmenu/glossyback2.gif);
+}
+
+.glossymenu div.submenu{ /*DIV that contains each sub menu*/
+background: white;
+border-left: 1px solid blue;
+border-right: 1px solid blue;
+border-top: 1px solid blue;
+margin-left:5px;
+margin-right:2px;
+-moz-border-top-left-radius: 5px;-webkit-border-top-left-radius: 5px;-khtml-border-top-left-radius: 5px;border-top-left-radius: 5px;
+-moz-border-bottom-left-radius: 5px;-webkit-border-bottom-left-radius: 5px;-khtml-border-bottom-left-radius: 5px;border-bottom-left-radius: 5px;
+}
+
+.glossymenu div.submenu ul{ /*UL of each sub menu*/
+list-style-type: none;
+margin: 0;
+padding: 0;
+}
+
+.glossymenu div.submenu ul li{
+border-bottom: 1px solid blue;
+}
+
+.glossymenu div.submenu ul li a{
+display: block;
+font: 11px Helvetica, Arial, sans-serif;
+color: black;
+text-decoration: none;
+padding: 2px 0;
+padding-left: 10px;
+}
+
+.glossymenu div.submenu ul li a:hover{
+background: lightblue;
+colorz: white;
+}
+

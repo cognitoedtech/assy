@@ -73,15 +73,15 @@
 	$objTH = new CTestHelper();
 	
 	$nTestID = null;
-	if(isset($_GET['test_id']))
+	if($qry[0] == "test_id")
 	{
-		$nTestID = $_GET['test_id'];
+		$nTestID = $qry[1];
 	}
 	
 	$nTschdID = null;
-	if(isset($_GET['tschd_id']))
+	if($qry[2] == "tschd_id")
 	{
-		$nTschdID = $_GET['tschd_id'];
+		$nTschdID = $qry[3];
 	}
 	
 	$test_type = $objDB->GetTestType($nTestID);
@@ -165,7 +165,7 @@
 								{
 									$CorrectAns++;
 								}
-								else if($Answer == -1 || $Answer == -2)
+								else if($Answer == -1 || $Answer == -2 || $Answer == -3)
 								{
 									$Unanswered++;
 								}
@@ -386,12 +386,20 @@
    	 	$("#captcha_img").attr("src","../3rd_party/captcha/captcha.php?r=" + Math.random());
 	}
 
+	function handleError(xhr, status, ex)
+	{
+		$(".modal1").hide();
+		$("#response_div").html("<span style='color:red;'>Request Error: "+ex.toString()+"</span>");
+		//alert(xhr.responseText);
+	}
+
     var time_zone = get_time_zone_offset( );
     var options = { 
     	    data: {'test_id': '<?php echo($nTestID);?>', 'test_pnr' : '<?php echo($test_pnr);?>', 'time_zone' : time_zone},
        	 	//target:        '',   // target element(s) to be updated with server response 
        		// beforeSubmit:  showRequest,  // pre-submit callback 
       	 	 success:       showResponse,  // post-submit callback 
+			 error:         handleError,
  
         	// other available options: 
         	url:      'ajax/ajax_free_user_result.php',         // override for form's 'action' attribute 
@@ -404,7 +412,47 @@
         	//timeout:   3000 
     	}; 
 	$(document).ready(function(){
-		
+		<?php 
+		if($res_visibility != CConfig::RV_NONE && $test_type != CConfig::TT_EQ)
+		{
+		?>
+
+		CanvasJS.addColorSet("customColors",
+				[//colorSet Array
+
+				 	"#4bb2c5",
+	                "#eaa228",
+	                "#c5b47f"               
+	            ]);
+
+		var chart = new CanvasJS.Chart("chart1", {
+			  colorSet: "customColors",
+			  axisX:{
+				  labelFontSize: 15,
+			  },
+			  axisY:{
+				  labelFontSize: 15,
+			  },
+		      data: [//array of dataSeries              
+		        { //dataSeries object
+
+		         /*** Change type "column" to "bar", "area", "line" or "pie"***/
+		         type: "column",
+		         dataPoints: [
+		         { label: "Correct", y: <?php echo($CorrectAns);?>},
+		         { label: "Wrong", y: <?php echo($WrongAns);?>},
+		         { label: "Unanswered", y: <?php echo($Unanswered);?>}
+		         ]
+		       }
+		       ]
+		     });
+
+		    chart.render();
+		<?php 
+		}
+		else 
+		{
+		?>
 		CanvasJS.addColorSet("customColors",
 				[//colorSet Array
 
@@ -434,6 +482,9 @@
 		     });
 
 		    chart.render();
+		<?php
+		}
+		?>
 		});
 
 		$("#free_user_registration").validate({

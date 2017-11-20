@@ -187,7 +187,9 @@
 		
 		public function IsTestPending($user_id, $test_id, $tschd_id)
 		{
+			// echo $user_id;
 			return $this->objTest->IsTestPending($user_id, $test_id, $tschd_id);
+
 		}
 		
 		public function StartTest($user_id, $test_id, $tschd_id, $language)
@@ -445,14 +447,14 @@
 			$sTestDetails .= "<tr style='color:darkred;font-weight:bold;'>";
 			$sTestDetails .= "<td>Flash Questions</td>";
 			$sTestDetails .= "<td>Lock Questions</td>";
-			$sTestDetails .= "<td>Test Expiration (HRS)</td>";
-			$sTestDetails .= "<td>Attempts Allowed</td>";
+			//$sTestDetails .= "<td>Test Expiration (HRS)</td>";
+			//$sTestDetails .= "<td>Attempts Allowed</td>";
 			$sTestDetails .= "</tr>";
 			$sTestDetails .= "<tr>";
 			$sTestDetails .= "<td>".$aryYN[$aryBTDetails['mcpa_flash_ques']]."</td>";
 			$sTestDetails .= "<td>".$aryYN[$aryBTDetails['mcpa_lock_ques']]."</td>";
-			$sTestDetails .= "<td>".($aryBTDetails['expire_hrs'] == -1?"Never":$aryBTDetails['expire_hrs'])."</td>";
-			$sTestDetails .= "<td>".($aryBTDetails['attempts'] == -1?"Unlimited":$aryBTDetails['attempts'])."</td>";
+			//$sTestDetails .= "<td>".($aryBTDetails['expire_hrs'] == -1?"Never":$aryBTDetails['expire_hrs'])."</td>";
+			//$sTestDetails .= "<td>".($aryBTDetails['attempts'] == -1?"Unlimited":$aryBTDetails['attempts'])."</td>";
 			$sTestDetails .= "</tr>";
 			$sTestDetails .= "</table><br/>";
 			
@@ -883,7 +885,7 @@
                 }
                 else
                 {
-                    $sRet = sprintf("<img src='lib/print_image.php?para_id=%s&ques_type=%s'>",$row[0],$ques_type);
+                	$sRet = sprintf("<img class='para_img' src='lib/print_image.php?para_id=%s&ques_type=%s'>",$row[0],$ques_type);
                 }
             }
             

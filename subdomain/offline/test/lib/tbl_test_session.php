@@ -4,13 +4,14 @@
 	include_once("tbl_test_schedule.php");
 	
 	include_once(dirname(__FILE__)."/../../database/config.php");
-	//include_once(dirname(__FILE__)."/../../lib/billing.php");
+	include_once(dirname(__FILE__)."/../../lib/billing.php");
 	
 	class CTestSession
 	{
 		private $objDBLink;
 		private $objTestDynamic;
 		private $dbCreated = false;
+		private $bResultExist = FALSE;
 		
 		public function __construct($objDBLink = null)
 		{
@@ -91,7 +92,7 @@
 				}
 			}
 			
-			$query = sprintf("insert into test_session (tsession_id, tschd_id, test_id, user_id, ques_map, cur_chronological_time, attempts_remaining) values ('%s','%s','%s','%s','%s','%s','%s')", $sSessionID, $tschd_id, $test_id, $user_id, json_encode($ques_map), $cur_chronological_time, $attempts_remaining);
+			$query = sprintf("insert into test_session (tsession_id, tschd_id, test_id, user_id, ques_map, cur_chronological_time, attempts_remaining) values ('%s','%s','%s','%s','%s','%s','%s')", $sSessionID, $tschd_id, $test_id, $user_id, json_encode($ques_map), ($cur_chronological_time=='')?0:$cur_chronological_time, $attempts_remaining);
 			
 			$result = mysql_query($query, $this->objDBLink) or die('Create Test Session error : ' . mysql_error());
 			
@@ -225,7 +226,7 @@
 			{
 				if(isset($aryWeights[$ques_id]))
 				{	
-					if(count($ansAry[$key]) == 1 && !in_array(-1, $ansAry[$key]) && !in_array(-2, $ansAry[$key]))
+					if(count($ansAry[$key]) == 1 && !in_array(-1, $ansAry[$key]) && !in_array(-2, $ansAry[$key]) && !in_array(-3, $ansAry[$key]))
 					{
 						if(!isset($arySecAttemptedQues[$secIndex]['score']))
 						{
@@ -324,8 +325,8 @@
 					{
 						$nRight++;
 					}
-					else if(count($ansAry[$key]) == 1 && (in_array(-1, $ansAry[$key]) || in_array(-2, $ansAry[$key])))
-					{
+					else if(count($ansAry[$key]) == 1 && count(array_intersect(array(-1, -2, -3), $ansAry[$key])) != 0)//count($ansAry[$key]) == 1 && (in_array(-1, $ansAry[$key]) || in_array(-2, $ansAry[$key])))
+					{	
 						$nUnans++;
 					}
 					else
@@ -375,8 +376,32 @@
 			return ($objTestParam['test_duration'] * 60) - $cur_chronological_time;
 		}
 		
+		private function IsResultPresent($user_id, $test_id, $tschd_id, $test_type)
+		{
+			$retVat = 0;
+			$query = sprintf("select * from result where user_id='%s' AND test_id='%s' AND tschd_id='%s' AND tschd_id > 0", $user_id, $test_id, $tschd_id);
+				
+			$result = mysql_query($query, $this->objDBLink) or die('Is Result Present error : ' . mysql_error());
+				
+			if(mysql_num_rows($result) > 0)
+			{
+				$row = mysql_fetch_array($result);
+				$retVal = $row['test_pnr'];
+			}
+			
+			return $retVal;
+		}
+		
 		private function PrepareAndSaveResult($user_id, $test_id, $tschd_id, $test_type)
 		{
+			$test_pnr = $this->IsResultPresent($user_id, $test_id, $tschd_id, $test_type);
+			if (!empty($test_pnr))
+			{
+				$this->bResultExist = TRUE;
+				return $test_pnr;
+			}
+			$this->bResultExist = FALSE;
+			
 			$query = sprintf("select * from test_session where user_id='%s' AND test_id='%s' AND tschd_id='%s'", $user_id, $test_id, $tschd_id);
 			
 			$result = mysql_query($query, $this->objDBLink) or die('Prepare And Save Result error : ' . mysql_error());
@@ -677,7 +702,7 @@
 					{
 						//printf("Question: %s, Answer: %s, Section: %s\n<br/>", $qIndex, $ansAry[$ansIndex], $key);
 						$answer_ary = $ques_map[$ansAry[$ansIndex]]['answer'];
-						if(count($answer_ary) == 1 && in_array(-1, $$answer_ary))
+						if(count($answer_ary) == 1 && (in_array(-1, $$answer_ary) || in_array(-3, $$answer_ary)))
 						{
 							$QuesInfoAry['sec'] = $key;
 							$QuesInfoAry['ques'] = $qIndex;
@@ -697,6 +722,29 @@
 			$SessionID = $this->PrepareAndSaveResult($user_id, $test_id, $tschd_id, $test_type);
 			
 			$this->PurgeSession($user_id, $test_id, $tschd_id);
+			
+			/*if($this->bResultExist == FALSE)
+			{
+				$amount = null;
+				$objBilling = new CBilling();
+				$scheduler_id = $objBilling->GetTestSchedulerID($tschd_id);
+				if($objBilling->GetQuesSource($test_id) == "mipcat")
+				{
+					$amount = $objBilling->GetMIpCATQuesRate($scheduler_id);
+				}
+				else 
+				{
+					$amount = $objBilling->GetPersonalQuesRate($scheduler_id);
+				}
+				
+				$isTestFromAssignedPackage = $objBilling->IsTestAssignedFromPackage($test_id, $scheduler_id);
+				$assignedPackageTestRate = 0;
+				if($isTestFromAssignedPackage)
+				{
+					$assignedPackageTestRate = $objBilling->GetAssignedPackageTestRate($test_id, $scheduler_id);
+				}
+				$objBilling->SubBalance($scheduler_id, ($amount+$assignedPackageTestRate));
+			} */
 			
 			return $SessionID;
 		}

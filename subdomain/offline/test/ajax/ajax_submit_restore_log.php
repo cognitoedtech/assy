@@ -13,19 +13,18 @@
 	$reason	= null;
 	$tsession_id = null;
 	$time_zone = null;
-	
-	if(isset($_GET['reason']))
+	if($qry[0] == "reason")
 	{
-		$reason = urldecode($_GET['reason']);
-	
-		if(isset($_GET['tsession_id']))
+		$reason = urldecode($qry[1]);
+		
+		if($qry[2] == "tsession_id")
 		{
-			$tsession_id = urldecode($_GET['tsession_id']);
+			$tsession_id = urldecode($qry[3]);
 		}
-	
-		if(isset($_GET['time_zone']))
+		
+		if($qry[4] == "time_zone")
 		{
-			$time_zone = $_GET['time_zone'];
+			$time_zone = $qry[5];
 		}
 	}
 	

@@ -13,12 +13,12 @@
 	$test_id 	= null;
 	$tschd_id 	= null;
 	
-	if(isset($_GET['test_id']))
+	if($qry[0] == "test_id")
 	{
-		$test_id = $_GET['test_id'];
-		if(isset($_GET['tschd_id']))
+		$test_id = $qry[1];
+		if($qry[2] == "tschd_id")
 		{
-			$tschd_id = $_GET['tschd_id'];
+			$tschd_id = $qry[3];
 		}
 	}
 	

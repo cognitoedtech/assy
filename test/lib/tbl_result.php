@@ -1158,6 +1158,7 @@
         {
         	$this->UpdateOfflineTestSchedule($schedule_id, $scheduleDate, $scheduleTimeZone);
         	
+        	
         	$query = sprintf("insert into result(test_pnr, tschd_id, user_id, test_id, ques_map, marks, section_marks, time_taken, visibility, test_date, attempt_history, paid) values %s", implode(",",$resultArray));
         	
         	$result = mysql_query($query, $this->objDBLink) or die('Insert Offline Result error : ' . mysql_error());

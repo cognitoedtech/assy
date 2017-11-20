@@ -149,23 +149,9 @@ $objIncludeJsCSS->IncludeMetroDatepickerJS("../../");
 										<label for="schd_type"><b>Select Schedule Type:</b></label>
 										<select class="form-control input-sm" id="schd_type" name="schd_type" onchange="OnSchdTypeChange();" onkeyup="OnSchdTypeChange();" onkeydown="OnSchdTypeChange();">
 											<option value="<?php echo(CConfig::TST_ONLINE);?>">Preregistered Users (Online)</option>
-											<?php 
-											if($plan_type == CConfig::SPT_PROFESSIONAL || $plan_type == CConfig::SPT_ENTERPRISE || $user_type == CConfig::UT_SUPER_ADMIN)
-											{
-											?>
 											<option value="<?php echo(CConfig::TST_OTFA_EMAIL);?>">On-the-fly Assessment (Email)</option>
 											<option value="<?php echo(CConfig::TST_OTFA_TPIN);?>">On-the-fly Assessment (TPIN)</option>
-											<?php
-											}
-											?>
-											<?php 
-											if($plan_type == CConfig::SPT_ENTERPRISE || $user_type == CConfig::UT_SUPER_ADMIN)
-											{
-											?>
-											<option value="<?php echo(CConfig::TST_OFFLINE);?>">Offline Schedule</option>
-											<?php 
-											}
-											?>
+											<option value="<?php echo(CConfig::TST_OFFLINE);?>">Offline Schedule</option>											
 										</select>
 									</div>
 								</div><br />

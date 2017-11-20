@@ -30,6 +30,7 @@
 				
 			$resultAry = json_decode($zip->getFromIndex(0), true);
 			
+			
 			$dtZone = new DateTimeZone($objTR->tzOffsetToName($time_zone));
 			$date = new DateTime($_POST['test_date'], $dtZone);
 			$scheduleDate = $date->format('Y-m-d H:i:s');
@@ -37,7 +38,10 @@
 			$completedDate = $date->format('Y-m-d H:i:s');
 			$testScheduleId = "";
 			$testId = 0;
-			foreach($resultAry as $result)
+			
+			$resultOnly = $resultAry["result"];
+			//echo "<pre>"; print_r($resultAry); echo "</pre>";
+			foreach($resultOnly as $result)
 			{
 				$isResultExist = $objTR->IsResultAlreadyExist($result['user_id'], $result['test_id'], $result['tschd_id']);
 				
@@ -52,11 +56,13 @@
 				}
 				else 
 				{
-					if(empty($testScheduleId))
+					if(trim($testScheduleId) =="")
 					{
 						$testScheduleId = $result['tschd_id'];
 					}
 					$value_string = sprintf("('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $result['test_pnr'], $result['tschd_id'], $result['user_id'], $result['test_id'], mysql_real_escape_string($result['ques_map']), $result['marks'], mysql_real_escape_string($result['section_marks']), $result['time_taken'], $result['visibility'], $completedDate, mysql_real_escape_string($result['attempt_history']), $result['paid']);
+					//echo $value_string. "<br/>";
+					//echo "<pre>"; print_r($result); echo "</pre>";
 					array_push($actualResultToBeInserted, $value_string);
 					$newResultInserted++;
 				}

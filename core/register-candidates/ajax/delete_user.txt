@@ -1,0 +1,24 @@
+Array
+(
+    [action] => remove
+    [data] => Array
+        (
+            [0] => "8ad33a59-0be3-05c4-fd79-c9c78bd37e6b"
+            [1] => "e6849f88-8e39-9774-151d-f90c86cd6633"
+        )
+
+    [batch_id] => 110
+)
+Array
+(
+    [id] => -1
+    [error] => 
+    [fieldErrors] => Array
+        (
+        )
+
+    [data] => Array
+        (
+        )
+
+)

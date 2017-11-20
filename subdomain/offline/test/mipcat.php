@@ -60,39 +60,39 @@
 	/*echo "<pre>";
 	print_r($qry);
 	echo "</pre><br/>";*/
-	if(isset($_GET['test_id']))
+	if($qry[0] == "test_id")
 	{
 		// The page is being called by clicking on question number or from Start Test button
-		$nTestID = $_GET['test_id'];
+		$nTestID = $qry[1];
 		
-		if(isset($_GET['tschd_id']))
+		if($qry[2] == "tschd_id")
 		{
-			$nTSchdID = $_GET['tschd_id'];
+			$nTSchdID = $qry[3];
 		}
-		if(isset($_GET['sec']))
+		if($qry[4] == "sec")
 		{
-			$nSection = $_GET['sec'];
+			$nSection = $qry[5];
 		}
-		if(isset($_GET['ques']))
+		if($qry[6] == "ques")
 		{
-			$nQuestion = $_GET['ques'];
+			$nQuestion = $qry[7];
 		}
-		if(isset($_GET['trans_lang_choice']))
+		if($qry[8] == "trans_lang_choice")
 		{
 			if(!empty($transLangChoice))
 			{
 				CSessionManager::UnsetSessVar(CSessionManager::STR_TRANS_LANG_CHOICE);
 			}
-			$transLangChoice = $_GET['trans_lang_choice'];
+			$transLangChoice = $qry[9];
 			CSessionManager::Set(CSessionManager::STR_TRANS_LANG_CHOICE, $transLangChoice);
 		}
-		if(isset($_GET['test_trans_lang']))
+		if($qry[10] == "test_trans_lang")
 		{
 			if(!empty($testTransLang))
 			{
 				CSessionManager::UnsetSessVar(CSessionManager::STR_TEST_TRANS_LANG);
 			}
-			$testTransLang = $_GET['test_trans_lang'];
+			$testTransLang = $qry[11];
 			CSessionManager::Set(CSessionManager::STR_TEST_TRANS_LANG, $testTransLang);
 		}
 		// Get Test Parameters
@@ -119,9 +119,9 @@
 		
 		$session_time = CSessionManager::Get(CSessionManager::INT_TEST_TIMER);
 		$nCurTime = null;
-		if(isset($_GET['curtime']) && $_GET['curtime'] != $session_time)
+		if($qry[8] == "curtime" && $qry[9] != $session_time)
 		{
-			$nCurTime = $_GET['curtime'];
+			$nCurTime = $qry[9];
 			
 			if(empty($nCurTime))
 			{
@@ -373,9 +373,6 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 		<style type="text/css">
-			@import "../core/media/css/ui-lightness/jquery-ui-1.8.21.custom.css";
-			.horiz { float: left; padding: 0 90px; }
-			.right{position:absolute;right:0px;width:300px;}
 			div.mipcat_code_ques
 			{
 				font-family: "Courier New", monospace;
@@ -386,20 +383,26 @@
 			}
 		</style>
 		<?php 
-			$objIncludeJsCSS->IncludeMetroBootstrapCSS("../");
-			//$objIncludeJsCSS->IncludeIconFontCSS("../");
+			$objIncludeJsCSS->CommonIncludeCSS ( "../" );
+			$objIncludeJsCSS->IncludeJquerySnippetCSS( "../" );
+			
+			$objIncludeJsCSS->CommonIncludeJS ( "../" );
+			$objIncludeJsCSS->IncludeJquerySnippetJS( "../" );
+			$objIncludeJsCSS->IncludeMathJAXJS( "../" );
+			$objIncludeJsCSS->IncludeJqueryUI_1_12_1_JS("../");
 		?>
-		<link rel="stylesheet" type="text/css" href="../css/mipcat.css" />
-		<link rel="stylesheet" type="text/css" href="../3rd_party/bootstrap/css/bootstrap.css" />
-		<link rel="stylesheet" type="text/css" href="../core/media/css/jquery.snippet.css" />
-		<script type="text/javascript" src="../3rd_party/wizard/js/jquery.min.js"></script>
-		<script type="text/javascript" charset="utf-8" src="../core/media/js/jquery-ui-1.8.21.custom.min.js"></script>
-		<script type="text/javascript" src="../core/media/js/jquery.snippet.js"></script>
-		<script type="text/javascript" src="../3rd_party/bootstrap/js/bootstrap.js"></script>
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-2246912-13']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
 		<script type="text/javascript" src="../js/mipcat/utils.js"></script>
-		<?php 
-			$objIncludeJsCSS->IncludeMetroMinJS("../");
-		?>
 		<style type="text/css">
 		
 		.selected_sec_name {
@@ -470,10 +473,15 @@
 		 }
 		</style>
 	</head>
-	<body style="margin: 5px;">
-		
+	<body>
+		<div class="container">
 		<div style="color:white;font-weight:bold;background-color:CornflowerBlue;padding:10px 10px;" id="header">
-			<input type="button" id="btn_end_exam" class="btn btn-mini btn-danger" value="End Exam (X)" style="font-weight:bold;float: right;"/><span>Test: <?php echo $test_name; ?></span>
+		<span>Test: <?php echo $test_name; ?></span>
+		<span class="pull-right" style="margin-top: -5px">
+			<button id="btn_end_exam" class="btn btn-sm btn-danger">
+				End Exam <i class="fa fa-window-close" aria-hidden="true"></i>
+			</button>
+		</span>
 		</div>
 		
 		<div class="container-fluid">
@@ -483,8 +491,8 @@
 				<button class="info" style="margin-top: 5px;">Current</button>
 				<button class="success" style="margin-top: 5px;">Attempted</button>
 				<button class="warning" style="margin-top: 5px;">Flagged</button>
-				<button style="margin-top: 5px;"><i class='icon-align-justify on-left'></i>&nbsp;Reading Comprehension Group</button>
-				<button style="margin-top: 5px;"><i class='icon-arrow-right on-left'></i>&nbsp;Direction Group</button>
+				<button style="margin-top: 5px;"><i class="fa fa-align-justify on-left" aria-hidden="true"></i>&nbsp;Reading Comprehension Group</button>
+				<button style="margin-top: 5px;"><i class='fa fa-arrow-right on-left' aria-hidden="true"></i>&nbsp;Direction Group</button>
 			</span>
 			<span class="timer"><input type="text" class="input-medium search-query" size="8" id="timer" style="text-align:center;color:#009900;font-weight: bold;width: 180px;height: 30px; margin-top: 5px;"></span>
 		</div><br />
@@ -608,7 +616,7 @@
                            {
                                $ques_cnts = sprintf("<img src='lib/print_image.php?qid=%s&opt=0'>", $aryQues['ques_id']);
                            }
-                           printf("<blockquote id='base_ques'><p><b>Ques %d). %s</b></p><small>%s</small></blockquote>", ($nQuestion+1), $ques_cnts, ucwords($aryQues['language']));
+                           printf("<blockquote id='base_ques'><p>Ques %d). %s</p><small>%s</small></blockquote>", ($nQuestion+1), $ques_cnts, ucwords($aryQues['language']));
                            
                            $opt_ary = array();
                            for($index = 0; $index < $aryQues['opt_count']; $index++)
@@ -635,7 +643,7 @@
                            	{
                            		$ques_cnts = sprintf("<img src='lib/print_image.php?qid=%s&opt=0'>", $aryTransQues['ques_id']);
                            	}
-                           	printf("<blockquote id='trans_ques' style='display :none'><p><b>Ques %d). %s</b></p><small>%s</small></blockquote>", ($nQuestion+1), $ques_cnts, ucwords($aryTransQues['language']));
+                           	printf("<blockquote id='trans_ques' style='display :none'><p>Ques %d). %s</p><small>%s</small></blockquote>", ($nQuestion+1), $ques_cnts, ucwords($aryTransQues['language']));
                            	
                            	$trans_opt_ary = array();
                            	for($index = 0; $index < $aryTransQues['opt_count']; $index++)
@@ -719,38 +727,57 @@
 			?>
 		</form>
 		
-		<div class="modal hide fade in" id="dlg_test_end_confirm" role="dialog" tabindex="-1">
-		   	<div class="modal-header">
-		   		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		  		<h3>End Exam Confirmation</h3>
+		<div class="modal fade" id="dlg_test_end_confirm" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">End Exam Confirmation</h4>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure to end the exam? After confirmation your test
+							progress will be submited for result and you will no longer be
+							able to attempt this test again.</p>
+						<p style="color: #666">To cancel, click the No button or hit the
+							ESC key.</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+						<button type="button" onclick="OnEndExam()" class="btn btn-primary">Yes</button>
+					</div>
+				</div>
 			</div>
-		   	<div class="modal-body">
-		   		<p>Are you sure to end the exam? After confirmation your test progress will be submited for result and you will no longer be able to attempt this test again.</p>
-		   	</div>
-		   	<div class="modal-footer">
-		   		<a href="#" class="btn btn-success" onclick="OnEndExam()">Yes</a>
-		   		<a href="#" class="btn" data-dismiss="modal">No</a>
-		   	</div>
 		</div>
 		
-		<div id="MessageModal" role="dialog" tabindex="-1" class="modal hide fade in">
-		  <div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		    <h3><?php echo(CConfig::SNC_SITE_NAME);?> - Closing Test</h3>
-		  </div>
-		  <div id="ModalMsgStr" class="modal-body">
-		  	
-		  </div>
-		  <div class="modal-footer">
-		    <a href="#" onclick="HideOL(); $('#MessageModal').modal('hide');" class="btn">Close</a>
-		  </div>
+		<div class="modal fade" id="MessageModal" tabindex="-1"
+			role="dialog" aria-labelledby="MessageModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="MessageModalLabel"><?php echo(CConfig::SNC_SITE_NAME);?> - Closing Test</h4>
+					</div>
+					<div id="ModalMsgStr" class="modal-body">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
 		</div>
 		</div>
 		<script  language="JavaScript" type="text/javascript">
 		//parent.ShowLeftMenu();
 		OnTransChoiceChange();
-		
-		window.onload = function() {
+
+		$(document).ready(function() {
 			TestTimer();
 			HeartBeat();
 			$("div.mipcat_code_ques").snippet("c",{style:"vim"});
@@ -771,7 +798,7 @@
 			?>
 
 			ToggleSections();
-		}
+		});
 
 		$("#btn_end_exam").click(function(){
 			if(OnEndExam.bExamEnded == false)
@@ -1045,7 +1072,7 @@
 			$qtAry		= array(CConfig::QT_READ_COMP  => "RC", CConfig::QT_DIRECTIONS => "DR");
 			$color		= $colorAry[0];
 			$index = 0;
-			$icon_ary = array(CConfig::QT_READ_COMP  => "<i class='icon-align-justify'></i>", CConfig::QT_DIRECTIONS => "<i class='icon-arrow-right'></i>");
+			$icon_ary = array(CConfig::QT_READ_COMP  => "<i class='fa fa-align-justify'></i>", CConfig::QT_DIRECTIONS => "<i class='fa fa-arrow-right'></i>");
 			$class_ary = array("default", "danger");
 			
 			foreach($objAnsAry as $secIndex => $ansSection)
@@ -1187,5 +1214,11 @@
 		}
 		?>
 		</script>
+		<script type="text/x-mathjax-config">
+  			MathJax.Hub.Config({
+    			tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+ 			});
+		</script>
+		</div>
 	</body>
 </html>

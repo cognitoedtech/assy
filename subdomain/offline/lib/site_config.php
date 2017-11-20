@@ -7,9 +7,9 @@
 		//const ROOT_URL = "http://www.ezeeassess.com" ;
 		//const ROOT_URL = "http://mcat.mastishka.com" ;
 		//const ROOT_URL = "http://localhost/mipcat" ;
-		const ROOT_URL = "http://offline_localhost:5087" ;
+		//const ROOT_URL = "http://:5087" ;
 		//const ROOT_URL = "http://".CSettings::IP.":5087";
-
+		const ROOT_URL = "http://localhost/offline" ;
 		const FREE_ROOT_URL = "http://free.localhost";
 		
 		const DEBUG_SITE		= false;

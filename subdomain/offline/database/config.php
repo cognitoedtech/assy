@@ -6,7 +6,7 @@
 		
 		const HOST 				= "localhost";
 		const USER_NAME	 		= "root";
-		const PASSWORD	 		= "root"; //"mipcat@racks123";
+		const PASSWORD	 		= ""; //"mipcat@racks123";
 		
 		//const PAYPAL_URL				= "https://www.sandbox.paypal.com/cgi-bin/webscr";
 		const PAYPAL_URL				= "https://www.paypal.com/cgi-bin/webscr";

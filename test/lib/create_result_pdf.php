@@ -1505,6 +1505,8 @@
 			{
 				$org_logo = $objDB->GetOrganizationName($org_id);
 			}
+			
+			
 				
 			$objTestHelper = new CTestHelper();
 			$sectional_details = $objTestHelper->GetSectionDetails($unpreparedResultAry['test_id']);

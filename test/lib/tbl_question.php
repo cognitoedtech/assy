@@ -182,7 +182,7 @@
 			
 			$tag_cond = "";
 			$order_by = " rand()";
-			if(!empty($objMCPAParam['tag_id']))
+			if(!empty($objMCPAParam['tag_id']) && $objMCPAParam['tag_id']!= -1)
 			{
 				$tag_cond = sprintf("AND tag_id='%s'", $objMCPAParam['tag_id']);
 				
