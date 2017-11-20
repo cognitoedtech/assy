@@ -8,9 +8,9 @@
 		//const ROOT_URL = "http://mcat.mastishka.com" ;
 
 		const STICKY_URL = "http://localhost" ;
-		const LOCALHOST_PROJECT = "/mipcat";
+		const LOCALHOST_PROJECT = "/ezeeassess-integration";
 		
-		const ROOT_URL = "http://localhost/mipcat" ;
+		const ROOT_URL = "http://localhost/ezeeassess-integration" ;
 
 		const HIGHCHART_SERVER_URL = "http://127.0.0.1:3003";
 
