@@ -10,6 +10,8 @@
 	//$qry = split("[=&]", $parsAry["query"]);
 	
 	$objDB = new CMcatDB();
+	//$mcq_type = $_POST["mcq_type"];
+	$mcq_type = NULL;
 	
 	if( isset($_POST["sub_id"]) )
 	{
@@ -18,12 +20,12 @@
 			if($_POST["mipcat"] == 1)
 			{
 				//echo("Test 1");
-				$objDB->PrepareTopicCombo(null, $_POST["sub_id"], $_POST["tag_id"], $_POST['lang'], $_POST["mcq_type"]);
+				$objDB->PrepareTopicCombo(null, $_POST["sub_id"], $_POST["tag_id"], $_POST['lang'], $mcq_type);
 			}
 			else 
 			{
 				//echo("Test 2");
-				$objDB->PrepareTopicCombo($user_id, $_POST["sub_id"], $_POST["tag_id"], $_POST['lang'], $_POST["mcq_type"], -1, $_POST["reconcile"]);
+				$objDB->PrepareTopicCombo($user_id, $_POST["sub_id"], $_POST["tag_id"], $_POST['lang'], $mcq_type, -1, $_POST["reconcile"]);
 			}
 		}
 	}

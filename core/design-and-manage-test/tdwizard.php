@@ -259,16 +259,16 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 									<hr />
 								</div>
 							</div>
-							<div class="row fluid">
+							<div class="row fluid" style="display:none;">
 								<div class="col-sm-12 col-md-12 col-lg-12">
 									<label>Question Type:</label>
-									<input type="radio" name="ques_type" value="<?php echo(CConfig::QUES_CTG_SCA);?>" checked />
+									<input type="radio" name="ques_type" value="<?php echo(CConfig::QUES_CTG_SCA);?>" />
 									<span style='color: darkred'><b>Single Correct Answer</b></span>
 									<span style="color: blue">(MCQ-SCA)</span>
 									<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span style='color: red'>MCQ-SCA:</span> Questions with only single correct answer."></i>
 									<br /> 
 									
-									<input type="radio" name="ques_type" value="<?php echo(CConfig::QUES_CTG_MCA);?>" />
+									<input type="radio" name="ques_type" value="<?php echo(CConfig::QUES_CTG_MCA);?>" checked/>
 									<span style='color: darkred'><b>Multiple Correct Answers</b></span>
 									<span style="color: blue">(MCQ-MCA)</span>
 									<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span style='color: red'>MCQ-MCA:</span> Questions with multiple correct answers."></i>
