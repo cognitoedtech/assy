@@ -43,6 +43,7 @@
 					$QuesAry[$qIndex]['replaced_para_desc'] = str_ireplace("&amp;","&",str_ireplace("&lt;","<",str_ireplace("&gt;",">",str_ireplace("<div class='mipcat_code_ques'>", CConfig::OPER_CODE_START, str_ireplace("</div>", CConfig::OPER_CODE_END,$QuesAry[$qIndex]['para_desc'])))));
 				}
 			}
+			
 			$qIndex++;
 		}
 			//echo $qIndex;

@@ -169,7 +169,7 @@
 				</div>				
 				<div class="form-group <?php echo(($quesType == CConfig::QT_MATRIX) ? "hide_div" : ""); ?>" id="option<?php echo($opt_idx + 1);?>_choice_text">
 				    <div class="col-lg-7 col-md-7 col-sm-7">
-				  		<input class="form-control input-sm" value="<?php echo((CUtils::getMimeType(base64_decode($optDetails[$opt_idx]['option'])) != "application/octet-stream")?"":str_ireplace("&amp;","&",str_ireplace("&lt;","<",str_ireplace("&gt;",">",str_ireplace("<div class='mipcat_code_ques'>", CConfig::OPER_CODE_START, str_ireplace("</div>", CConfig::OPER_CODE_END,base64_decode($optDetails[$opt_idx]['option'])))))));?>" type="text" name="option<?php echo($opt_idx + 1);?>_choice_text">
+				  		<input class="form-control input-sm" value="<?php echo((CUtils::getMimeType(base64_decode($optDetails[$opt_idx]['option'])) != "application/octet-stream")?"":htmlentities(str_ireplace("&amp;","&",str_ireplace("&lt;","<",str_ireplace("&gt;",">",str_ireplace("<div class='mipcat_code_ques'>", CConfig::OPER_CODE_START, str_ireplace("</div>", CConfig::OPER_CODE_END,base64_decode($optDetails[$opt_idx]['option']))))))));?>" type="text" name="option<?php echo($opt_idx + 1);?>_choice_text">
 					</div>
 				</div>
 				<div class="form-group <?php echo(($quesType == CConfig::QT_MATRIX) ? "hide_div" : ""); ?>" id="option<?php echo($opt_idx + 1);?>_choice_image" style="display:none;">

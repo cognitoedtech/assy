@@ -1480,13 +1480,21 @@
 					{
 						$optionsAry["black"][$blckI++] = sprintf("<option value='%s'>%s</option>", $topic[0], $topic[1]);
 					}
+					else if($topic_type_ary['ques_type'] == CConfig::QT_INT)
+					{
+						$optionsAry["black"][$blckI++] = sprintf("<option value='%s'>%s - MT</option>", $topic[0], $topic[1]);
+					}
+					else if($topic_type_ary['ques_type'] == CConfig::QT_MATRIX)
+					{
+						$optionsAry["black"][$blckI++] = sprintf("<option value='%s'>%s - IN</option>", $topic[0], $topic[1]);
+					}
 					else if($topic_type_ary['ques_type'] == CConfig::QT_READ_COMP)
 					{
-						$optionsAry["green"][$greenI++] = sprintf("<option style='color:green;' value='%s'>%s</option>", $topic[0], $topic[1]);
+						$optionsAry["green"][$greenI++] = sprintf("<option style='color:green;' value='%s'>%s - RC</option>", $topic[0], $topic[1]);
 					}
 					else
 					{
-						$optionsAry["blue"][$blueI++] = sprintf("<option style='color:darkblue;' value='%s'>%s</option>", $topic[0], $topic[1]);
+						$optionsAry["blue"][$blueI++] = sprintf("<option style='color:darkblue;' value='%s'>%s - DIR</option>", $topic[0], $topic[1]);
 					}
 				}
 				else 
@@ -1495,13 +1503,21 @@
 					{
 						$optionsAry["black"][$blckI++] = sprintf("<option esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
 					}
+					else if($topic_type_ary['ques_type'] == CConfig::QT_INT)
+					{
+						$optionsAry["black"][$blckI++] = sprintf("<option esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s - MT (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
+					}
+					else if($topic_type_ary['ques_type'] == CConfig::QT_MATRIX)
+					{
+						$optionsAry["black"][$blckI++] = sprintf("<option esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s - IN (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
+					}
 					else if($topic_type_ary['ques_type'] == CConfig::QT_READ_COMP)
 					{
-						$optionsAry["green"][$greenI++] = sprintf("<option style='color:green;' esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
+						$optionsAry["green"][$greenI++] = sprintf("<option style='color:green;' esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s - RC (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
 					}
 					else
 					{
-						$optionsAry["blue"][$blueI++] = sprintf("<option style='color:darkblue; esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
+						$optionsAry["blue"][$blueI++] = sprintf("<option style='color:darkblue; esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s - DR (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
 					}	
 				}
 				
