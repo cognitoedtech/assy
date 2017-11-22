@@ -395,7 +395,7 @@
 						$cell_value = trim($cell->getValue());
 						$pos = stripos($cell_value, CConfig::OPER_IMG."[");
 						$ea_pos = stripos($cell_value, CConfig::EA_OPER_IMG."[");
-							
+						
 						if($pos !== false)
 						{
 							$img = trim(substr($cell_value, 13,-1));
@@ -595,9 +595,11 @@
 				if($row->getRowIndex() > 1)
 				{
 					$col_count = $this->CountColumn($worksheet, $row->getRowIndex());
-					if($col_count < count(CConfig::$QUES_XLS_HEADING_ARY))
+					$min_col_count = ($ques_type == CConfig::QT_INT) ? (count(CConfig::$QUES_XLS_HEADING_ARY) - 1) : count(CConfig::$QUES_XLS_HEADING_ARY);
+					
+					if($col_count < $min_col_count)
 					{
-						$generated_errors .= "[row ".$row->getRowIndex()."]   Some value has been left blank in specified row.There should be atleast two options with each question.;";
+						$generated_errors .= "[row ".$row->getRowIndex()."]   Some value has been left blank in specified row.There should be atleast one option for integer question and two options with other question.;";
 					}
 					else 
 					{
@@ -609,9 +611,6 @@
 							$cell_val = str_replace("’", "'", trim($cell->getValue()));
 							$pos = stripos($cell_val, CConfig::OPER_IMG."[");
 							$ea_pos = stripos($cell_val, CConfig::EA_OPER_IMG."[");
-							
-							$mat_opt_pos = stripos($cell_val, CConfig::OPER_QT_MATRIX."[");
-							$mat_opt_ea_pos = stripos($cell_val, CConfig::EA_OPER_QT_MATRIX."[");
 							
 							$img_content = "";
 							$img_type = "";
@@ -766,7 +765,7 @@
 										{
 											$generated_errors .= "[".$cell_index.$row->getRowIndex()."](row ".$row->getRowIndex(). " : column ".$cell_index.") :   '".$cell_val."' is not acceptable in this cell. Answer should be a numeric value between 1 and ".($col_count - (count(CConfig::$QUES_XLS_HEADING_ARY) - 2))." for this question. If you do not find such issue then please check specified row for blank cells.;";
 										}
-										else if(preg_match('/^\d+$/',$cell_val) != 0 && (intval($cell_val) < 1 || intval($cell_val) > ($col_count - (count(CConfig::$QUES_XLS_HEADING_ARY) - 2))))
+										else if(preg_match('/^\d+$/',$cell_val) != 0 && $ques_type != CConfig::QT_INT && (intval($cell_val) < 1 || intval($cell_val) > ($col_count - (count(CConfig::$QUES_XLS_HEADING_ARY) - 2))))
 										{
 											$generated_errors .= "[".$cell_index.$row->getRowIndex()."](row ".$row->getRowIndex(). " : column ".$cell_index.") :   '".$cell_val."' is not acceptable in this cell. Answer should be a numeric value between 1 and ".($col_count - (count(CConfig::$QUES_XLS_HEADING_ARY) - 2))." for this question. If you do not find such issue then please check specified row for blank cells.;";
 										}
@@ -1011,7 +1010,7 @@
 			}
 			
 			//echo $tag." ".$tag_id."hello";
-			if($ques_type == CConfig::QT_NORMAL)
+			if($ques_type == CConfig::QT_NORMAL || $ques_type == CConfig::QT_INT || $ques_type == CConfig::QT_MATRIX)
 			{
 				$row_processed = $this->InsertNormalQuestions($worksheet, $user_id, $ques_type, $tag_id, $zip_file, $is_eq);
 			}

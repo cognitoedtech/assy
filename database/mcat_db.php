@@ -651,7 +651,7 @@
 
             if(!$is_eq)
             {
-            	$this->InsertOptions($row, $ques_id);
+            	$this->InsertOptions($row, $ques_id, $ques_type);
             }
             else 
             {
@@ -4156,13 +4156,20 @@
         	}
         }
         
-        public function InsertOptions($row, $ques_id)
+        public function InsertOptions($row, $ques_id, $ques_type = NULL)
         {
             $option_ary = array();
             $answers    = "";
             $index      = 0;
 			
             $comma_pos = strpos($row[CConfig::$QUES_XLS_HEADING_ARY["Answer"]], ",");
+            
+            // Remove any option value if it equals zero
+            if($ques_type != CConfig::QT_INT) {
+	            foreach (array_keys($row[CConfig::$QUES_XLS_HEADING_ARY["Answer"]], 0) as $key) {
+	            	unset($array[$key]);
+	            }
+            }
 			
             if($comma_pos !== false)
             {
