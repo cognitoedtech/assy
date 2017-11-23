@@ -105,6 +105,8 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 					<div class="col-lg-2 col-md-2 col-sm-2">
 					   	<select class="form-control input-sm" id="ques_type" name="ques_type">
 							<option value='<?php echo(CConfig::QT_NORMAL);?>'>Normal</option>
+							<option value='<?php echo(CConfig::QT_INT);?>'>Integer</option>
+							<option value='<?php echo(CConfig::QT_MATRIX);?>'>Matrix</option>
 							<option value='<?php echo(CConfig::QT_READ_COMP);?>'>Reading Comprehension</option>
 							<option value='<?php echo(CConfig::QT_DIRECTIONS);?>'>Directions</option>
 						</select>

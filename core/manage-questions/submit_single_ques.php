@@ -55,6 +55,7 @@ $objIncludeJsCSS->IncludeJqueryValidateMinJS("../../");
 $objIncludeJsCSS->IncludeMetroNotificationJS("../../");
 $objIncludeJsCSS->IncludeBootStrapFileUploadMinJS("../../");
 $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
+$objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 ?>
 
 <style type="text/css">
@@ -122,7 +123,21 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 			          		</label>
 			        	</div>
 			        </div>
-			        <div class="col-lg-3 col-md-3 col-sm-3" style="width: 23%">
+			        <div class="col-lg-1 col-md-1 col-sm-1">
+				        <div class="radio">
+				          <label>
+				            <input type="radio" id="integer" value='<?php echo(CConfig::QT_INT); ?>' name="ques_type" onchange="OnQuesTypeChange();"> Integer
+				          </label>
+				        </div>
+				     </div>
+				     <div class="col-lg-1 col-md-1 col-sm-1">
+				        <div class="radio">
+				          <label>
+				            <input type="radio" id="matrix" value='<?php echo(CConfig::QT_MATRIX); ?>' name="ques_type" onchange="OnQuesTypeChange();"> Matrix
+				          </label>
+				        </div>
+				     </div>
+			        <div class="col-lg-2 col-md-2 col-sm-2" style="width: 23%">
 				        <div class="radio">
 				          <label>
 				            <input type="radio" id="rc" value='<?php echo(CConfig::QT_READ_COMP); ?>' name="ques_type" onchange="OnQuesTypeChange();"> Reading Comprehension(RC)
@@ -136,6 +151,20 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 				          </label>
 				        </div>
 				     </div>
+			     </div>
+			     <div id="sca_mca_choice">
+			     	<div class="form-group">
+			     		<div class="col-lg-2 col-md-2 col-sm-2">
+				    		<label class="control-label">MCA Question:</label>
+				    	</div>
+				    	<div class="col-lg-10 col-md-10 col-sm-10">
+				        	<div class="checkbox">
+				          		<label>
+						            <input type="checkbox" id="mca" name="mca" value="1"> Yes (Tick this, if this question should be treated as Multiple Correct Answer)
+				          		</label>
+				        	</div>
+				        </div>	
+				    </div>
 			     </div>
 			     <div id="rc_dir_existing" style="display:none;">
 			     	<div class="form-group">
@@ -300,26 +329,51 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 					</div>
 				</div>
 				
+				<div class="form-group" id="matrix-optons" style="display:none;">
+				   	<div class="col-lg-2 col-md-2 col-sm-2">
+				    	<label class="control-label">Matrix Options :</label>
+				    </div>
+				    <div class="col-lg-4 col-md-4 col-sm-4">
+				    	<div class="input-group">
+				    		<span class="input-group-addon" id="basic-addon2">Left Column : </span>
+				    		<input readonly type="text" id="matrix_left_rows" name="matrix_left_rows" class="form-control" value="2" min="2" max="10">
+						</div>
+				    </div>
+				    <div class="col-lg-4 col-md-4 col-sm-4">
+				    	<div class="input-group">
+				    		<span class="input-group-addon" id="basic-addon2">Right Column : </span>
+							<input readonly type="text" id="matrix_right_rows" name="matrix_right_rows" class="form-control" value="2" min="2" max="10">
+						</div>
+				    </div>
+				</div>
 				<div class="form-group">
 				   	<div class="col-lg-2 col-md-2 col-sm-2">
 				    	<label class="control-label">Option 1 :</label>
 				    </div>
-				    <div class="col-lg-1 col-md-1 col-sm-1">
-				        <div class="radio">
-				       		<label>
-					           <input type="radio" value="text" name="option1_choice" onchange="OnFormateChange(this);" checked> Text
-				        	</label>
-				    	</div>
-				    </div>	
-					<div class="col-lg-1 col-md-1 col-sm-1">
-					    <div class="radio">
-					    	<label>
-					        	<input type="radio" value="image" name="option1_choice" onchange="OnFormateChange(this);"> Image
-					    	</label>
+				    <div class="col-lg-1 col-md-1 col-sm-1 matrix_dropdown_opt" style="display:none;">
+				    	<select name="option1_choice_select" class="matrix_dropdown_select">
+				    		<option value="A"> A </option>
+				    		<option value="B"> B </option>
+				    	</select>
+				    </div>
+				    <div class="matrix_dropdown_opt_inverse">
+					    <div class="col-lg-1 col-md-1 col-sm-1">
+					        <div class="radio">
+					       		<label>
+						           <input type="radio" value="text" name="option1_choice" onchange="OnFormateChange(this);" checked> Text
+					        	</label>
+					    	</div>
+					    </div>	
+						<div class="col-lg-1 col-md-1 col-sm-1">
+						    <div class="radio">
+						    	<label>
+						        	<input type="radio" value="image" name="option1_choice" onchange="OnFormateChange(this);"> Image
+						    	</label>
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="form-group" id="option1_choice_text">
+				<div class="form-group matrix_dropdown_opt_inverse" id="option1_choice_text">
 					<div class="col-lg-2 col-md-2 col-sm-2">
 				    	<label class="control-label"></label>
 				    </div>
@@ -344,46 +398,54 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 					</div>
 				</div>
 				
-				<div class="form-group">
-				   	<div class="col-lg-2 col-md-2 col-sm-2">
-				    	<label class="control-label">Option 2 :</label>
-				    </div>
-				    <div class="col-lg-1 col-md-1 col-sm-1">
-				        <div class="radio">
-				       		<label>
-					           <input type="radio" value="text" name="option2_choice" onchange="OnFormateChange(this);" checked> Text
-				        	</label>
-				    	</div>
-				    </div>	
-					<div class="col-lg-1 col-md-1 col-sm-1">
-					    <div class="radio">
-					    	<label>
-					        	<input type="radio" value="image" name="option2_choice" onchange="OnFormateChange(this);"> Image
-					    	</label>
+				<div id="option2_div">
+					<div class="form-group">
+					   	<div class="col-lg-2 col-md-2 col-sm-2">
+					    	<label class="control-label">Option 2 :</label>
+					    </div>
+					    <div class="col-lg-1 col-md-1 col-sm-1 matrix_dropdown_opt" style="display:none;">
+					    	<select name="option2_choice_select" class="matrix_dropdown_select">
+					    		<option value="A"> A </option>
+					    		<option value="B"> B </option>
+					    	</select>
+					    </div>
+					    <div class="col-lg-1 col-md-1 col-sm-1 matrix_dropdown_opt_inverse">
+					        <div class="radio">
+					       		<label>
+						           <input type="radio" value="text" name="option2_choice" onchange="OnFormateChange(this);" checked> Text
+					        	</label>
+					    	</div>
+					    </div>	
+						<div class="col-lg-1 col-md-1 col-sm-1 matrix_dropdown_opt_inverse">
+						    <div class="radio">
+						    	<label>
+						        	<input type="radio" value="image" name="option2_choice" onchange="OnFormateChange(this);"> Image
+						    	</label>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="form-group" id="option2_choice_text">
-					<div class="col-lg-2 col-md-2 col-sm-2">
-				    	<label class="control-label"></label>
-				    </div>
-				    <div class="col-lg-4 col-md-4 col-sm-4">
-				  		<input class="form-control input-sm"  type="text" name="option2_choice_text">
+					<div class="form-group matrix_dropdown_opt_inverse" id="option2_choice_text">
+						<div class="col-lg-2 col-md-2 col-sm-2">
+					    	<label class="control-label"></label>
+					    </div>
+					    <div class="col-lg-4 col-md-4 col-sm-4">
+					  		<input class="form-control input-sm"  type="text" name="option2_choice_text">
+						</div>
 					</div>
-				</div>
-				<div class="form-group" id="option2_choice_image" style="display:none;">
-					<div class="col-lg-2 col-md-2 col-sm-2">
-					   	<label class="control-label"></label>
-					</div>
-					<div class="col-lg-7 col-md-7 col-sm-7">
-				    	<div class="fileupload fileupload-new" data-provides="fileupload">
-							<div class="fileupload-preview thumbnail" style="width: 90%; height: 300px;"></div>
-							<div>
-								<span class="btn btn-sm btn-success btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="option2_choice_img" /></span>
-								<a href="#" class="btn btn-sm btn-success fileupload-exists" data-dismiss="fileupload">Remove</a>
+					<div class="form-group" id="option2_choice_image" style="display:none;">
+						<div class="col-lg-2 col-md-2 col-sm-2">
+						   	<label class="control-label"></label>
+						</div>
+						<div class="col-lg-7 col-md-7 col-sm-7">
+					    	<div class="fileupload fileupload-new" data-provides="fileupload">
+								<div class="fileupload-preview thumbnail" style="width: 90%; height: 300px;"></div>
+								<div>
+									<span class="btn btn-sm btn-success btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="option2_choice_img" /></span>
+									<a href="#" class="btn btn-sm btn-success fileupload-exists" data-dismiss="fileupload">Remove</a>
+								</div>
+							</div><br />
+							<div id="option2_choice_img_error">
 							</div>
-						</div><br />
-						<div id="option2_choice_img_error">
 						</div>
 					</div>
 				</div>
@@ -392,14 +454,14 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 				</div>
 				<input type="hidden" id="options_count" value="2" name="options_count">
 				
-				<div class="form-group">
+				<div class="form-group matrix_dropdown_opt_inverse">
 			      <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
 			        <input class="btn btn-sm btn-info" id='add_option' onclick="AddOption();" type='button' value='Add Option'>
 			        <input class="btn btn-sm btn-info" id='remove_option' onclick="RemoveOption();" type='button' value='Remove Option' disabled>
 			      </div>
 			    </div>
 			    
-			    <div class="form-group">
+			    <div class="form-group matrix_dropdown_opt_inverse">
 					<div class="col-lg-2 col-md-2 col-sm-2">
 						<label for="answers" class="control-label">Correct Options :</label>
 					</div>
@@ -492,6 +554,52 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 	<script type="text/javascript">
 		var optCounter  = 3;
 
+		function OnMatrixLeftRowsChange(step, prevStep){
+			var up = (prevStep < step ) ? true : false;
+			var matRightStep = $('#matrix_right_rows').val();
+			//alert(up + " - (L : " + prevStep + " , R : " + matRightStep + ") - " + step);
+			
+			if (step > matRightStep)
+			{
+				$("#matrix_left_rows").val(matRightStep);
+				alert("Number of rows in Left column can't be greater than Right column.");
+			}
+			else
+			{
+				if (up) {
+					AddOption();
+				}
+				else {
+					RemoveOption();
+				}
+			}
+		}
+		
+		function OnMatrixRightRowsChange(step, prevStep){
+			var up = (prevStep < step ) ? true : false;
+			var cOpt = 'A';
+			var matLeftStep = $('#matrix_left_rows').val();
+			
+			//alert(step);
+			
+			if (matLeftStep > step )
+			{
+				$("#matrix_left_rows").val(step);
+				alert("Number of rows in Left column can't be greater than Right column.");
+			}
+			else
+			{
+				var newOpt = String.fromCharCode(cOpt.charCodeAt(0) + step - 1);
+				
+				if (up){
+					$(".matrix_dropdown_select").append('<option value="'+newOpt+'">'+newOpt+'</option>');
+				}
+				else {
+					$(".matrix_dropdown_select option[value='"+newOpt+"']").nextAll().remove();
+				}
+			}
+		}
+		
 		function GetTagHints()
 		{
 			$('#ques_tag').typeahead('destroy');
@@ -511,39 +619,65 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 		$.getJSON("../ajax/ajax_get_subjects.php",{term: encodeURIComponent($("#subject").val())}, function(data){
 			$("#subject").typeahead({ source:data });
 		});
-		
+
+		var bOpt2Removed = false;
 		function OnQuesTypeChange()
         {
+	        //alert(bOpt2Removed);
+	        
 			$("#upld_ques_exl_form").validate().resetForm();
         	var val = $("input[name=ques_type]:checked").val();
         	
         	if(val == "<?php echo(CConfig::QT_READ_COMP); ?>") 
         	{
-        		
-	    	    $("#para_img_id").hide();
+        		$("#sca_mca_choice").show();
+        		$(".matrix_dropdown_opt").hide();
+        		$(".matrix_dropdown_opt_inverse").show();
+        		$("#para_img_id").hide();
 	    	    $("#topic_label").text("Title :");
 	    	    $("#topic_selection_msg").text("(Please select unique title.)");
         		$("#rc_dir_new").hide();
+        		$("#matrix-optons").hide();
         		$("#rc_dir_id").show();
         		$("#dir_para_id").hide();
 				$("#rc_para_id").show();
+				
+				if(this.bOpt2Removed == true)
+				{
+					bOpt2Removed = false;
+					AddOption();
+				}
+				
+				$("input[name='option1_choice']").prop( "disabled", false );
+				$("#add_option").show();
 				$("#image").removeAttr("checked");
 				$("#text").attr("checked","checked");
 				$("#para_text").show();
 				$("#rc_dir_existing").show();
 				$("input:radio[name='rc_dir_existing_choice'][value ='no']").prop('checked', true);
 				OnExistingParaChoiceChange();
-				
         	}
         	else if(val == "<?php echo(CConfig::QT_DIRECTIONS); ?>")
         	{
+        		$("#sca_mca_choice").show();
+        		$(".matrix_dropdown_opt").hide();
+        		$(".matrix_dropdown_opt_inverse").show();
         		$("#para_img_id").hide();
         		$("#rc_para_id").hide();
         		$("#topic_label").text("Title :");
         		$("#topic_selection_msg").text("(Please select unique title.)");
         		$("#rc_dir_new").hide();
+        		$("#matrix-optons").hide();
         		$("#rc_dir_id").show();
         		$("#dir_para_id").show();
+        		
+				if(bOpt2Removed == true)
+				{
+					bOpt2Removed = false;
+					AddOption();
+				}
+        		$("input[name='option1_choice']").prop( "disabled", false );
+				$("#add_option").show();
 				$("#image").removeAttr("checked");
 				$("#text").attr("checked","checked");
 				$("#para_text").show();
@@ -551,18 +685,69 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 				$("input:radio[name='rc_dir_existing_choice'][value ='no']").prop('checked', true);
 			    OnExistingParaChoiceChange();					
         	}
-        	else
+        	else if (val == "<?php echo(CConfig::QT_INT); ?>")
         	{
+        		$("#sca_mca_choice").hide();
+        		$(".matrix_dropdown_opt").hide();
+        		$(".matrix_dropdown_opt_inverse").show();
         		$("#rc_para_id").hide();
         		$("#dir_para_id").hide();
 				$("#rc_dir_id").hide();
+				$("#matrix-optons").hide();
 				$("#rc_dir_questions").hide();
 				$("#rc_dir_existing").hide();
+				$("#rc_dir_existing").hide();
+				
+				bOpt2Removed = true;
+				for(i=optCounter; i > 2; i--)
+				{
+					RemoveOption();
+				}
+				//$("#answers option[value='option1']").nextAll().remove();
+
+				$("input[name='option1_choice']").prop( "disabled", true );
+				$("#add_option").hide();
 				$("#topic_label").text("Topic :");
 				$("#topic_selection_msg").text("(Topic should be different from RC or directions para title already submitted.)");
 				$("#rc_dir_new").show();
 				$("#topic_id").show();
 				$("#submit_button").removeAttr("disabled");
+	        }
+        	else
+        	{
+        		if(bOpt2Removed == true)
+				{
+        			bOpt2Removed = false;
+					AddOption();
+				}
+                
+        		$("#rc_para_id").hide();
+        		$("#dir_para_id").hide();
+				$("#rc_dir_id").hide();
+				$("#rc_dir_questions").hide();
+				$("#rc_dir_existing").hide();
+				$("input[name='option1_choice']").prop( "disabled", false );
+				$("#add_option").show();
+				$("#topic_label").text("Topic :");
+				$("#topic_selection_msg").text("(Topic should be different from RC or directions para title already submitted.)");
+				$("#rc_dir_new").show();
+				$("#topic_id").show();
+				$("#submit_button").removeAttr("disabled");
+
+				if (val == "<?php echo(CConfig::QT_MATRIX); ?>")
+            	{
+            		$("#sca_mca_choice").hide();
+            		$("#matrix-optons").show();
+            		$(".matrix_dropdown_opt").show();
+            		$(".matrix_dropdown_opt_inverse").hide();
+            	}
+        		else
+        		{
+            		$("#sca_mca_choice").show();
+        			$("#matrix-optons").hide();
+        			$(".matrix_dropdown_opt").hide();
+            		$(".matrix_dropdown_opt_inverse").show();
+                }
 	        }
 		}
 
@@ -646,15 +831,37 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 
 		function AddOption()
         {
-			$("#upld_ques_exl_form").validate().resetForm();
+	        $("#upld_ques_exl_form").validate().resetForm();
+			var style = "display:none;";
+			var invStyle = "";
+			var selVal = $("input[name=ques_type]:checked").val();
+			var matRightStep = $('#matrix_right_rows').val();
+			if(selVal == <?php echo(CConfig::QT_MATRIX); ?>)
+			{
+				style = "";
+				invStyle = "display:none;";
+			}
+			
 			var sOpt = "<div id='option"+optCounter+"_div'>";
+
 			sOpt += "<div class='form-group'>";
 			sOpt += "<div class='col-lg-2 col-md-2 col-sm-2'><label class='control-label'>Option "+optCounter+" :</label></div>";
-			sOpt += "<div class='col-lg-1 col-md-1 col-sm-1'><div class='radio'><label><input type='radio' value='text' name='option"+optCounter+"_choice' onchange='OnFormateChange(this);' checked> Text</label></div></div>";
-			sOpt += "<div class='col-lg-1 col-md-1 col-sm-1'><div class='radio'><label><input type='radio' value='image' name='option"+optCounter+"_choice' onchange='OnFormateChange(this);'> Image</label></div></div>";
+
+			sOpt += "<div class='col-lg-1 col-md-1 col-sm-1 matrix_dropdown_opt' style='"+style+"'>";
+			sOpt += "<select name='option"+optCounter+"_choice_select' class='matrix_dropdown_select'>";
+			var cOpt = 'A';
+			for (i=0; i < matRightStep; i++) {
+				var newOpt = String.fromCharCode(cOpt.charCodeAt(0) + i);
+				sOpt += "<option value='"+newOpt+"'> "+ newOpt +" </option>";
+			}
+			sOpt += "</select>";
 			sOpt += "</div>";
 
-			sOpt += "<div class='form-group' id='option"+optCounter+"_choice_text'>";
+			sOpt += "<div class='col-lg-1 col-md-1 col-sm-1 matrix_dropdown_opt_inverse' style='"+invStyle+"'><div class='radio'><label><input type='radio' value='text' name='option"+optCounter+"_choice' onchange='OnFormateChange(this);' checked> Text</label></div></div>";
+			sOpt += "<div class='col-lg-1 col-md-1 col-sm-1 matrix_dropdown_opt_inverse' style='"+invStyle+"'><div class='radio'><label><input type='radio' value='image' name='option"+optCounter+"_choice' onchange='OnFormateChange(this);'> Image</label></div></div>";
+			sOpt += "</div>";
+
+			sOpt += "<div class='form-group matrix_dropdown_opt_inverse' id='option"+optCounter+"_choice_text' style='"+invStyle+"'>";
 			sOpt += "<div class='col-lg-2 col-md-2 col-sm-2'><label class='control-label'></label></div><div class='col-lg-4 col-md-4 col-sm-4'><input class='form-control input-sm' opt_count='"+optCounter+"' type='text' name='option"+optCounter+"_choice_text'></div>";
 			sOpt += "</div>";
 
@@ -701,7 +908,7 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
 
         function RemoveOption()
         {
-        	$("#upld_ques_exl_form").validate().resetForm();
+       	 	$("#upld_ques_exl_form").validate().resetForm();
         	var numOfOptions = parseInt($("#options_count").val());
 
 			$("select#answers option:last").remove();
@@ -720,7 +927,17 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
     	}
 
         $(document).ready(function() {
-
+            $('#matrix_left_rows').bootstrapNumber({
+        		upClass: 'success',
+        		downClass: 'danger',
+        		success: OnMatrixLeftRowsChange
+        	});
+        	$('#matrix_right_rows').bootstrapNumber({
+        		upClass: 'success',
+        		downClass: 'danger',
+        		success: OnMatrixRightRowsChange
+        	});
+        	
     		if(save_success == 1)
     		{
     			 var not = $.Notify({
@@ -768,7 +985,16 @@ $objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
                 		required:true,
             		},
             		option2_choice_text: {
-                		required:true,
+                		required: function(){
+                    		var retVal = true;
+                			var val = $("input[name=ques_type]:checked").val();
+
+                			if(val == "<?php echo(CConfig::QT_INT); ?>")
+                			{
+                				retVal = false;
+                			}
+                			return retVal;
+                    	},
             		},
             		option2_choice_img: {
                 		required:true,

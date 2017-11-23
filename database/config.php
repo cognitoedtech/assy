@@ -158,6 +158,8 @@
         const QT_NORMAL				= 0;
 		const QT_READ_COMP			= 1;
         const QT_DIRECTIONS			= 2;
+        const QT_INT				= 3;
+        const QT_MATRIX				= 4;
         // - - - - - - - - - - - - - - - - - -
 		
         // - - - - - - - - - - - - - - - - - -
@@ -565,18 +567,24 @@
         const OPER_XLS_EMPTY 	= "#@MIPCAT_EMPTY";
         const OPER_CODE_START 	= "#@MIPCAT_CODE_START";
         const OPER_CODE_END 	= "#@MIPCAT_CODE_END";
+        const OPER_IMG			= "#@MIPCAT_IMG";
+        const OPER_QT_MATRIX	= "#@MIPCAT_QT_MAT";
         
         const EA_OPER_XLS_COPY  	= "#@EZEEASSESS_COPY";
         const EA_OPER_XLS_NA     	= "#@EZEEASSESS_NA";
         const EA_OPER_XLS_EMPTY 	= "#@EZEEASSESS_EMPTY";
         const EA_OPER_CODE_START 	= "#@EZEEASSESS_CODE_START";
         const EA_OPER_CODE_END 		= "#@EZEEASSESS_CODE_END";
+        const EA_OPER_IMG			= "#@EZEEASSESS_IMG";
+        const EA_OPER_QT_MATRIX		= "#@EZEEASSESS_QT_MAT";
         
         const QU_OPER_XLS_COPY  	= "#@QUIZUS_COPY";
         const QU_OPER_XLS_NA     	= "#@QUIZUS_NA";
         const QU_OPER_XLS_EMPTY 	= "#@QUIZUS_EMPTY";
         const QU_OPER_CODE_START 	= "#@QUIZUS_CODE_START";
         const QU_OPER_CODE_END 		= "#@QUIZUS_CODE_END";
+        const QU_OPER_IMG			= "#@QUIZUS_IMG";
+        const QU_OPER_QT_MATRIX		= "#@QUIZUS_QT_MAT";
        
         static $QUES_XLS_HEADING_ARY  = array("S No"=>'A',
         									  "Para Description"=>'B', 

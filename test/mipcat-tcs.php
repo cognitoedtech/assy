@@ -1069,7 +1069,7 @@ body {
 		var dir_img_nwidth, dir_img_width;
 		var dir_img_nheight, dir_img_height;
 		
-		$(document).ready(function() {
+		$(window).on("load",function() {
 			TestTimer();
 			HeartBeat();
 			$("div.mipcat_code_ques").snippet("c",{style:"vim"});

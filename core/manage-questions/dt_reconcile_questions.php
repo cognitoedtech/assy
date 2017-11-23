@@ -64,6 +64,8 @@ $objIncludeJsCSS->IncludeJquerySnippetJS("../../");
 $objIncludeJsCSS->IncludeBootStrapFileUploadMinJS("../../");
 $objIncludeJsCSS->IncludeUtilsJS("../../");
 $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
+$objIncludeJsCSS->IncludeBootStrap3TypeHeadMinJS("../../");
+$objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 ?>
 <style type="text/css">
 	.modal, .modal.fade.in {
@@ -101,6 +103,11 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 		padding:5px;
 		margin: 10px;
 	}
+	
+	.hide_div {
+		display: none;
+	}
+}
 </style>
 </head>
 <body>
@@ -239,7 +246,8 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 		        	<thead>
 						<tr>
 							<th data-class="expand" ><font color="#000000">S. No.</font></th>
-							<th data-class="phone,tablet" ><font color="#000000">Question</font></th>
+							<th data-class="phone,tablet"><font color="#000000">Q. ID</font></th>
+							<th data-class="phone,tablet"><font color="#000000">Question</font></th>
 							<th data-hide="phone,tablet"><font color="#000000">Options</font></th>
 							<th data-hide="phone,tablet"><font color="#000000">Difficulty</font></th>
 							<th data-hide="phone,tablet"><font color="#000000">Edit Question</font></th>
@@ -250,6 +258,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 					<tfoot>
 						<tr>
 							<th data-class="expand" ><font color="#000000">S. No.</font></th>
+							<th data-class="phone,tablet"><font color="#000000">Q. ID</font></th>
 							<th data-class="phone,tablet" ><font color="#000000">Question</font></th>
 							<th data-hide="phone,tablet"><font color="#000000">Options</font></th>
 							<th data-hide="phone,tablet"><font color="#000000">Difficulty</font></th>
@@ -447,6 +456,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 
 						   tableData += "<tr id='"+qInfoAry['ques_id']+"'>";
 						   tableData += "<td>"+(qIndex+1)+"</td>";
+						   tableData += "<td>"+qInfoAry['ques_id']+"</td>";
 						   tableData += "<td>"+qInfoAry['question']+"</td>";
 						   tableData += "<td><input type='button' class='btn btn-sm btn-success' value='Options' id='"+qInfoAry['ques_id']+"_options' onclick='GetOptions(this);'/></td>";	
 

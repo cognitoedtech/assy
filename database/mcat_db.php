@@ -651,7 +651,7 @@
 
             if(!$is_eq)
             {
-            	$this->InsertOptions($row, $ques_id);
+            	$this->InsertOptions($row, $ques_id, $ques_type);
             }
             else 
             {
@@ -1382,9 +1382,18 @@
 			return $query;
 		}*/
 		
-		public function UpdateQuestion($data_row, $ques_id, $mca)
+		public function UpdateQuestion($data_row, $ques_id, $mca, $tag_id = -1)
 		{
-			$query = sprintf("update question set question = '%s' , mca = '%s' where ques_id = '%s'", mysql_real_escape_string($data_row[CConfig::$QUES_XLS_HEADING_ARY["Question"]]), $mca, $ques_id);
+			$query = "";
+			
+			if($tag_id != -1)
+			{
+				$query = sprintf("update question set question = '%s' , mca = '%s', tag_id = '%s' where ques_id = '%s'", mysql_real_escape_string($data_row[CConfig::$QUES_XLS_HEADING_ARY["Question"]]), $mca, $tag_id, $ques_id);
+			}
+			else
+			{
+				$query = sprintf("update question set question = '%s' , mca = '%s' where ques_id = '%s'", mysql_real_escape_string($data_row[CConfig::$QUES_XLS_HEADING_ARY["Question"]]), $mca, $ques_id);
+			}
 			
 			mysql_query($query, $this->db_link) or die("Update Question Error :".mysql_error());
 			
@@ -1473,11 +1482,11 @@
 					}
 					else if($topic_type_ary['ques_type'] == CConfig::QT_READ_COMP)
 					{
-						$optionsAry["green"][$greenI++] = sprintf("<option style='color:green;' value='%s'>%s</option>", $topic[0], $topic[1]);
+						$optionsAry["green"][$greenI++] = sprintf("<option style='color:green;' value='%s'>%s - RC</option>", $topic[0], $topic[1]);
 					}
 					else
 					{
-						$optionsAry["blue"][$blueI++] = sprintf("<option style='color:darkblue;' value='%s'>%s</option>", $topic[0], $topic[1]);
+						$optionsAry["blue"][$blueI++] = sprintf("<option style='color:darkblue;' value='%s'>%s - DR</option>", $topic[0], $topic[1]);
 					}
 				}
 				else 
@@ -1488,11 +1497,11 @@
 					}
 					else if($topic_type_ary['ques_type'] == CConfig::QT_READ_COMP)
 					{
-						$optionsAry["green"][$greenI++] = sprintf("<option style='color:green;' esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
+						$optionsAry["green"][$greenI++] = sprintf("<option style='color:green;' esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s - RC (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
 					}
 					else
 					{
-						$optionsAry["blue"][$blueI++] = sprintf("<option style='color:darkblue; esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
+						$optionsAry["blue"][$blueI++] = sprintf("<option style='color:darkblue; esy='%s' mod='%s' hrd='%s' value='%s' type='%s' %s %s>%s - DR (Total:%d, E:%d, M:%d, H:%d)</option>", $nEasyCount, $nModerateCount, $nHardCount, $topic[0], $topic_type_ary['ques_type'], $linked_to, ($topic_id==$topic[0]?"selected='selected'":""), $topic[1], $nTotal, $nEasyCount, $nModerateCount, $nHardCount);
 					}	
 				}
 				
@@ -4148,13 +4157,20 @@
         	}
         }
         
-        public function InsertOptions($row, $ques_id)
+        public function InsertOptions($row, $ques_id, $ques_type = NULL)
         {
             $option_ary = array();
             $answers    = "";
             $index      = 0;
 			
             $comma_pos = strpos($row[CConfig::$QUES_XLS_HEADING_ARY["Answer"]], ",");
+            
+            // Remove any option value if it equals zero
+            if($ques_type != CConfig::QT_INT) {
+	            foreach (array_keys($row[CConfig::$QUES_XLS_HEADING_ARY["Answer"]], 0) as $key) {
+	            	unset($array[$key]);
+	            }
+            }
 			
             if($comma_pos !== false)
             {

@@ -19,8 +19,27 @@
 	{
 		$quesDisplayStyle = "";
 		$quesDetails      = $objDB->GetQuestionDetails($_POST['ques_id']);
+		$quesType	      = $quesDetails['ques_type'];
 		$optDetails       = json_decode($quesDetails['options'], true);
+		$ques_tag 		  = $objDB->GetQuestionTag($quesDetails['tag_id']);
 		$ansAry           = array();
+		$highestAlpha	  = '';
+		$highestAlphaPos  = 0;
+		$alphabets 		  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		
+		if($quesType == CConfig::QT_MATRIX) {
+			for($opt_idx = 0; $opt_idx < count($optDetails); $opt_idx++)
+			{
+				$cur_opt = (CUtils::getMimeType(base64_decode($optDetails[$opt_idx]['option'])) != "application/octet-stream")?"":base64_decode($optDetails[$opt_idx]['option']);
+				
+				$pos = strpos($alphabets, $cur_opt);
+				
+				$highestAlphaPos 	= ($highestAlphaPos < $pos) ? $pos : $highestAlphaPos;
+				$highestAlpha 		= $alphabets[$highestAlphaPos];
+			}
+		}
+		
+		$highestAlphaPos = $highestAlphaPos < (count($optDetails) - 1) ? (count($optDetails) - 1) : $highestAlphaPos;
 ?>
 		<div style='height: 330px;overflow-y: auto;overflow-x: hidden;margin:12px;padding:12px;'>
 			<form class="form-horizontal" action="post_get/form_update_question.php" method="post" enctype="multipart/form-data" name="upld_ques_exl_form" id="upld_ques_exl_form">
@@ -79,6 +98,27 @@
 				printf("<button type='button' class='btn btn-sm btn-info' id='question_cancel_btn' onclick='CancelEditImage(this);'>Cancel</button>");
 				printf("</div><br /><br />");
 			}
+			?>
+			
+			<div class="form-group" id="matrix-optons" style="<?php echo(($quesType == CConfig::QT_MATRIX) ? "" : "display:none"); ?>;">
+			   	<div class="col-lg-2 col-md-2 col-sm-2">
+			    	<label class="control-label">Matrix Options :</label>
+			    </div>
+			    <div class="col-lg-5 col-md-5 col-sm-5">
+			    	<div class="input-group">
+			    		<span class="input-group-addon" id="basic-addon2">Left : </span>
+			    		<input readonly type="text" id="matrix_left_rows" name="matrix_left_rows" class="form-control" value="<?php echo(count($optDetails));?>" min="2" max="10">
+					</div>
+			    </div>
+			    <div class="col-lg-5 col-md-5 col-sm-5">
+			    	<div class="input-group">
+			    		<span class="input-group-addon" id="basic-addon2">Right : </span>
+						<input readonly type="text" id="matrix_right_rows" name="matrix_right_rows" class="form-control" value="<?php echo($highestAlphaPos+1);?>" min="2" max="10">
+					</div>
+			    </div>
+			</div>
+				
+			<?php
 			for($opt_idx = 0; $opt_idx < count($optDetails); $opt_idx++)
 			{
 				if($optDetails[$opt_idx]['answer'] == 1)
@@ -97,9 +137,9 @@
 					printf("<input type='hidden' name='option%s_edit_choice' id='option%s_edit_choice' value='0'/>", ($opt_idx + 1), ($opt_idx + 1));
 					printf("<div id='option%s_edit_div' style='display:none;'>", ($opt_idx + 1));
 				}
-			?>  
-				
-				<div class="form-group">
+				$cur_opt = (CUtils::getMimeType(base64_decode($optDetails[$opt_idx]['option'])) != "application/octet-stream")?"":base64_decode($optDetails[$opt_idx]['option']);
+			?>
+				<div class="form-group <?php echo(($quesType == CConfig::QT_MATRIX) ? "hide_div" : ""); ?>">
 				    <div class="col-lg-2 col-md-2 col-sm-2">
 				        <div class="radio">
 				       		<label>
@@ -110,17 +150,29 @@
 					<div class="col-lg-2 col-md-2 col-sm-2">
 					    <div class="radio">
 					    	<label>
-					        	<input type="radio" value="image" name="option<?php echo($opt_idx + 1);?>_choice" onchange="OnFormateChange(this);"/> Image
+					        	<input type="radio" value="image" name="option<?php echo($opt_idx + 1);?>_choice" onchange="OnFormateChange(this);" <?php echo(($quesType == CConfig::QT_INT) ? "disabled" : ""); ?>/> Image
 					    	</label>
 						</div>
 					</div>
 				</div>
-				<div class="form-group" id="option<?php echo($opt_idx + 1);?>_choice_text">
+				
+				<div class="form-group <?php echo(($quesType == CConfig::QT_MATRIX) ? "" : "hide_div"); ?>" id="option<?php echo($opt_idx + 1);?>_choice_select">
 				    <div class="col-lg-7 col-md-7 col-sm-7">
-				  		<input class="form-control input-sm" value="<?php echo((CUtils::getMimeType(base64_decode($optDetails[$opt_idx]['option'])) != "application/octet-stream")?"":str_ireplace("&amp;","&",str_ireplace("&lt;","<",str_ireplace("&gt;",">",str_ireplace("<div class='mipcat_code_ques'>", CConfig::OPER_CODE_START, str_ireplace("</div>", CConfig::OPER_CODE_END,base64_decode($optDetails[$opt_idx]['option'])))))));?>" type="text" name="option<?php echo($opt_idx + 1);?>_choice_text">
+				  		<select class="matrix_dropdown_select" name="option<?php echo($opt_idx + 1);?>_choice_select">
+				  			<?php 
+				  				for($i = 0; $i <= $highestAlphaPos; $i++){
+				  					printf("<option value='%s' %s>%s</option>", $alphabets[$i], ($alphabets[$i] == $cur_opt) ? "selected": "", $alphabets[$i]);
+				  				}
+				  			?>
+				  		</select>
+					</div>
+				</div>				
+				<div class="form-group <?php echo(($quesType == CConfig::QT_MATRIX) ? "hide_div" : ""); ?>" id="option<?php echo($opt_idx + 1);?>_choice_text">
+				    <div class="col-lg-7 col-md-7 col-sm-7">
+				  		<input class="form-control input-sm" value="<?php echo((CUtils::getMimeType(base64_decode($optDetails[$opt_idx]['option'])) != "application/octet-stream")?"":htmlentities(str_ireplace("&amp;","&",str_ireplace("&lt;","<",str_ireplace("&gt;",">",str_ireplace("<div class='mipcat_code_ques'>", CConfig::OPER_CODE_START, str_ireplace("</div>", CConfig::OPER_CODE_END,base64_decode($optDetails[$opt_idx]['option']))))))));?>" type="text" name="option<?php echo($opt_idx + 1);?>_choice_text">
 					</div>
 				</div>
-				<div class="form-group" id="option<?php echo($opt_idx + 1);?>_choice_image" style="display:none;">
+				<div class="form-group <?php echo(($quesType == CConfig::QT_MATRIX) ? "hide_div" : ""); ?>" id="option<?php echo($opt_idx + 1);?>_choice_image" style="display:none;">
 					<div class="col-lg-9 col-md-9 col-sm-9">
 				    	<div class="fileupload fileupload-new" data-provides="fileupload">
 							<div class="fileupload-preview thumbnail" style="width: 90%; height: 300px;"></div>
@@ -146,15 +198,15 @@
 				</div>
 				<input type="hidden" id="options_count" value="<?php echo(count($optDetails));?>" name="options_count">
 				
-				<div class="form-group">
+				<div class="form-group <?php echo(($quesType == CConfig::QT_MATRIX || $quesType == CConfig::QT_INT) ? "hide_div" : ""); ?>">
 			      <div class="col-lg-6 col-md-6 col-sm-6">
 			        <input class="btn btn-sm btn-info" id='add_option' onclick="AddOption();" type='button' value='Add Option'>
 			        <input class="btn btn-sm btn-info" id='remove_option' onclick="RemoveOption();" type='button' value='Remove Option' <?php echo((count($optDetails) == 2)?"disabled":"");?>>
 			      </div>
 			    </div>
 			    
-			    <label><b>Correct Options:</b></label>
-			    <div class="form-group">
+			    <label class="<?php echo(($quesType == CConfig::QT_MATRIX) ? "hide_div" : ""); ?>"><b>Correct Options:</b></label>
+			    <div class="form-group <?php echo(($quesType == CConfig::QT_MATRIX) ? "hide_div" : ""); ?>">
 					<div class="col-lg-4 col-md-4 col-sm-4">
 						<select class="form-control input-sm" id="answers" name="answers[]" multiple>
 							<?php 
@@ -178,17 +230,33 @@
 					</div>
 				</div>
 				
+				<label><b>Tag Question Set(Optional):</b></label>
+				<div class="form-group">
+				    <div class="col-lg-4 col-md-4 col-sm-4">
+				  		<input class="form-control input-sm" data-provide="typeahead"  type="text" onkeypress="GetTagHints();" id="ques_tag" name="ques_tag" value="<?php echo($ques_tag);?>">
+					</div>
+				</div>
+				
 				<div class="form-group">
 			      <div class="col-lg-4 col-md-4 col-sm-4">
 			        <button id='submit_button' type="submit" class="btn btn-primary">Submit</button>
 			      </div>
 			    </div>
 				<input type="hidden" value="<?php echo($_POST['ques_id']);?>" name="ques_id" />
+				<input type="hidden" value="<?php echo($quesType);?>" name="ques_type" />
 			</form>
 		</div>
 		<script type="text/javascript">
 
 			var optCounter  = <?php echo(count($optDetails) + 1);?>;
+
+			function GetTagHints()
+			{
+				$('#ques_tag').typeahead('destroy');
+				$.getJSON("../ajax/ajax_get_ques_tags.php",{term: encodeURIComponent($("#ques_tag").val())}, function(data){
+					$("#ques_tag").typeahead({ source:data });
+				});
+			}
 			
 			function OnFormateChange(obj)
 		    {
@@ -238,14 +306,36 @@
 
 		    function AddOption()
 	        {
+		    	var style = "display:none;";
+				var invStyle = "";
+				var matRightStep = $('#matrix_right_rows').val();
+
+				if(<?php echo($quesType);?> == <?php echo(CConfig::QT_MATRIX); ?>)
+				{
+					style = "";
+					invStyle = "display:none;";
+				}
+				
 				var sOpt = "<div id='option"+optCounter+"_div'>";
 				sOpt += "<label><b>Option "+optCounter+":</b></label>";
-				sOpt += "<div class='form-group'>";
+				sOpt += "<div class='form-group' style='"+invStyle+"'>";
 				sOpt += "<div class='col-lg-2 col-md-2 col-sm-2'><div class='radio'><label><input type='radio' value='text' name='option"+optCounter+"_choice' onchange='OnFormateChange(this);' checked> Text</label></div></div>";
 				sOpt += "<div class='col-lg-2 col-md-2 col-sm-2'><div class='radio'><label><input type='radio' value='image' name='option"+optCounter+"_choice' onchange='OnFormateChange(this);'> Image</label></div></div>";
 				sOpt += "</div>";
 
-				sOpt += "<div class='form-group' id='option"+optCounter+"_choice_text'>";
+				sOpt += "<div class='form-group' style='"+style+"'>";
+				sOpt += "<div class='col-lg-7 col-md-7 col-sm-7'>";
+				sOpt += "<select name='option"+optCounter+"_choice_select' class='matrix_dropdown_select'>";
+				var cOpt = 'A';
+				for (i=0; i < matRightStep; i++) {
+					var newOpt = String.fromCharCode(cOpt.charCodeAt(0) + i);
+					sOpt += "<option value='"+newOpt+"'> "+ newOpt +" </option>";
+				}
+				sOpt += "</select>";
+				sOpt += "</div>";
+				sOpt += "</div>";
+				
+				sOpt += "<div class='form-group' id='option"+optCounter+"_choice_text' style='"+invStyle+"'>";
 				sOpt += "<div class='col-lg-7 col-md-7 col-sm-7'><input class='form-control input-sm' opt_count='"+optCounter+"' type='text' name='option"+optCounter+"_choice_text'></div>";
 				sOpt += "</div>";
 
@@ -364,6 +454,63 @@
 	    			form.submit();
 	    		}
 			});
+
+	        function OnMatrixLeftRowsChange(step, prevStep){
+				var up = (prevStep < step ) ? true : false;
+				var matRightStep = $('#matrix_right_rows').val();
+				//alert(up + " - (L : " + prevStep + " , R : " + matRightStep + ") - " + step);
+				
+				if (step > matRightStep)
+				{
+					$("#matrix_left_rows").val(matRightStep);
+					alert("Number of rows in Left column can't be greater than Right column.");
+				}
+				else
+				{
+					if (up) {
+						AddOption();
+					}
+					else {
+						RemoveOption();
+					}
+				}
+			}
+			
+			function OnMatrixRightRowsChange(step, prevStep){
+				var up = (prevStep < step ) ? true : false;
+				var cOpt = 'A';
+				var matLeftStep = $('#matrix_left_rows').val();
+				
+				//alert(step);
+				
+				if (matLeftStep > step )
+				{
+					$("#matrix_left_rows").val(step);
+					alert("Number of rows in Left column can't be greater than Right column.");
+				}
+				else
+				{
+					var newOpt = String.fromCharCode(cOpt.charCodeAt(0) + step - 1);
+					
+					if (up){
+						$(".matrix_dropdown_select").append('<option value="'+newOpt+'">'+newOpt+'</option>');
+					}
+					else {
+						$(".matrix_dropdown_select option[value='"+newOpt+"']").nextAll().remove();
+					}
+				}
+			}
+			
+	        $('#matrix_left_rows').bootstrapNumber({
+        		upClass: 'success',
+        		downClass: 'danger',
+        		success: OnMatrixLeftRowsChange
+        	});
+        	$('#matrix_right_rows').bootstrapNumber({
+        		upClass: 'success',
+        		downClass: 'danger',
+        		success: OnMatrixRightRowsChange
+        	});
 		</script>
 <?php
 	}

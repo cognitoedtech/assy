@@ -194,7 +194,7 @@ $objIncludeJsCSS->IncludeJqueryFormJS("../../");
 							<th data-hide="phone,tablet"><font color="#000000">Result &frasl; Rank</font></th>
 							<th data-hide="phone,tablet"><font color="#000000">Time Taken (MM:SS)</font></th>
 							<?php 
-							if($nUserType != CConfig::UT_INDIVIDAL && ($plan_type == CConfig::SPT_ENTERPRISE || $plan_type == CConfig::SPT_PROFESSIONAL || $nUserType == CConfig::UT_SUPER_ADMIN))
+							if($nUserType != CConfig::UT_INDIVIDAL)
 							{
 							?>
 							<th data-hide="phone,tablet"><font color="#000000">Visibility</font></th>
@@ -465,7 +465,7 @@ $objIncludeJsCSS->IncludeJqueryFormJS("../../");
 						if(aryResultInfo[index]['schd_id'] == tschd_id && aryResultInfo[index]['test_id'] == $("#test_id").val())
 						{
 							<?php 
-							if($plan_type == CConfig::SPT_ENTERPRISE || $plan_type == CConfig::SPT_PROFESSIONAL || $nUserType == CConfig::UT_SUPER_ADMIN)
+							if($nUserType != CConfig::UT_INDIVIDAL)
 							{
 							?>
 							$("#tbody_id").append(aryResultInfo[index]['tr_open']+aryResultInfo[index]['test_name']+aryResultInfo[index]['completed_on']+aryResultInfo[index]['name']+aryResultInfo[index]['location']+aryResultInfo[index]['marks']+aryResultInfo[index]['result']+aryResultInfo[index]['time_taken']+aryResultInfo[index]['visibility']+aryResultInfo[index]['btn_activity_log']+aryResultInfo[index]['tr_close']);
@@ -544,7 +544,7 @@ $objIncludeJsCSS->IncludeJqueryFormJS("../../");
 							if(aryResultInfo[index]['schd_id'] == tschd_id && aryResultInfo[index]['test_id'] == $("#test_id").val() && $("#batch").val() == aryResultInfo[index]['batch'])
 							{
 								<?php 
-								if($plan_type == CConfig::SPT_ENTERPRISE || $plan_type == CConfig::SPT_PROFESSIONAL || $nUserType == CConfig::UT_SUPER_ADMIN)
+								if($nUserType != CConfig::UT_INDIVIDAL)
 								{
 								?>
 								$("#tbody_id").append(aryResultInfo[index]['tr_open']+aryResultInfo[index]['test_name']+aryResultInfo[index]['completed_on']+aryResultInfo[index]['name']+aryResultInfo[index]['location']+aryResultInfo[index]['marks']+aryResultInfo[index]['result']+aryResultInfo[index]['time_taken']+aryResultInfo[index]['visibility']+aryResultInfo[index]['btn_activity_log']+aryResultInfo[index]['tr_close']);
@@ -568,7 +568,7 @@ $objIncludeJsCSS->IncludeJqueryFormJS("../../");
 						if(aryResultInfo[index]['schd_id'] == tschd_id && aryResultInfo[index]['test_id'] == $("#test_id").val())
 						{
 							<?php 
-							if($plan_type == CConfig::SPT_ENTERPRISE || $plan_type == CConfig::SPT_PROFESSIONAL || $nUserType == CConfig::UT_SUPER_ADMIN)
+							if($nUserType == CConfig::UT_INDIVIDAL)
 							{
 							?>
 							$("#tbody_id").append(aryResultInfo[index]['tr_open']+aryResultInfo[index]['test_name']+aryResultInfo[index]['completed_on']+aryResultInfo[index]['name']+aryResultInfo[index]['location']+aryResultInfo[index]['marks']+aryResultInfo[index]['result']+aryResultInfo[index]['time_taken']+aryResultInfo[index]['visibility']+aryResultInfo[index]['btn_activity_log']+aryResultInfo[index]['tr_close']);
