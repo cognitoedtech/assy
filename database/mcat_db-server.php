@@ -1984,10 +1984,10 @@
 		}
 		
 		public function InsertIntoTest($user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, $test_expiration, 
-									$attempts, $mcq_type, $pref_lang, $allow_trans, $test_nature, $tag_id, $test_type = CConfig::TT_DEFAULT, $shuffle=1)
+									$attempts, $mcq_type, $pref_lang, $allow_trans, $test_nature, $tag_id, $test_type = CConfig::TT_DEFAULT)
 		{
 			$nRet = FALSE;
-			$query = sprintf("insert into test (owner_id, test_name, mcpa_flash_ques, mcpa_lock_ques, expire_hrs, attempts, tag_id, is_static,  mcq_type,  pref_lang, allow_trans, test_type,shuffle) values ('%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s','%s', '%s','%s')",$user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, ($test_expiration==-1)?-1:($test_expiration*24), $attempts, $tag_id, ($test_nature=='')?0:$test_nature, $mcq_type, $pref_lang, $allow_trans, $test_type,$shuffle);
+			$query = sprintf("insert into test (owner_id, test_name, mcpa_flash_ques, mcpa_lock_ques, expire_hrs, attempts, tag_id, is_static,  mcq_type,  pref_lang, allow_trans, test_type) values ('%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s','%s', '%s')",$user_id, $test_name, $mcpa_flash_ques, $mcpa_lock_ques, ($test_expiration==-1)?-1:($test_expiration*24), $attempts, $tag_id, ($test_nature=='')?0:$test_nature, $mcq_type, $pref_lang, $allow_trans, $test_type);
 			
 			//echo $query."<br />";
 			$result = mysql_query($query, $this->db_link) or die('Insert into test error : ' . mysql_error());
@@ -2661,7 +2661,6 @@
 				
 				$export_test_button = ($test_schedule_type == CConfig::TST_OFFLINE)?"<br /><br /><a href='ajax/ajax_download_offline_test.php?schd_id=".$row['schd_id']."' target='_blank' class='btn btn-sm btn-success'>Export Test</a>":(($row['schedule_type'] == CConfig::TST_OFFLINE)?" (Finished)":"");
 				echo "<td style='text-align: center;'>".$test_schedule_type2.$export_test_button."</td>";
-				echo "<td><input type='button' class='btn btn-sm btn-primary' schd_id='".$row['schd_id']."' test_schedule_type='".$test_schedule_type."' value='Correct Result' onclick='CorrectResult(this)'/></td>";
 				echo "</tr>";
 			}
 		}

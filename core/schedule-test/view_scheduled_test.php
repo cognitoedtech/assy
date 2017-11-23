@@ -91,6 +91,7 @@ $objIncludeJsCSS->IncludeDatatablesResponsiveJS("../../");
 					<div class="preloader"><i></i><i></i><i></i><i></i></div>
 				</div>
 			<br />
+			
 				<div id='TableToolsPlacement'>
 				</div><br />
 			    <div class="form-inline">
@@ -104,6 +105,8 @@ $objIncludeJsCSS->IncludeDatatablesResponsiveJS("../../");
 								<th data-hide="phone,tablet"><font color="#000000">Schedule Created</font></th>
 								<th data-hide="phone,tablet"><font color="#000000">Candidates Details</font></th>
 								<th data-hide="phone,tablet"><font color="#000000">Schedule Type</font></th>
+								<th data-hide="phone,tablet"><font color="#000000">Correct Result</font></th>
+								
 							</tr>
 						</thead>
 						<?php
@@ -118,6 +121,7 @@ $objIncludeJsCSS->IncludeDatatablesResponsiveJS("../../");
 								<th data-hide="phone,tablet"><font color="#000000">Schedule Created</font></th>
 								<th data-hide="phone,tablet"><font color="#000000">Candidates Details</font></th>
 								<th data-hide="phone,tablet"><font color="#000000">Schedule Type</font></th>
+								<th data-hide="phone,tablet"><font color="#000000">Correct Result</font></th>
 							</tr>
 						</tfoot>
 			        </table>
@@ -126,6 +130,9 @@ $objIncludeJsCSS->IncludeDatatablesResponsiveJS("../../");
 				include_once (dirname ( __FILE__ ) . "/../../lib/footer.php");
 				?>
 			</div>
+			
+			
+			
 			
 			<div class="modal" id="cand_test_status_modal">
 			  	<div class="modal-dialog">
@@ -258,6 +265,28 @@ $objIncludeJsCSS->IncludeDatatablesResponsiveJS("../../");
 			}
 		});
 	}
+
+	function CorrectResult(obj)
+	{
+
+		
+		
+		$.ajax({
+			url: "ajax/ajax_correct_result.php",
+			data: {'schd_id' : $(obj).attr("schd_id"), 'schedule_type' : $(obj).attr("test_schedule_type")},
+			type: 'POST',
+			async: false,
+			success: function(data) 
+			{
+			
+				alert(data);
+			}
+
+			});
+		
+	}
+
+	
 	</script>
 </body>
 </html>

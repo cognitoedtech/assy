@@ -133,10 +133,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 					</div>
 				</div>
 			</div>
-			<?php 
-			if($nUserType != CConfig::UT_INDIVIDAL)
-			{
-			?>
+		
 			<div class="row fluid">
 				<div class="col-lg-12 col-md-12 col-sm-12">
 					<br />
@@ -150,9 +147,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 					
 				</div>
 			</div>
-			<?php 
-			}
-			?>
+			
 			<div class="row fluid">
 				<div class="col-lg-12 col-md-12 col-sm-12">
 					<div id="result_inspection">			
@@ -200,7 +195,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 			$("#ri_batch").hide();
 			$("#result_inspection").hide();
 			<?php 
-			if($nUserType != CConfig::UT_INDIVIDAL)
+			//if($nUserType != CConfig::UT_INDIVIDAL)
 			{
 			?>
 			$("#download_pdf").hide();
@@ -223,7 +218,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 		$('#ri_test_schd_date').change(function() {
 			$("#result_inspection").hide();
 			<?php 
-			if($nUserType != CConfig::UT_INDIVIDAL)
+			//if($nUserType != CConfig::UT_INDIVIDAL)
 			{
 			?>
 			$("#download_pdf").hide();
@@ -283,7 +278,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 		});
 
 		<?php 
-		if($nUserType != CConfig::UT_INDIVIDAL)
+		//if($nUserType != CConfig::UT_INDIVIDAL)
 		{
 		?>
 		function DownloadPDF(obj)
@@ -307,7 +302,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 		{
 			$("#result_inspection").hide();
 			<?php 
-			if($nUserType != CConfig::UT_INDIVIDAL)
+			//if($nUserType != CConfig::UT_INDIVIDAL)
 			{
 			?>
 			$("#download_pdf").hide();
@@ -336,7 +331,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 			var test_pnr = $('#ri_candidate_id').val();
 
 			<?php 
-			if($nUserType != CConfig::UT_INDIVIDAL)
+			//if($nUserType != CConfig::UT_INDIVIDAL)
 			{
 			?>
 			if(test_pnr)

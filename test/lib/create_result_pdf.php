@@ -1562,7 +1562,7 @@
 					$this->ImprovedTable($header,$data,$pdf);
 					//$pdf->MultiCell(190, 5, "Summary: Correct->".$correct_count." Wrong->".$s_no -($correct_count + $unans_count)."Unans->".$unans_count);
 					$pdf->Ln(2);
-					$wrong = $s_no - ($correct_count + $unans_count);
+					$wrong = $s_no -1 - ($correct_count + $unans_count);
 					$summary = "Summary-> Correct:".$correct_count . " Wrong:".$wrong . " Un Answered:".$unans_count;
 					$pdf->Cell(190, 5,$summary);
 					

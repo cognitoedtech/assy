@@ -2,6 +2,7 @@
 	include_once(dirname(__FILE__)."/../../lib/utils.php");
 	include_once("tbl_test_dynamic.php");
 	include_once("tbl_test_schedule.php");
+	include_once("tbl_question.php");
 	
 	include_once(dirname(__FILE__)."/../../database/config.php");
 	include_once(dirname(__FILE__)."/../../lib/billing.php");
@@ -757,5 +758,50 @@
                
             return $result;
         }
+        
+        public function updateResult($test_schid)
+        {
+        	 
+        	$query =  sprintf("select * from result where tschd_id='%s'", $test_schid);
+        	
+        	$result = mysql_query($query, $this->objDBLink) or die('Select result pnr error : ' . mysql_error());
+        	
+        	// Loop throught  the test pnr for above scheudle id
+        	
+        	$counter = 0;
+        	while($row = mysql_fetch_array($result))
+        	{
+        	
+        		 
+        		$objTestParam = $this->objTestDynamic->GetTestParams($row['test_id']);
+        		$ques_map = $row['ques_map'];
+        		 
+        		$marks = 0;
+        		$secPerformance = array();
+        		if($test_type == CConfig::TT_DEFAULT)
+        		{
+        			$marks = $this->CalculateMarks($ques_map, $objTestParam);
+        			$secPerformance = $this->CalculateSectionMarks($ques_map, $objTestParam);
+        		}
+        		else if($test_type == CConfig::TT_EQ)
+        		{
+        			$marks = $this->CalculateEQScore($ques_map, $objTestParam);
+        			$secPerformance = $this->CalculateSectionEQScores($ques_map, $objTestParam);
+        		}
+        		
+        		
+        		//$time_taken = $this->CalculateTimeTaken($row['cur_chronological_time'], $objTestParam);
+        		 
+        		$query = sprintf("update result set marks = '%s', section_marks = '%s' where test_pnr = '%s'", $marks, json_encode($secPerformance),$row['test_pnr']);
+        	
+        		$updateres = mysql_query($query, $this->objDBLink) or die('Update result error : ' . mysql_error());
+        		$counter++;        	        	
+        	}
+        	
+        	return $counter;
+        	 
+        }
+        
+        
 	}
 ?>
