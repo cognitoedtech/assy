@@ -357,6 +357,68 @@ foreach ( $objAnsAry[$nSection] as $qusIndex => $Answer )
 		$nUnansweredLegend = $nUnansweredLegend + 1;
 	}
 }
+
+function PopulateIntegerOptions($correctOpt)
+{
+	$numOfDigits = strlen($correctOpt);
+	
+	printf("<tr><td></td>");
+	for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
+	{
+		$label = pow(10, $digitPos);
+		
+		printf("<td>%s</td>", $label);
+	}
+	printf("</tr>");
+	
+	for ($index = 0; $index < 10; $index++)
+	{
+		printf("<tr>");
+		printf("<td class='info'>%s</td>", $index);
+		for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
+		{
+			printf("<td class='info'>");
+			printf("<input type='radio' name='opt_pos_%s' value='%s'>", $digitPos, ($index * pow(10, $digitPos)));
+			printf("</td>");
+		}
+		printf("</tr>");
+	}
+}
+
+function PopulateMatrixOptions($optAry)
+{
+	$highestAlpha	  = '';
+	$highestAlphaPos  = 0;
+	$alphabets 		  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$romans			  = array("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+							 "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
+							 "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX");
+	
+	$num_options = $GLOBALS['aryQues']['opt_count'];
+	
+	foreach ($optAry as $key => $val) {
+		$pos = strpos($alphabets, $val['option']);
+		
+		$highestAlphaPos 	= ($highestAlphaPos < $pos) ? $pos : $highestAlphaPos;
+		$highestAlpha 		= $alphabets[$highestAlphaPos];
+	}
+	
+	printf("<tr><td></td>");
+	for($opt_col = 0; $opt_col < $highestAlphaPos; $opt_col ++) {
+		printf("<td>%s</td>", $alphabets[$opt_col]);
+	}
+	printf("</tr>");
+	
+	//$optAry[$opt_row];
+	for($opt_row = 0; $opt_row < $num_options; $opt_row ++) {
+		printf("<tr>");
+		printf("<td>%s</td>", $romans[$opt_row]);
+		for($opt_col = 0; $opt_col < $highestAlphaPos; $opt_col ++) {
+			printf("<td><input type='radio' name='r%s-c%s' value='r%s-c%s'></td>", $opt_row, $opt_col, $opt_row, $opt_col);
+		}
+		printf("</tr>");
+	}
+}
 ?>
 <html>
 <head>
@@ -801,7 +863,7 @@ body {
 							}
 							?>
 						</div>
-						<div class="col-xs-12 <?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "col-sm-12" : "col-sm-6");?>">
+						<div class="col-xs-12 <?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL || $aryQues['ques_type'] == CConfig::QT_INT || $aryQues['ques_type'] == CConfig::QT_MATRIX ? "col-sm-12" : "col-sm-6");?>">
 							<table width="100%" cellpadding="4" cellspacing="4">
 								<tr>
 									<td colspan="2" id="td_question" style="color: DarkSlateBlue;">
@@ -846,31 +908,40 @@ body {
 									</td>
 								</tr>
 								<?php
-								for($opt_idx = 0; $opt_idx < $aryQues ['opt_count']; $opt_idx ++) {
-									if ($opt_idx == 0) {
-										printf ( "<tr>\n" );
-									} 
-	
-									else //if (($opt_idx % 2) == 0) {
-									{
-										printf ( "</tr>\n<tr>\n" );
-									}
-									
-									$ip_type = "radio";
-									if ($objMCPAParams ['mcq_type'] == 1) {
-										$ip_type = "checkbox";
-									}
-								?>
-								<td class="info" id="td_opts" style="<?php echo((empty($opt_ary[$opt_idx]) && !is_numeric($opt_ary[$opt_idx])) ? "display:none;" : "");?>"><label><?php echo($opt_idx+1);?>). <input
-										style="position: relative; top: -4px;"
-										id="rb_opt_<?php echo($opt_idx+1);?>"
-										type="<?php echo($ip_type);?>" name="answer[]"
-										value="<?php echo($opt_idx+1);?>"
-										<?php echo(in_array(($opt_idx+1), $objAnsAry[$nSection][$nQuestion])?"checked='checked'":""); ?> />
-										<span id="base_opt_<?php echo($opt_idx+1);?>"><?php echo($opt_ary[$opt_idx]);?></span><?php printf(!empty($aryTransQues)?"<span id='trans_opt_%d' style='display :none;'>%s</span>":"", ($opt_idx+1), $trans_opt_ary[$opt_idx]);?></label></td>
-									<?php
-									if ($opt_idx == ($aryQues ['opt_count'] - 1)) {
-										printf ( "</tr>\n" );
+								if($aryQues['ques_type'] == CConfig::QT_INT) {
+									PopulateIntegerOptions($opt_ary[0]);
+								}
+								else if($aryQues['ques_type'] == CConfig::QT_MATRIX) {
+									PopulateMatrixOptions($opt_ary);
+								}
+								else {
+									for($opt_idx = 0; $opt_idx < $aryQues ['opt_count']; $opt_idx ++) {
+										if ($opt_idx == 0) {
+											printf ( "<tr>\n" );
+										} 
+		
+										else //if (($opt_idx % 2) == 0) {
+										{
+											printf ( "</tr>\n<tr>\n" );
+										}
+										
+										$ip_type = "radio";
+										//if ($objMCPAParams ['mcq_type'] == 1) {
+										if ($aryQues['mca'] == 1) {
+											$ip_type = "checkbox";
+										}
+									?>
+									<td class="info" id="td_opts" style="<?php echo((empty($opt_ary[$opt_idx]) && !is_numeric($opt_ary[$opt_idx])) ? "display:none;" : "");?>"><label><?php echo($opt_idx+1);?>). <input
+											style="position: relative; top: -4px;"
+											id="rb_opt_<?php echo($opt_idx+1);?>"
+											type="<?php echo($ip_type);?>" name="answer[]"
+											value="<?php echo($opt_idx+1);?>"
+											<?php echo(in_array(($opt_idx+1), $objAnsAry[$nSection][$nQuestion])?"checked='checked'":""); ?> />
+											<span id="base_opt_<?php echo($opt_idx+1);?>"><?php echo($opt_ary[$opt_idx]);?></span><?php printf(!empty($aryTransQues)?"<span id='trans_opt_%d' style='display :none;'>%s</span>":"", ($opt_idx+1), $trans_opt_ary[$opt_idx]);?></label></td>
+										<?php
+										if ($opt_idx == ($aryQues ['opt_count'] - 1)) {
+											printf ( "</tr>\n" );
+											}
 										}
 									}
 								?>

@@ -1616,8 +1616,8 @@
 				"data" => array()
 			);
 			
-			$fp = fopen('delete_user.txt', 'w+');
-			fwrite($fp, print_r($data, true));
+			//$fp = fopen('delete_user.txt', 'w+');
+			//fwrite($fp, print_r($data, true));
 			
 			if ( !isset($data['action']) ) // Get data
 			{
@@ -1628,8 +1628,8 @@
 				$this->DeleteUser(implode(",",$data['data']), $owner_id, $owner_type, $batch_id);			
 			}
 			
-			fwrite($fp, print_r($objRet, true));
-			fclose($fp);
+			//fwrite($fp, print_r($objRet, true));
+			//fclose($fp);
 			return $objRet;
 		}
 		
@@ -4159,6 +4159,9 @@
         
         public function InsertOptions($row, $ques_id, $ques_type = NULL)
         {
+        	//$fp = fopen('insert_options.txt', 'a');
+			//fwrite($fp, print_r($row, true));
+			
             $option_ary = array();
             $answers    = "";
             $index      = 0;
@@ -4206,6 +4209,8 @@
             }
 
             $query = sprintf("update question set options = '%s' where ques_id = '%s'", json_encode($option_ary), $ques_id);
+            //fwrite($fp, $query."\r\n");
+            //fclose($fp);
 
             $result =  mysql_query($query, $this->db_link) or die('Insert Options error : ' . mysql_error());
 
