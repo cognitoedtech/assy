@@ -20,6 +20,8 @@
 	
 	if($_FILES['csv']['size'] > 0)
 	{
+		$filename = $_FILES['csv']['name'];
+		
 		if(isset($_POST['eq_choice']) && $_POST['eq_choice'] == "yes" && $user_type == CConfig::UT_SUPER_ADMIN)
 		{
 			//get the xls file name
@@ -166,7 +168,7 @@
 			{
 				$row_processed = $objQuesExcel->InsertExcelQuestions($worksheet, $user_id, $ques_type, $tag, $zip_file);
 					
-				echo "<p style='color: green;'> Processed ".$row_processed." rows successfully...</p>";
+				echo "<p style='color: green;'> <b>".$filename." :</b> Processed ".$row_processed." rows successfully...</p>";
 			}
 			else
 			{
@@ -174,7 +176,7 @@
 			
 				for($error_index = 0; $error_index < (count($errors_ary) - 1); $error_index++)
 				{
-					echo "<p style='color: red;'>".$errors_ary[$error_index]."</p>";
+					echo "<p style='color: red;'><b>".$filename." :</b>".$errors_ary[$error_index]."</p>";
 				}
 			}	
 		}

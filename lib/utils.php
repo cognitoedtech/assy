@@ -17,6 +17,22 @@
 		}
 		
 		/*
+		 * Produce log file
+		 */
+		static function LogDataInFile($file_name, $data, $bAry=false, $mode="w")
+		{
+			$handle = fopen($file_name, $mode);
+			
+			if(bAry) {
+				fwrite($handle, print_r($data, TRUE));
+			}
+			else {
+				fwrite($handle, $data);
+			}
+			
+			fclose($handle);
+		}
+		/*
 		 * Encode Mp3 file, adds MX as first two chars.
 		 */
 		static function EncodeMp3($filepath)

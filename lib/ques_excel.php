@@ -438,7 +438,7 @@
 						}	
 					}
 					
-					$suffix = ($ques_type == CConfig::QT_INT)? "<IN>" : (($ques_type == CConfig::QT_MATRIX)? "<MT>" : "") ;
+					$suffix = ($ques_type == CConfig::QT_INT)? "{IN}" : (($ques_type == CConfig::QT_MATRIX)? "{MT}" : "") ;
 					
 					$data_row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]] = $data_row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]].$suffix;
 					

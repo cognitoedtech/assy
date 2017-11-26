@@ -632,6 +632,8 @@
 			//echo($query."<br/>");
 			$bResult = mysql_query($query, $this->objDBLink) or die('Update Answer error : ' . mysql_error());
 			
+			CUtils::LogDataInFile("question_map.txt", $ques_map, true);
+			
 			return $bResult;
 		}
 		

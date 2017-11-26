@@ -156,6 +156,11 @@
 			unset($this->objTSessionID);
 		}
 		
+		public function GetTestIterator()
+		{
+			return $this->objIterator;
+		}
+		
 		public function GetAttemptsFromTestSession($tsession_id, &$bShowPreRestoreForm)
 		{
 			return $this->objTestSession->GetAttemptsFromTestSession($tsession_id, $bShowPreRestoreForm);
@@ -275,6 +280,11 @@
 			echo "</pre>";*/
 			
 			$this->objTestSession->UpdateAnswer($UserID, $TestID, $nTSchdID, $this->aryQuestionID[$Section][$Question], $Answer);
+		}
+		
+		public function GetQuestionID($Section, $Question)
+		{
+			return $this->aryQuestionID[$Section][$Question];
 		}
 		
 		public function UpdateTimeElapsed($UserID, $TestID, $nTSchdID, $TimeElapsed)
