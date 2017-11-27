@@ -209,11 +209,14 @@ if ($qry [0] == "test_id") {
 	CSessionManager::Set ( CSessionManager::BOOL_SEL_TEST_LANG, $langofchoice );
 	
 	if($nLastQuesType== CConfig::QT_INT && !is_array($nAns) && $nAns != -1) {
-		$tempAns = $objTH->GetIntQuesAns($nSection, $nQuestion);
+		$tempAns = base64_decode($objTH->GetIntQuesAns($nSection, $nQuestion));
+		
+		//CUtils::LogDataInFile("temp_act_answer.txt", $tempAns." : ".$nAns);
+		
 		if($tempAns == $nAns)
 		{
 			// Mark the first option correct if answer matches 
-			$nAns = array(0);
+			$nAns = array(1);
 		}
 		else {
 			// Record the wrong answer
@@ -229,7 +232,7 @@ if ($qry [0] == "test_id") {
 		$_POST ['flag_choice'] = 0;
 	}
 		
-	CUtils::LogDataInFile("post_submit_ans.txt", $_POST, true);
+	//CUtils::LogDataInFile("post_submit_ans.txt", $_POST, true);
 	
 	if (isset ( $_POST ['flag_choice'] ) ) {
 	if ($_POST ['flag_choice'] == QUES_FLAG_UNANSWERED) {
@@ -380,9 +383,8 @@ foreach ( $objAnsAry[$nSection] as $qusIndex => $Answer )
 
 function PopulateIntegerOptions($correctOpt, $ansAry)
 {
-	$handle = fopen("populate_int_ques.txt","w");
-	fwrite($handle, print_r($ansAry, TRUE));
-	fclose($handle);
+	//CUtils::LogDataInFile("populate_int_opts.txt", $correctOpt, false, "a");
+	//CUtils::LogDataInFile("populate_int_opts.txt", $ansAry, true, "a");
 	
 	$min_cols = 4;
 	$correct_opt_len = strlen($correctOpt);
@@ -393,14 +395,14 @@ function PopulateIntegerOptions($correctOpt, $ansAry)
 	$bAnswered = false;
 	if(count(array_intersect(array(-1,-2,-3), $ansAry)) == 0)
 	{
-		$answer = $ansAry[0];
+		$answer = ($ansAry[0] == 1) ? $correctOpt : $ansAry[0];
 		$answer_ary = str_split(strrev($answer));
 		$bAnswered = true;
 	}
 	
 	printf("<tr class='info'><td>");
 	printf("<div style='border: 1px solid blue; background-color: #fff;'><span id='int_ans_sel' style='margin-left: 5px;'>%s</span></div>", $answer);
-	printf("<input type='hidden' name='int_answer' id='text_int_opt' value='-1'>");
+	printf("<input type='hidden' name='int_answer' id='text_int_opt' value='%s'>", $bAnswered ? $answer : -1);
 	printf("</td>");
 	for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
 	{
@@ -425,7 +427,7 @@ function PopulateIntegerOptions($correctOpt, $ansAry)
 			if(array_key_exists($digitPos, $answer_ary)) {
 				$sel_opt = $answer_ary[$digitPos];
 			}
-			CUtils::LogDataInFile("ans_ary.txt", $answer_ary, true);
+			//CUtils::LogDataInFile("ans_ary.txt", $answer_ary, true);
 			printf("<td>");
 			printf("&nbsp; <input type='radio' onclick='UpdateIntAnswer(this, %d, %d);' name='opt_pos_%s' value='%s' %s>", 
 					$digitPos, $numOfDigits, $digitPos, $index, $bAnswered && $sel_opt == $index ? "checked": "");
@@ -1680,7 +1682,7 @@ body {
 		
 		foreach ( $objAnsAry as $secIndex => $ansSection ) {
 			foreach ( $ansSection as $qusIndex => $ansQuestion ) {
-				if ($linked_to != $objIter [$secIndex] [$qusIndex] ['linked_to'] && $objIter [$secIndex] [$qusIndex] ['ques_type'] != CConfig::QT_NORMAL) {
+				if ($linked_to != $objIter [$secIndex] [$qusIndex] ['linked_to'] && ($objIter [$secIndex] [$qusIndex] ['ques_type'] == CConfig::QT_READ_COMP || $objIter [$secIndex] [$qusIndex] ['ques_type'] == CConfig::QT_DIRECTIONS) ) {
 					$linked_to = $objIter [$secIndex] [$qusIndex] ['linked_to'];
 					$index ++;
 					

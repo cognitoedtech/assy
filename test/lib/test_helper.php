@@ -297,7 +297,7 @@
 		{
 			$iterator = $this->objTest->GetTestIterator();
 			
-			CUtils::LogDataInFile("post_answer.txt", $iterator, true);
+			//CUtils::LogDataInFile("post_answer.txt", $iterator, true);
 			
 			return $iterator[$Section][$Question]['ques_type'];
 		}
