@@ -381,6 +381,8 @@ foreach ( $objAnsAry[$nSection] as $qusIndex => $Answer )
 	}
 }
 
+CUtils::LogDataInFile("ques_ary.txt", $aryQues, true);
+
 function PopulateIntegerOptions($correctOpt, $ansAry)
 {
 	//CUtils::LogDataInFile("populate_int_opts.txt", $correctOpt, false, "a");
@@ -449,13 +451,17 @@ function PopulateMatrixOptions($optAry, $ansAry)
 	$num_options = $GLOBALS['aryQues']['opt_count'];
 	
 	foreach ($optAry as $key => $val) {
-		$pos = strpos($alphabets, $val['option']);
-		
-		$highestAlphaPos 	= ($highestAlphaPos < $pos) ? $pos : $highestAlphaPos;
-		$highestAlpha 		= $alphabets[$highestAlphaPos];
+		foreach( explode(",", $val['option']) as  $opt_part) {
+			$pos = strpos($alphabets, $opt_part);
+			
+			$highestAlphaPos 	= ($highestAlphaPos < $pos) ? $pos : $highestAlphaPos;
+			$highestAlpha 		= $alphabets[$highestAlphaPos];
+		}
 	}
 	
-	//CUtils::LogDataInFile("populate_mat_details.txt", $highestAlphaPos." - ".$highestAlpha);
+	CUtils::LogDataInFile("populate_mat_details.txt", $highestAlphaPos." - ".$highestAlpha);
+	CUtils::LogDataInFile("populate_mat_opt_ary.txt", $optAry, true);
+	CUtils::LogDataInFile("populate_mat_ans_ary.txt", $ansAry, true);
 	
 	printf("<tr><td></td>");
 	for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
@@ -468,7 +474,7 @@ function PopulateMatrixOptions($optAry, $ansAry)
 		printf("<tr>");
 		printf("<td><b>%s</b><input type='hidden' id='mat_opt_%s' name='answer[]' value='-1'/></td>", $romans[$opt_row], $opt_row);
 		for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
-			printf("<td><input type='radio' onclick='UpdateMatrixAnswer(this, %d, %d, %d, %d);' name='mat_row_%s' value='%s'/></td>", 
+			printf("<td><input type='checkbox' onclick='UpdateMatrixAnswer(this, %d, %d, %d, %d);' name='mat_row_%s' value='%s'/></td>", 
 					$opt_row, $opt_col, $num_options, $highestAlphaPos, $opt_row, $alphabets[$opt_col]);
 		}
 		printf("</tr>");
@@ -1795,9 +1801,14 @@ body {
 
 		function UpdateMatrixAnswer(obj, row, col, max_rows, max_cols)
 		{
-			var selection = $("input[name=mat_row_"+row+"]:checked").val();
+			var selection = array();
+			$("input[name=mat_row_"+row+"]:checked").each(function () {
+	            alert(" Value: " + $(this).val());
+	            selection.push($(this).val());
+	        });
+			//var selection = $("input[name=mat_row_"+row+"]:checked").val();
 
-			$("#mat_opt_"+row).val(selection);
+			$("#mat_opt_"+row).val(selection.join(","));
 			
 			ChangeSubmitBtnName("Save & Next");
 		}

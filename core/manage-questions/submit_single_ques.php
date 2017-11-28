@@ -351,7 +351,7 @@ $objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 				    	<label class="control-label">Option 1 :</label>
 				    </div>
 				    <div class="col-lg-1 col-md-1 col-sm-1 matrix_dropdown_opt" style="display:none;">
-				    	<select name="option1_choice_select" class="matrix_dropdown_select" multiple>
+				    	<select name="option1_choice_select[]" class="matrix_dropdown_select" multiple>
 				    		<option value="A"> A </option>
 				    		<option value="B"> B </option>
 				    	</select>
@@ -404,7 +404,7 @@ $objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 					    	<label class="control-label">Option 2 :</label>
 					    </div>
 					    <div class="col-lg-1 col-md-1 col-sm-1 matrix_dropdown_opt" style="display:none;">
-					    	<select name="option2_choice_select" class="matrix_dropdown_select" multiple>
+					    	<select name="option2_choice_select[]" class="matrix_dropdown_select" multiple>
 					    		<option value="A"> A </option>
 					    		<option value="B"> B </option>
 					    	</select>
@@ -581,21 +581,20 @@ $objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 			
 			//alert(step);
 			
-			if (matLeftStep > step )
+			/*if (matLeftStep > step )
 			{
 				$("#matrix_left_rows").val(step);
 				alert("Number of rows in Left column can't be greater than Right column.");
 			}
 			else
-			{
-				var newOpt = String.fromCharCode(cOpt.charCodeAt(0) + step - 1);
-				
-				if (up){
-					$(".matrix_dropdown_select").append('<option value="'+newOpt+'">'+newOpt+'</option>');
-				}
-				else {
-					$(".matrix_dropdown_select option[value='"+newOpt+"']").nextAll().remove();
-				}
+			{*/
+			var newOpt = String.fromCharCode(cOpt.charCodeAt(0) + step - 1);
+			
+			if (up){
+				$(".matrix_dropdown_select").append('<option value="'+newOpt+'">'+newOpt+'</option>');
+			}
+			else {
+				$(".matrix_dropdown_select option[value='"+newOpt+"']").nextAll().remove();
 			}
 		}
 		
@@ -847,7 +846,7 @@ $objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 			sOpt += "<div class='col-lg-2 col-md-2 col-sm-2'><label class='control-label'>Option "+optCounter+" :</label></div>";
 
 			sOpt += "<div class='col-lg-1 col-md-1 col-sm-1 matrix_dropdown_opt' style='"+style+"'>";
-			sOpt += "<select name='option"+optCounter+"_choice_select' class='matrix_dropdown_select' multiple>";
+			sOpt += "<select name='option"+optCounter+"_choice_select[]' class='matrix_dropdown_select' multiple>";
 			var cOpt = 'A';
 			for (i=0; i < matRightStep; i++) {
 				var newOpt = String.fromCharCode(cOpt.charCodeAt(0) + i);

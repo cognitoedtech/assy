@@ -4193,7 +4193,7 @@
                     $cur_opt = base64_encode($row[$opt_index]);
                     
                     if (!empty($cur_opt)) {
-                    	$option_ary[$index]['option'] = ($ques_type == CConfig::QT_MATRIX) ? implode(",", $cur_opt) : $cur_opt ;
+                    	$option_ary[$index]['option'] = $cur_opt ;
                     }
                     else {
                     	break;

@@ -158,7 +158,7 @@
 				
 				<div class="form-group <?php echo(($quesType == CConfig::QT_MATRIX) ? "" : "hide_div"); ?>" id="option<?php echo($opt_idx + 1);?>_choice_select">
 				    <div class="col-lg-7 col-md-7 col-sm-7">
-				  		<select class="matrix_dropdown_select" name="option<?php echo($opt_idx + 1);?>_choice_select" multiple>
+				  		<select class="matrix_dropdown_select" name="option<?php echo($opt_idx + 1);?>_choice_select[]" multiple>
 				  			<?php 
 				  				for($i = 0; $i <= $highestAlphaPos; $i++){
 				  					
@@ -326,7 +326,7 @@
 
 				sOpt += "<div class='form-group' style='"+style+"'>";
 				sOpt += "<div class='col-lg-7 col-md-7 col-sm-7'>";
-				sOpt += "<select name='option"+optCounter+"_choice_select' class='matrix_dropdown_select'>";
+				sOpt += "<select name='option"+optCounter+"_choice_select[]' class='matrix_dropdown_select' multiple>";
 				var cOpt = 'A';
 				for (i=0; i < matRightStep; i++) {
 					var newOpt = String.fromCharCode(cOpt.charCodeAt(0) + i);
@@ -459,21 +459,13 @@
 	        function OnMatrixLeftRowsChange(step, prevStep){
 				var up = (prevStep < step ) ? true : false;
 				var matRightStep = $('#matrix_right_rows').val();
-				//alert(up + " - (L : " + prevStep + " , R : " + matRightStep + ") - " + step);
+				alert(up + " - (L : " + prevStep + " , R : " + matRightStep + ") - " + step);
 				
-				if (step > matRightStep)
-				{
-					$("#matrix_left_rows").val(matRightStep);
-					alert("Number of rows in Left column can't be greater than Right column.");
+				if (up) {
+					AddOption();
 				}
-				else
-				{
-					if (up) {
-						AddOption();
-					}
-					else {
-						RemoveOption();
-					}
+				else {
+					RemoveOption();
 				}
 			}
 			
@@ -484,21 +476,13 @@
 				
 				//alert(step);
 				
-				if (matLeftStep > step )
-				{
-					$("#matrix_left_rows").val(step);
-					alert("Number of rows in Left column can't be greater than Right column.");
+				var newOpt = String.fromCharCode(cOpt.charCodeAt(0) + step - 1);
+				
+				if (up){
+					$(".matrix_dropdown_select").append('<option value="'+newOpt+'">'+newOpt+'</option>');
 				}
-				else
-				{
-					var newOpt = String.fromCharCode(cOpt.charCodeAt(0) + step - 1);
-					
-					if (up){
-						$(".matrix_dropdown_select").append('<option value="'+newOpt+'">'+newOpt+'</option>');
-					}
-					else {
-						$(".matrix_dropdown_select option[value='"+newOpt+"']").nextAll().remove();
-					}
+				else {
+					$(".matrix_dropdown_select option[value='"+newOpt+"']").nextAll().remove();
 				}
 			}
 			

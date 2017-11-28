@@ -142,6 +142,7 @@
 	if(empty($code_error))
 	{
 		$tag_id = ($ques_tag == NULL) ? NULL : $objDB->GetTagId($ques_tag);
+		//CUtils::LogDataInFile("options.txt", $_POST, true);
 		$objDB->UpdateQuestion($data_row, $_POST['ques_id'], $mca, $tag_id);
 		
 		CUtils::Redirect("../dt_reconcile_questions.php?ques_updated=1");
