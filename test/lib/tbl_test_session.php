@@ -318,6 +318,7 @@
 			$nWrong = 0;
 			$nUnans = 0;
 			$qCount = 0;
+			
 			foreach ($qusAry as $key => $ques_id)
 			{
 				if(isset($aryCorrectAns[$ques_id]))
@@ -635,6 +636,8 @@
 			$query = sprintf("update test_session set ques_map='%s' where user_id='%s' AND test_id='%s' AND tschd_id='%s'", json_encode($ques_map), $user_id, $test_id, $nTSchdID);
 			//echo($query."<br/>");
 			$bResult = mysql_query($query, $this->objDBLink) or die('Update Answer error : ' . mysql_error());
+			
+			//CUtils::LogDataInFile("question_map.txt", $ques_map, true);
 			
 			return $bResult;
 		}

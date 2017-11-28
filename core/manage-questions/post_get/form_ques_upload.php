@@ -122,7 +122,7 @@
 			
 			if ($ques_type == CConfig::QT_INT || $ques_type == CConfig::QT_MATRIX)
 			{
-				$suffix = ($ques_type == CConfig::QT_INT) ? "<IN>" : "<MT>";
+				$suffix = ($ques_type == CConfig::QT_INT) ? "{IN}" : "{MT}";
 				$topic_with_suffix = $topic_with_suffix.$suffix;
 			}
 			

@@ -293,6 +293,22 @@
 			return $this->objTest->GetTestAnswers($user_id, $test_id, $tschd_id);
 		}
 		
+		public function GetQuesType($Section, $Question)
+		{
+			$iterator = $this->objTest->GetTestIterator();
+			
+			//CUtils::LogDataInFile("post_answer.txt", $iterator, true);
+			
+			return $iterator[$Section][$Question]['ques_type'];
+		}
+		
+		public function GetIntQuesAns($Section, $Question)
+		{
+			$iterator = $this->objTest->GetTestIterator($Section, $Question);
+			
+			return $iterator[$Section][$Question]['options'][0]['option'];
+		}
+		
 		public function SubmitAnswer($UserID, $TestID, $nTSchdID, $Section, $Question, $Answer, $TimeElapsed)
 		{
 			$this->objTest->SubmitAnswer($UserID, $TestID, $nTSchdID, $Section, $Question, $Answer);

@@ -175,38 +175,14 @@ if ($qry [0] == "test_id") {
 	$nTestID = $_POST ['test_id'];
 	$nSection = $_POST ['section'];
 	$nQuestion = $_POST ['question'];
-	$nAns = $_POST ['answer'];
-	
-	$langofchoice = $_POST ['langofchoice'];
-	CSessionManager::Set ( CSessionManager::BOOL_SEL_TEST_LANG, $langofchoice );
 	
 	/*
-	$handle = fopen("post_submit_ans.txt","w");
-	fwrite($handle, print_r($_POST, TRUE));
-	fclose($handle);
-	*/
-	
-	if(count ( $nAns ) > 0 && ! in_array ( - 1, $nAns ))
-	{
-		$_POST ['flag_choice'] = 0;
-	}
-	
-	if (isset ( $_POST ['flag_choice'] ) ) {
-	if ($_POST ['flag_choice'] == QUES_FLAG_UNANSWERED) {
-			$nAns = array ("-1" );
-		} else if ($_POST ['flag_choice'] == QUES_FLAG_MARKED_FOR_REVIEW) {
-			$nAns = array ("-2" );
-		} else if ($_POST ['flag_choice'] == QUES_FLAG_VISITED) {
-			$nAns = array ("-3" );
-		}
-	}
-	
+	 * -----------------------------------------------------------------------
+	 * Initiate test block
+	 * -----------------------------------------------------------------------
+	 */
 	$nCurTime = $_POST ['cur_timer'];
 	$nTSchdID = $_POST ['tschd_id'];
-	
-	// printf("TestID: %s, SectionID: %s, Question#: %s, Answer: %s, Tschd_ID:
-	// %s<br/>", $nTestID, $nSection, $nQuestion, $nAns, $nTSchdID);
-	
 	$objMCPAParams = $objTH->GetMCPAParams ( $nTestID );
 	
 	$bTranslation = $objMCPAParams ['allow_trans'];
@@ -219,6 +195,53 @@ if ($qry [0] == "test_id") {
 		}
 	} else {
 		$bNewTest = $objTH->StartTest ( $sUserID, $nTestID, $nTSchdID, $objMCPAParams ['pref_lang'] );
+	}
+	/*
+	 * -----------------------------------------------------------------------
+	 */
+	
+	$nLastQuesType = $objTH->GetQuesType($nSection, $nQuestion);
+	$nAns = ($nLastQuesType== CConfig::QT_INT) ? $_POST ['int_answer'] : $_POST ['answer'];
+	
+	//CUtils::LogDataInFile("post_answer.txt", $objTH->GetIterator(), true);
+	
+	$langofchoice = $_POST ['langofchoice'];
+	CSessionManager::Set ( CSessionManager::BOOL_SEL_TEST_LANG, $langofchoice );
+	
+	if($nLastQuesType== CConfig::QT_INT && !is_array($nAns) && $nAns != -1) {
+		$tempAns = base64_decode($objTH->GetIntQuesAns($nSection, $nQuestion));
+		
+		//CUtils::LogDataInFile("temp_act_answer.txt", $tempAns." : ".$nAns);
+		
+		if($tempAns == $nAns)
+		{
+			// Mark the first option correct if answer matches 
+			$nAns = array(1);
+		}
+		else {
+			// Record the wrong answer
+			$nAns = array($nAns);
+		}
+	}
+	else if($nLastQuesType == CConfig::QT_INT) {
+		$nAns = array(-1);
+	}
+	
+	if(count ( $nAns ) > 0 && ! in_array ( - 1, $nAns ))
+	{
+		$_POST ['flag_choice'] = 0;
+	}
+		
+	//CUtils::LogDataInFile("post_submit_ans.txt", $_POST, true);
+	
+	if (isset ( $_POST ['flag_choice'] ) ) {
+	if ($_POST ['flag_choice'] == QUES_FLAG_UNANSWERED) {
+			$nAns = array ("-1" );
+		} else if ($_POST ['flag_choice'] == QUES_FLAG_MARKED_FOR_REVIEW) {
+			$nAns = array ("-2" );
+		} else if ($_POST ['flag_choice'] == QUES_FLAG_VISITED) {
+			$nAns = array ("-3" );
+		}
 	}
 	
 	/*
@@ -358,27 +381,56 @@ foreach ( $objAnsAry[$nSection] as $qusIndex => $Answer )
 	}
 }
 
-function PopulateIntegerOptions($correctOpt)
+function PopulateIntegerOptions($correctOpt, $ansAry)
 {
-	$numOfDigits = strlen($correctOpt);
+	//CUtils::LogDataInFile("populate_int_opts.txt", $correctOpt, false, "a");
+	//CUtils::LogDataInFile("populate_int_opts.txt", $ansAry, true, "a");
 	
-	printf("<tr><td></td>");
+	$min_cols = 4;
+	$correct_opt_len = strlen($correctOpt);
+	$numOfDigits = ($correct_opt_len < $min_cols) ? $min_cols : $correct_opt_len;
+	
+	$answer = 0;
+	$answer_ary = array();
+	$bAnswered = false;
+	if(count(array_intersect(array(-1,-2,-3), $ansAry)) == 0)
+	{
+		$answer = ($ansAry[0] == 1) ? $correctOpt : $ansAry[0];
+		$answer_ary = str_split(strrev($answer));
+		$bAnswered = true;
+	}
+	
+	printf("<tr class='info'><td>");
+	printf("<div style='border: 1px solid blue; background-color: #fff;'><span id='int_ans_sel' style='margin-left: 5px;'>%s</span></div>", $answer);
+	printf("<input type='hidden' name='int_answer' id='text_int_opt' value='%s'>", $bAnswered ? $answer : -1);
+	printf("</td>");
 	for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
 	{
 		$label = pow(10, $digitPos);
-		
-		printf("<td>%s</td>", $label);
+		if(strlen($label) == 1) {
+			$label = "<small>Unit Place</small>";
+		}
+		else {
+			$label = "<small>".$label."<sup>th</sup> Place </small>";
+		}
+		printf("<td style='color:red;'><b>%s</b></td>", $label);
 	}
 	printf("</tr>");
 	
 	for ($index = 0; $index < 10; $index++)
 	{
 		printf("<tr>");
-		printf("<td class='info'>%s</td>", $index);
+		printf("<td style='color:blue;' class='info'><b>%s</b></td>", $index);
 		for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
 		{
-			printf("<td class='info'>");
-			printf("<input type='radio' name='opt_pos_%s' value='%s'>", $digitPos, ($index * pow(10, $digitPos)));
+			$sel_opt = 0;
+			if(array_key_exists($digitPos, $answer_ary)) {
+				$sel_opt = $answer_ary[$digitPos];
+			}
+			//CUtils::LogDataInFile("ans_ary.txt", $answer_ary, true);
+			printf("<td>");
+			printf("&nbsp; <input type='radio' onclick='UpdateIntAnswer(this, %d, %d);' name='opt_pos_%s' value='%s' %s>", 
+					$digitPos, $numOfDigits, $digitPos, $index, $bAnswered && $sel_opt == $index ? "checked": "");
 			printf("</td>");
 		}
 		printf("</tr>");
@@ -586,7 +638,7 @@ span.username {
 	#dir-para {
 		resize: both;
     	overflow: auto;
-		display: <?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "none" : "block");?> !important;
+		display: <?php echo(($aryQues['ques_type'] == CConfig::QT_NORMAL || $aryQues['ques_type'] == CConfig::QT_INT || $aryQues['ques_type'] == CConfig::QT_MATRIX) ? "none" : "block");?> !important;
 		position: relative;
 		border:1px solid #aaa;
 	}
@@ -828,14 +880,14 @@ body {
 					
 					</div>
 					<div class="row" id="question-area">
-						<div id="dir-para" class="<?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "col-sm-0" : "col-xs-12 col-sm-6");?>">
-							<!-- <button type="button" class="btn btn-primary" onclick="TogglePara()" id="toggle_para" style="<?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "display:none;" : "");?>">
+						<div id="dir-para" class="<?php echo(($aryQues['ques_type'] == CConfig::QT_NORMAL) ? "col-sm-0" : "col-xs-12 col-sm-6");?>">
+							<!-- <button type="button" class="btn btn-primary" onclick="TogglePara()" id="toggle_para" style="<?php echo(($aryQues['ques_type'] == CConfig::QT_NORMAL || $aryQues['ques_type'] == CConfig::QT_INT || $aryQues['ques_type'] == CConfig::QT_MATRIX) ? "display:none;" : "");?>">
 							</button> -->
 							<div class="well" id="base_para">
 								<blockquote>
 									<p>
 		    					<?php
-											if ($aryQues ['ques_type'] != CConfig::QT_NORMAL && $aryQues ['ques_type'] != - 1) {
+											if ($aryQues ['ques_type'] != CConfig::QT_NORMAL && $aryQues ['ques_type'] != CConfig::QT_INT && $aryQues ['ques_type'] != CConfig::QT_MATRIX && $aryQues ['ques_type'] != - 1) {
 												echo ($objTH->GetRCDirectionPara ( $aryQues ['ques_id'], $aryQues ['ques_type'] ));
 											}
 											?>
@@ -863,10 +915,10 @@ body {
 							}
 							?>
 						</div>
-						<div class="col-xs-12 <?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL || $aryQues['ques_type'] == CConfig::QT_INT || $aryQues['ques_type'] == CConfig::QT_MATRIX ? "col-sm-12" : "col-sm-6");?>">
-							<table width="100%" cellpadding="4" cellspacing="4">
-								<tr>
-									<td colspan="2" id="td_question" style="color: DarkSlateBlue;">
+						<div class="table-responsive col-xs-12 <?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL || $aryQues['ques_type'] == CConfig::QT_INT || $aryQues['ques_type'] == CConfig::QT_MATRIX ? "col-sm-12" : "col-sm-6");?>">
+							<table class="table <?php echo($aryQues['ques_type'] == CConfig::QT_INT || $aryQues['ques_type'] == CConfig::QT_MATRIX? "table-striped table-bordered table-condensed" : "");?>" cellpadding="4" cellspacing="4">
+								<thead><tr>
+									<td colspan="11" id="td_question" style="color: DarkSlateBlue;">
 									<?php
 									$ques_cnts = "";
 									if (CUtils::getMimeType ( $aryQues ['question'] ) == "application/octet-stream") {
@@ -906,10 +958,10 @@ body {
 									}
 									?><br />
 									</td>
-								</tr>
+								</tr></thead>
 								<?php
 								if($aryQues['ques_type'] == CConfig::QT_INT) {
-									PopulateIntegerOptions($opt_ary[0]);
+									PopulateIntegerOptions($opt_ary[0], $objAnsAry[$nSection][$nQuestion]);
 								}
 								else if($aryQues['ques_type'] == CConfig::QT_MATRIX) {
 									PopulateMatrixOptions($opt_ary);
@@ -1540,6 +1592,7 @@ body {
 		{
 			$("input:radio[name='answer[]']").prop('checked', false);
 			$("input:checkbox[name='answer[]']").prop('checked', false);
+			$("input:hidden[name='int_answer']").val(-1);
 			
 			<?php
 			if ((count ( $objAnsAry [$nSection] [$nQuestion] ) > 0 && ! in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) && ! in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) {
@@ -1629,7 +1682,7 @@ body {
 		
 		foreach ( $objAnsAry as $secIndex => $ansSection ) {
 			foreach ( $ansSection as $qusIndex => $ansQuestion ) {
-				if ($linked_to != $objIter [$secIndex] [$qusIndex] ['linked_to'] && $objIter [$secIndex] [$qusIndex] ['ques_type'] != CConfig::QT_NORMAL) {
+				if ($linked_to != $objIter [$secIndex] [$qusIndex] ['linked_to'] && ($objIter [$secIndex] [$qusIndex] ['ques_type'] == CConfig::QT_READ_COMP || $objIter [$secIndex] [$qusIndex] ['ques_type'] == CConfig::QT_DIRECTIONS) ) {
 					$linked_to = $objIter [$secIndex] [$qusIndex] ['linked_to'];
 					$index ++;
 					
@@ -1706,6 +1759,35 @@ body {
 				$("#section_info").hide();
 				bShowSections = true;
 			}
+		}
+
+		function UpdateIntAnswer(obj, pos, max_digits)
+		{
+			var sVal = '';
+			for(i=max_digits-1; i>=0;i--)
+			{
+				var selection = $("input[name=opt_pos_"+i+"]:checked").val();
+				if(selection == undefined) {
+					$("input[name=opt_pos_"+i+"][value=0]").prop('checked', 'checked');
+					selection = 0;
+				}
+				sVal = sVal + selection;
+			}
+			//alert(sVal);
+			
+			/*int_val = $("#int_ans_sel").text();
+			pos = pos == 0 ? 1 : pos;
+			
+			alert(pos.length+" # "+int_val + " : " + pos+" - "+ ($(obj).val() / pos));
+
+			int_val[pos.length - pos - 1] = $(obj).val() / pos;
+
+			alert(int_val);*/
+
+			$("#text_int_opt").val( parseInt(sVal) );
+			$("#int_ans_sel").text( parseInt(sVal) );
+
+			ChangeSubmitBtnName("Save & Next");
 		}
 
 		<?php
