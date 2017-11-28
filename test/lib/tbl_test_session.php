@@ -307,6 +307,10 @@
 				}
 			}
 			
+			print_r($qusAry);
+			
+			
+			
 			$secIndex 			 = 0;
 			$arySecAttemptedQues = array();
 				
@@ -775,7 +779,12 @@
         		 
         		$objTestParam = $this->objTestDynamic->GetTestParams($row['test_id']);
         		$ques_map = $row['ques_map'];
-        		 
+				
+        		
+        		
+        		
+        		
+        		
         		$marks = 0;
         		$secPerformance = array();
         		if($test_type == CConfig::TT_DEFAULT)
@@ -801,6 +810,27 @@
         	return $counter;
         	 
         }
+        
+        // THis is for generating consolidated result sheet as required by Allen
+        
+        public function GenerateResultSheet($test_schid)
+        {
+        	$query =  sprintf("select rs.*, us.email from result rs inner join users us on rs.user_id = us.user_id  where tschd_id='%s'", $test_schid);        	 
+        	$result = mysql_query($query, $this->objDBLink) or die('Select result pnr error : ' . mysql_error());
+        	 
+        	// Loop throught  the test pnr for above scheudle id
+        	 
+        	$counter = 0;
+        	while($row = mysql_fetch_array($result))
+        	{        		         		 
+        		//$objTestParam = $this->objTestDynamic->GetTestParams($row['test_id']);
+        		$ques_map = $row['ques_map'];
+        	
+        		
+        		
+        	}
+        }
+        
         
         
 	}
