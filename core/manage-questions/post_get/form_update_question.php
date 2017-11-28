@@ -106,7 +106,7 @@
 		{
 			if($ques_type == CConfig::QT_MATRIX)
 			{
-				$data_row[$opt_index] = $_POST['option'.$opt_count.'_choice_select'];
+				$data_row[$opt_index] = implode(",",$_POST['option'.$opt_count.'_choice_select']);
 			}
 			else if($_POST['option'.$opt_count.'_choice'] == "text")
 			{

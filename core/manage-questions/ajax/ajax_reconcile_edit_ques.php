@@ -158,10 +158,11 @@
 				
 				<div class="form-group <?php echo(($quesType == CConfig::QT_MATRIX) ? "" : "hide_div"); ?>" id="option<?php echo($opt_idx + 1);?>_choice_select">
 				    <div class="col-lg-7 col-md-7 col-sm-7">
-				  		<select class="matrix_dropdown_select" name="option<?php echo($opt_idx + 1);?>_choice_select">
+				  		<select class="matrix_dropdown_select" name="option<?php echo($opt_idx + 1);?>_choice_select" multiple>
 				  			<?php 
 				  				for($i = 0; $i <= $highestAlphaPos; $i++){
-				  					printf("<option value='%s' %s>%s</option>", $alphabets[$i], ($alphabets[$i] == $cur_opt) ? "selected": "", $alphabets[$i]);
+				  					
+				  					printf("<option value='%s' %s>%s</option>", $alphabets[$i], in_array($alphabets[$i], explode(",",$cur_opt)) ? "selected": "", $alphabets[$i]);
 				  				}
 				  			?>
 				  		</select>

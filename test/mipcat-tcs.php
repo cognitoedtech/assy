@@ -437,7 +437,7 @@ function PopulateIntegerOptions($correctOpt, $ansAry)
 	}
 }
 
-function PopulateMatrixOptions($optAry)
+function PopulateMatrixOptions($optAry, $ansAry)
 {
 	$highestAlpha	  = '';
 	$highestAlphaPos  = 0;
@@ -455,18 +455,21 @@ function PopulateMatrixOptions($optAry)
 		$highestAlpha 		= $alphabets[$highestAlphaPos];
 	}
 	
+	//CUtils::LogDataInFile("populate_mat_details.txt", $highestAlphaPos." - ".$highestAlpha);
+	
 	printf("<tr><td></td>");
-	for($opt_col = 0; $opt_col < $highestAlphaPos; $opt_col ++) {
-		printf("<td>%s</td>", $alphabets[$opt_col]);
+	for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
+		printf("<td><b>%s</b></td>", $alphabets[$opt_col]);
 	}
 	printf("</tr>");
 	
 	//$optAry[$opt_row];
 	for($opt_row = 0; $opt_row < $num_options; $opt_row ++) {
 		printf("<tr>");
-		printf("<td>%s</td>", $romans[$opt_row]);
-		for($opt_col = 0; $opt_col < $highestAlphaPos; $opt_col ++) {
-			printf("<td><input type='radio' name='r%s-c%s' value='r%s-c%s'></td>", $opt_row, $opt_col, $opt_row, $opt_col);
+		printf("<td><b>%s</b><input type='hidden' id='mat_opt_%s' name='answer[]' value='-1'/></td>", $romans[$opt_row], $opt_row);
+		for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
+			printf("<td><input type='radio' onclick='UpdateMatrixAnswer(this, %d, %d, %d, %d);' name='mat_row_%s' value='%s'/></td>", 
+					$opt_row, $opt_col, $num_options, $highestAlphaPos, $opt_row, $alphabets[$opt_col]);
 		}
 		printf("</tr>");
 	}
@@ -964,7 +967,7 @@ body {
 									PopulateIntegerOptions($opt_ary[0], $objAnsAry[$nSection][$nQuestion]);
 								}
 								else if($aryQues['ques_type'] == CConfig::QT_MATRIX) {
-									PopulateMatrixOptions($opt_ary);
+									PopulateMatrixOptions($opt_ary, $objAnsAry[$nSection][$nQuestion]);
 								}
 								else {
 									for($opt_idx = 0; $opt_idx < $aryQues ['opt_count']; $opt_idx ++) {
@@ -1787,6 +1790,15 @@ body {
 			$("#text_int_opt").val( parseInt(sVal) );
 			$("#int_ans_sel").text( parseInt(sVal) );
 
+			ChangeSubmitBtnName("Save & Next");
+		}
+
+		function UpdateMatrixAnswer(obj, row, col, max_rows, max_cols)
+		{
+			var selection = $("input[name=mat_row_"+row+"]:checked").val();
+
+			$("#mat_opt_"+row).val(selection);
+			
 			ChangeSubmitBtnName("Save & Next");
 		}
 
