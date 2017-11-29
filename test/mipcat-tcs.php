@@ -227,6 +227,23 @@ if ($qry [0] == "test_id") {
 		$nAns = array(-1);
 	}
 	
+	CUtils::LogDataInFile("ans_ary_pre.txt", $nAns, true);
+	if($nLastQuesType== CConfig::QT_MATRIX) {
+		$bMatStr = false;
+		foreach($nAns as $key => $ans_row) {
+			if(!is_numeric($ans_row)) {
+				$bMatStr = true;
+				break;
+			}	
+		}
+		if($bMatStr) {
+			foreach($nAns as $key => $ans_row) {
+				$nAns[$key] = ($ans_row < 0) ? 0 : $ans_row;
+			}
+		}
+	}
+	CUtils::LogDataInFile("ans_ary_post.txt", $nAns, true);
+	
 	if(count ( $nAns ) > 0 && ! in_array ( - 1, $nAns ))
 	{
 		$_POST ['flag_choice'] = 0;
@@ -450,7 +467,11 @@ function PopulateMatrixOptions($optAry, $ansAry)
 	
 	$num_options = $GLOBALS['aryQues']['opt_count'];
 	
+	$bEmptyAnsAry = (count($ansAry) > 0 ) ? false : true;
 	foreach ($optAry as $key => $val) {
+		if($bEmptyAnsAry) {
+			array_push($ansAry, -1);
+		}
 		foreach( explode(",", $val['option']) as  $opt_part) {
 			$pos = strpos($alphabets, $opt_part);
 			
@@ -463,7 +484,7 @@ function PopulateMatrixOptions($optAry, $ansAry)
 	CUtils::LogDataInFile("populate_mat_opt_ary.txt", $optAry, true);
 	CUtils::LogDataInFile("populate_mat_ans_ary.txt", $ansAry, true);
 	
-	printf("<tr><td></td>");
+	printf("<tr><td><input type='hidden' name='mat_rows' value='%s'/></td>", $num_options);
 	for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
 		printf("<td><b>%s</b></td>", $alphabets[$opt_col]);
 	}
@@ -472,10 +493,11 @@ function PopulateMatrixOptions($optAry, $ansAry)
 	//$optAry[$opt_row];
 	for($opt_row = 0; $opt_row < $num_options; $opt_row ++) {
 		printf("<tr>");
-		printf("<td><b>%s</b><input type='hidden' id='mat_opt_%s' name='answer[]' value='-1'/></td>", $romans[$opt_row], $opt_row);
+		printf("<td><b>%s</b><input type='hidden' id='mat_opt_%s' name='answer[]' value='$ansAry[$opt_row]'/></td>", 
+				$romans[$opt_row], $opt_row, $opt_row);
 		for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
-			printf("<td><input type='checkbox' onclick='UpdateMatrixAnswer(this, %d, %d, %d, %d);' name='mat_row_%s' value='%s'/></td>", 
-					$opt_row, $opt_col, $num_options, $highestAlphaPos, $opt_row, $alphabets[$opt_col]);
+			printf("<td><input type='checkbox' onclick='UpdateMatrixAnswer(this, %d, %d, %d, %d);' name='mat_row_%s' value='%s' %s/></td>", 
+					$opt_row, $opt_col, $num_options, $highestAlphaPos, $opt_row, $alphabets[$opt_col], in_array($alphabets[$opt_col], explode(",", $ansAry[$opt_row])) ? "checked": "");
 		}
 		printf("</tr>");
 	}
@@ -1801,14 +1823,20 @@ body {
 
 		function UpdateMatrixAnswer(obj, row, col, max_rows, max_cols)
 		{
-			var selection = array();
+			var selection = [];
 			$("input[name=mat_row_"+row+"]:checked").each(function () {
-	            alert(" Value: " + $(this).val());
 	            selection.push($(this).val());
 	        });
 			//var selection = $("input[name=mat_row_"+row+"]:checked").val();
 
-			$("#mat_opt_"+row).val(selection.join(","));
+			if (selection.length > 0) {
+				$("#mat_opt_"+row).val(selection.join(","));
+			}
+			else {
+				$("#mat_opt_"+row).val(-1);
+			}
+			
+			//alert(" Value: " + selection.join(","));
 			
 			ChangeSubmitBtnName("Save & Next");
 		}
