@@ -227,6 +227,23 @@ if ($qry [0] == "test_id") {
 		$nAns = array(-1);
 	}
 	
+	CUtils::LogDataInFile("ans_ary_pre.txt", $nAns, true);
+	if($nLastQuesType== CConfig::QT_MATRIX) {
+		$bMatStr = false;
+		foreach($nAns as $key => $ans_row) {
+			if(!is_numeric($ans_row)) {
+				$bMatStr = true;
+				break;
+			}	
+		}
+		if($bMatStr) {
+			foreach($nAns as $key => $ans_row) {
+				$nAns[$key] = ($ans_row < 0) ? 0 : $ans_row;
+			}
+		}
+	}
+	CUtils::LogDataInFile("ans_ary_post.txt", $nAns, true);
+	
 	if(count ( $nAns ) > 0 && ! in_array ( - 1, $nAns ))
 	{
 		$_POST ['flag_choice'] = 0;
@@ -381,6 +398,8 @@ foreach ( $objAnsAry[$nSection] as $qusIndex => $Answer )
 	}
 }
 
+CUtils::LogDataInFile("ques_ary.txt", $aryQues, true);
+
 function PopulateIntegerOptions($correctOpt, $ansAry)
 {
 	//CUtils::LogDataInFile("populate_int_opts.txt", $correctOpt, false, "a");
@@ -437,7 +456,7 @@ function PopulateIntegerOptions($correctOpt, $ansAry)
 	}
 }
 
-function PopulateMatrixOptions($optAry)
+function PopulateMatrixOptions($optAry, $ansAry)
 {
 	$highestAlpha	  = '';
 	$highestAlphaPos  = 0;
@@ -448,25 +467,37 @@ function PopulateMatrixOptions($optAry)
 	
 	$num_options = $GLOBALS['aryQues']['opt_count'];
 	
+	$bEmptyAnsAry = (count($ansAry) > 0 ) ? false : true;
 	foreach ($optAry as $key => $val) {
-		$pos = strpos($alphabets, $val['option']);
-		
-		$highestAlphaPos 	= ($highestAlphaPos < $pos) ? $pos : $highestAlphaPos;
-		$highestAlpha 		= $alphabets[$highestAlphaPos];
+		if($bEmptyAnsAry) {
+			array_push($ansAry, -1);
+		}
+		foreach( explode(",", $val['option']) as  $opt_part) {
+			$pos = strpos($alphabets, $opt_part);
+			
+			$highestAlphaPos 	= ($highestAlphaPos < $pos) ? $pos : $highestAlphaPos;
+			$highestAlpha 		= $alphabets[$highestAlphaPos];
+		}
 	}
 	
-	printf("<tr><td></td>");
-	for($opt_col = 0; $opt_col < $highestAlphaPos; $opt_col ++) {
-		printf("<td>%s</td>", $alphabets[$opt_col]);
+	CUtils::LogDataInFile("populate_mat_details.txt", $highestAlphaPos." - ".$highestAlpha);
+	CUtils::LogDataInFile("populate_mat_opt_ary.txt", $optAry, true);
+	CUtils::LogDataInFile("populate_mat_ans_ary.txt", $ansAry, true);
+	
+	printf("<tr><td><input type='hidden' name='mat_rows' value='%s'/></td>", $num_options);
+	for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
+		printf("<td><b>%s</b></td>", $alphabets[$opt_col]);
 	}
 	printf("</tr>");
 	
 	//$optAry[$opt_row];
 	for($opt_row = 0; $opt_row < $num_options; $opt_row ++) {
 		printf("<tr>");
-		printf("<td>%s</td>", $romans[$opt_row]);
-		for($opt_col = 0; $opt_col < $highestAlphaPos; $opt_col ++) {
-			printf("<td><input type='radio' name='r%s-c%s' value='r%s-c%s'></td>", $opt_row, $opt_col, $opt_row, $opt_col);
+		printf("<td><b>%s</b><input type='hidden' id='mat_opt_%s' name='answer[]' value='$ansAry[$opt_row]'/></td>", 
+				$romans[$opt_row], $opt_row, $opt_row);
+		for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
+			printf("<td><input type='checkbox' onclick='UpdateMatrixAnswer(this, %d, %d, %d, %d);' name='mat_row_%s' value='%s' %s/></td>", 
+					$opt_row, $opt_col, $num_options, $highestAlphaPos, $opt_row, $alphabets[$opt_col], in_array($alphabets[$opt_col], explode(",", $ansAry[$opt_row])) ? "checked": "");
 		}
 		printf("</tr>");
 	}
@@ -964,7 +995,7 @@ body {
 									PopulateIntegerOptions($opt_ary[0], $objAnsAry[$nSection][$nQuestion]);
 								}
 								else if($aryQues['ques_type'] == CConfig::QT_MATRIX) {
-									PopulateMatrixOptions($opt_ary);
+									PopulateMatrixOptions($opt_ary, $objAnsAry[$nSection][$nQuestion]);
 								}
 								else {
 									for($opt_idx = 0; $opt_idx < $aryQues ['opt_count']; $opt_idx ++) {
@@ -1787,6 +1818,26 @@ body {
 			$("#text_int_opt").val( parseInt(sVal) );
 			$("#int_ans_sel").text( parseInt(sVal) );
 
+			ChangeSubmitBtnName("Save & Next");
+		}
+
+		function UpdateMatrixAnswer(obj, row, col, max_rows, max_cols)
+		{
+			var selection = [];
+			$("input[name=mat_row_"+row+"]:checked").each(function () {
+	            selection.push($(this).val());
+	        });
+			//var selection = $("input[name=mat_row_"+row+"]:checked").val();
+
+			if (selection.length > 0) {
+				$("#mat_opt_"+row).val(selection.join(","));
+			}
+			else {
+				$("#mat_opt_"+row).val(-1);
+			}
+			
+			//alert(" Value: " + selection.join(","));
+			
 			ChangeSubmitBtnName("Save & Next");
 		}
 
