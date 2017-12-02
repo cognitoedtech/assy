@@ -203,7 +203,7 @@ if ($qry [0] == "test_id") {
 	$nLastQuesType = $objTH->GetQuesType($nSection, $nQuestion);
 	$nAns = ($nLastQuesType== CConfig::QT_INT) ? $_POST ['int_answer'] : $_POST ['answer'];
 	
-	//CUtils::LogDataInFile("post_answer.txt", $objTH->GetIterator(), true);
+	//CUtils::LogDataInFile("iterator.txt", $objTH->GetIterator(), true);
 	
 	$langofchoice = $_POST ['langofchoice'];
 	CSessionManager::Set ( CSessionManager::BOOL_SEL_TEST_LANG, $langofchoice );
@@ -1037,7 +1037,7 @@ body {
 								id="question" name="question" value="<?php echo($nQuestion);?>" />
 							<input type="hidden" id="langofchoice" name="langofchoice"
 								value="0" /> <input type="hidden" id="showParaChoice"
-								name="showParaChoice" /> <input type="hidden"
+								name="showParaChoice" value="0"/> <input type="hidden"
 								id="prev_linked_to" name="prev_linked_to"
 								value="<?php echo($aryQues['linked_to']);?>"> <input
 								type="hidden" id="showSectionChoice" name="showSectionChoice">
@@ -1844,7 +1844,7 @@ body {
 		<?php
 		if ($aryQues ['ques_type'] != CConfig::QT_NORMAL) {
 			?>
-		var bShowPara = <?php echo($bShowPara);?>;
+		var bShowPara = <?php echo(empty($bShowPara) ? 0 : $bShowPara);?>;
 		function TogglePara()
 		{
 			var trans_val = $("input[name=trans_choice]:checked").val();

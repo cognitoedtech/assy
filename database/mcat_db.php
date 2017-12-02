@@ -2012,11 +2012,12 @@
 		
 		public function InsertIntoTestDynamic($test_id, $duration,
 		    							  $max_ques, $criteria, $cutoff_min,
-		    							  $cutoff_max, $top, $r_marks, $w_marks,
+		    							  $cutoff_max, $top, $r_marks, $p_marks, $w_marks,
 		    							  $sec_count, $ques_source, $section_details,
 		    							  $subject_in_section, $topic_in_subject, $ques_source, $visibility)
 		{
-			$query = sprintf("insert into test_dynamic (test_id, section_count, section_details, subject_in_section, topic_in_subject, criteria, cutoff_min, cutoff_max, top_result, test_duration, marks_for_correct, negative_marks, max_question, ques_source, visibility) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $test_id, $sec_count, $section_details, $subject_in_section, $topic_in_subject, ($criteria=='')?0:$criteria, $cutoff_min, $cutoff_max, ($top=='')?0:$top, $duration, $r_marks, $w_marks, $max_ques, $ques_source, $visibility);
+			$query = sprintf("insert into test_dynamic (test_id, section_count, section_details, subject_in_section, topic_in_subject, criteria, cutoff_min, cutoff_max, top_result, test_duration, marks_for_correct, partial_marks, negative_marks, max_question, ques_source, visibility) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", 
+					$test_id, $sec_count, $section_details, $subject_in_section, $topic_in_subject, ($criteria=='')?0:$criteria, $cutoff_min, $cutoff_max, ($top=='')?0:$top, $duration, $r_marks, $p_marks, $w_marks, $max_ques, $ques_source, $visibility);
 			
 			//echo $query."<br/>";
 			
@@ -2027,12 +2028,13 @@
 		
 		public function InsertIntoTestStatic($user_id,$test_id, $duration,
 		    							  $max_ques, $criteria, $cutoff_min,
-		    							  $cutoff_max, $top, $r_marks, $w_marks,
+		    							  $cutoff_max, $top, $r_marks, $p_marks, $w_marks,
 		    							  $sec_count, $ques_source, $questions,
 		    							  $section_details, $subject_in_section, 
 		    							  $topic_in_subject, $ques_source, $visibility)
 		{
-			$query = sprintf("insert into test_static (test_id, section_count, section_details, subject_in_section, topic_in_subject, criteria, cutoff_min, cutoff_max, top_result, test_duration, marks_for_correct, negative_marks, max_question, ques_source, visibility) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $test_id, $sec_count,  $section_details, $subject_in_section, $topic_in_subject, $criteria, $cutoff_min, $cutoff_max, $top, $duration, $r_marks, $w_marks, $max_ques, $ques_source, $visibility);
+			$query = sprintf("insert into test_static (test_id, section_count, section_details, subject_in_section, topic_in_subject, criteria, cutoff_min, cutoff_max, top_result, test_duration, marks_for_correct, partial_marks, negative_marks, max_question, ques_source, visibility) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", 
+					$test_id, $sec_count,  $section_details, $subject_in_section, $topic_in_subject, $criteria, $cutoff_min, $cutoff_max, $top, $duration, $r_marks, $p_marks, $w_marks, $max_ques, $ques_source, $visibility);
 			
 			//echo $query."<br/>";
 			

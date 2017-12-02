@@ -173,6 +173,8 @@
 		
 		public function LoadTest($user_id, $test_id, $tschd_id, $language, &$bNew)
 		{
+			CUtils::LogDataInFile("load_test_params.txt", $user_id." - ".$test_id." - ".$tschd_id." - ".$language."\r\n");
+			
 			if($this->objTestSession->SessionExist($user_id, $test_id, $tschd_id) != null)
 			{
 				$bNew = false;
