@@ -317,6 +317,7 @@ if ($objAnsAry == null) {
 }
 
 $sSectionName = $objTH->GetSectionName ( $nSection );
+$sSectionName = substr($sSectionName, strpos($sSectionName, strpos($sSectionName,"~")+1, strlen($sSectionName)));
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Adjust attempts
@@ -398,7 +399,34 @@ foreach ( $objAnsAry[$nSection] as $qusIndex => $Answer )
 	}
 }
 
-CUtils::LogDataInFile("ques_ary.txt", $aryQues, true);
+// Populate Section Details
+$arySection = $objTH->GetSectionDetails ( $nTestID );
+
+$grpIndex = -1;
+$secIndex = 0;
+$grpSecIndex = 0;
+$aryGroup = array();
+foreach ( $arySection as $key => $Section ) {
+	if (! empty ( $Section ['name'] )) {
+		$grpName = substr($Section ['name'], 0, strpos($Section ['name'],"~"));
+		
+		if (strcmp($grpName, $aryGroup[$grpIndex][$grpSecIndex-1]['grp_name']) != 0) {
+			$grpIndex++;
+			$grpSecIndex = 0;
+			$aryGroup[$grpIndex] = array();
+		}
+		
+		$aryGroup[$grpIndex][$grpSecIndex] = array();
+		$aryGroup[$grpIndex][$grpSecIndex]['sec_index'] = $secIndex;
+		$aryGroup[$grpIndex][$grpSecIndex]['sec_name'] = substr($Section ['name'], strpos($Section ['name'],"~")+1, strlen($Section ['name']));
+		$aryGroup[$grpIndex][$grpSecIndex]['grp_name'] = $grpName;
+		
+		$grpSecIndex++;
+	}
+	$secIndex ++;
+}
+
+//CUtils::LogDataInFile("group_ary.txt", $aryGroup, true);
 
 function PopulateIntegerOptions($correctOpt, $ansAry)
 {
@@ -559,7 +587,7 @@ span.username {
 /* Group or Section Scroller Style*/
 /*---------------------------------------------------------------*/
 
-.wrapper {
+.wrapper, .wrapper-g {
     position:relative;
     margin:0 auto;
     overflow:hidden;
@@ -567,7 +595,7 @@ span.username {
   	height:50px;
 }
 
-.list {
+.list, .list-g {
     position:relative;
     left:0px;
     top:0px;
@@ -581,7 +609,7 @@ span.username {
     -webkit-overflow-scrolling: touch;
 }
 
-.list li{
+.list li, .list-g li{
 	display:table-cell;
     position:relative;
     text-align:center;
@@ -591,7 +619,7 @@ span.username {
     vertical-align:middle;
 }
 
-.scroller {
+.scroller, .scroller-g {
   text-align:center;
   cursor:pointer;
   display:none;
@@ -602,11 +630,11 @@ span.username {
   background-color:#fff;
 }
 
-.scroller-right{
+.scroller-right, .scroller-right-g {
   float:right;
 }
 
-.scroller-left {
+.scroller-left, .scroller-left-g {
   float:left;
 }
 
@@ -707,7 +735,7 @@ span.username {
 	}
 	
 	#group-strip {
-		display: none;
+		
 	}
 	
 	#timer-strip {
@@ -807,11 +835,36 @@ body {
 		
 		<div class="row row-eq-height countme">
 			<div class="col-xs-12 col-sm-9">
-				<div class="row row-eq-height" id="group-strip">
+				<div class="row border row-eq-height" id="group-strip">
+					<div class="scroller-g scroller-left-g"><i class="fa fa-chevron-left" aria-hidden="false"></i>
+					</div>
+	  				<div class="scroller-g scroller-right-g"><i class="fa fa-chevron-right" aria-hidden="false"></i>
+	  				</div>
+					<div class="wrapper-g">
+						<ul class="nav nav-tabs list-g">
+						<?php
+						$secStop = array(0, 0); 
+						foreach ($aryGroup as $key => $group) {
+							$active = false;
+							foreach($group as $section) {
+								if($section['sec_index'] == $nSection) {
+									$active = true;
+									$secStop[0] = $group[0]['sec_index'];
+									$secStop[1] = $group[count($group)-1]['sec_index'];
+								}
+							}
+							
+							printf ( "<li %s><a href='#%s~%s_questions' aria-controls='#%s~%s_questions' data-toggle='tab' index='%s'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", 
+									$active ? "class='active'" : "", $group[0]['grp_name'], $group[0]['sec_name'], $group[0]['grp_name'], $group[0]['sec_name'], $group[0]['sec_index'], $group[0]['grp_name'] );
+						}
+						CUtils::LogDataInFile("params.txt", $secStop, true);
+						?>
+						</ul>
+					</div>
 				</div>
 				<div class="row border" id="timer-strip">
 					<div class="col-sm-6" id="cur-section-label">
-						<span class="selected_sec_name"><?php printf("<b><i class='icon-tasks icon-black'></i>&nbsp;Current Section: <span style='color:FireBrick;'>%s</span></b>",$sSectionName);?></span>
+						<span class="selected_sec_name"><?php printf("<b><i class='icon-tasks icon-black'></i>&nbsp;Current Section: <span style='color:FireBrick;'>%s</span></b>", $sSectionName);?></span>
 					</div>
 					<div class="col-sm-6">
 						<span class="timer"><input type="text"
@@ -827,15 +880,17 @@ body {
 						<div class="wrapper">
 							<ul class="nav nav-tabs list">
 							<?php
-							$arySection = $objTH->GetSectionDetails ( $nTestID );
-							
 							$secIndex = 0;
 							foreach ( $arySection as $key => $Section ) {
 								if (! empty ( $Section ['name'] )) {
 									if ($secIndex == $nSection)
-										printf ( "<li class='active'><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", $Section ['name'], $Section ['name'], $Section ['name'] );
+										printf ( "<li class='active'><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab' index='%s' style='%s'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", 
+												$Section ['name'], $Section ['name'], $secIndex, ($secIndex < $secStop[0] || $secIndex > $secStop[1]) ? "display:none;" : "", 
+												substr($Section ['name'], strpos($Section ['name'],"~")+1, strlen($Section ['name'])) );
 									else
-										printf ( "<li ><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", $Section ['name'], $Section ['name'], $Section ['name'] );
+										printf ( "<li ><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab' index='%s' style='%s'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", 
+												$Section ['name'], $Section ['name'], $secIndex, ($secIndex < $secStop[0] || $secIndex > $secStop[1]) ? "display:none;" : "", 
+												substr($Section ['name'], strpos($Section ['name'],"~")+1, strlen($Section ['name'])) );
 								
 								}
 								$secIndex ++;
@@ -1091,7 +1146,7 @@ body {
 								printf ( "<div style='padding: 5px; overflow-y: auto;' role='tabpanel' class='tab-pane %s' id='%s_questions'>", $secIndex == $nSection ? 'active' : '', $Section ['name'] );
 								printf("<button style='margin-top: 5px;'><i class='fa fa-align-justify on-left' aria-hidden='true'></i>&nbsp;Reading Comprehension Group</button>");
 								printf("<button style='margin-top: 5px;margin-bottom: 5px;'><i class='fa fa-arrow-right on-left' aria-hidden='true'></i>&nbsp;Direction Group</button>");
-								printf("<div class='sec-name-questios'>%s</div>", $Section ['name']);
+								printf("<div class='sec-name-questios'>%s</div>", substr($Section ['name'], strpos($Section ['name'],"~")+1, strlen($Section ['name'])) );
 								printf("<div class='instruction_area'>");
 								
 								//printf("<script language='JavaScript' type='text/javascript'>alert('%s')</script>", print_r($objAnsAry, TRUE));
@@ -1250,12 +1305,14 @@ body {
 			var hidWidth;
 			var scrollBarWidths = 40;
 			var nItemsCount = 0;
+			var nItemsCountGrp = 0;
 			var nScrollLen;
+			var nScrollLenGrp;
 			
 			var widthOfList = function(){
  				var itemsWidth = 0;
  				nItemsCount = 0;
-				$('.list li').each(function(){
+				$('.list li > a:visible').each(function(){
   					var itemWidth = $(this).outerWidth();
  					itemsWidth+=itemWidth;
 					
@@ -1264,12 +1321,32 @@ body {
   			return itemsWidth;
 			};
 
+			var widthOfListGrp = function(){
+ 				var itemsWidth = 0;
+ 				nItemsCount = 0;
+				$('.list-g li > a:visible').each(function(){
+  					var itemWidth = $(this).outerWidth();
+ 					itemsWidth+=itemWidth;
+					
+ 					nItemsCountGrp++;
+				});
+  			return itemsWidth;
+			};
+
 			var widthOfHidden = function(){
 				return (($('.wrapper').outerWidth())-widthOfList()-getLeftPosi())-scrollBarWidths;
 			};
 
+			var widthOfHiddenGrp = function(){
+				return (($('.wrapper-g').outerWidth())-widthOfList()-getLeftPosi())-scrollBarWidths;
+			};
+
 			var getLeftPosi = function(){
 				return $('.list').position().left;
+			};
+
+			var getLeftPosiGrp = function(){
+				return $('.list-g').position().left;
 			};
 
 			var heightExceptQArea = function(){
@@ -1289,12 +1366,25 @@ body {
 					var amount = $(".list li.active").position().left;
 					$('.wrapper').animate({scrollLeft:amount}, function(){});
 				}
+
+				if($( window ).width() <= widthOfListGrp() && !bFromScroller)
+				{
+					var amount = $(".list-g li.active").position().left;
+					$('.wrapper-g').animate({scrollLeft:amount}, function(){});
+				}
 								
 				if (($('.wrapper').outerWidth()) < widthOfList()) {
 			    	$('.scroller-right').show();
 			  	}
 			  	else {
 					$('.scroller-right').hide();
+			  	}
+
+				if (($('.wrapper-g').outerWidth()) < widthOfListGrp()) {
+			    	$('.scroller-right-g').show();
+			  	}
+			  	else {
+					$('.scroller-right-g').hide();
 			  	}
 
 				if (getLeftPosi()<0) {
@@ -1305,6 +1395,14 @@ body {
 			    	$('.scroller-left').hide();
 			  	}
 
+				if (getLeftPosiGrp()<0) {
+			    	$('.scroller-left-g').show();
+			  	}
+			  	else {
+			    	//$('.item').animate({left:"-="+getLeftPosiGrp()+"px"},'slow');
+			    	$('.scroller-left-g').hide();
+			  	}
+
 			  	//alert("Window Height: " + $( window ).height() + ", RowsHeight: " + heightExceptQArea());
 			  	$("#question-area").css("height", $( window ).height() - heightExceptQArea() - 40);
 			  	$("#dir-para").css("height", $( window ).height() - heightExceptQArea() - 60);
@@ -1312,6 +1410,9 @@ body {
 				
 			  	var nItemsWidth = $('.wrapper').width();
 			  	nScrollLen  = nItemsWidth / nItemsCount;
+
+			  	var nItemsWidthGrp = $('.wrapper-g').width();
+			  	nScrollLenGrp  = nItemsWidthGrp / nItemsCountGrp;
 			}
 			
 			reAdjust();
@@ -1319,7 +1420,7 @@ body {
 			$(window).on('resize',function(e){
 				if($( window ).width() <= widthOfList())
 				{
-					var amount = $(".list li.active").position().left;
+					var amount = $(".list li.active:visible").position().left;
 					$('.wrapper').animate({scrollLeft:amount}, function(){
 			        	reAdjust();
 				        });
@@ -1345,6 +1446,22 @@ body {
 			    	var amount = (direction === "left" ? "-="+ nScrollLen : "+="+nScrollLen);
 					
 			        $('.wrapper').animate({scrollLeft:amount}, function(){
+				        reAdjust(1);
+				        });
+			    }
+
+			    $(".scroller-right-g").bind("click", function(event) {
+			    	scrollContentGrp("right");
+			    });
+
+			    $(".scroller-left-g").bind("click", function(event) {
+			    	scrollContentGrp("left");
+			    });
+
+			    function scrollContentGrp(direction) {
+			    	var amount = (direction === "left" ? "-="+ nScrollLenGrp : "+="+nScrollLenGrp);
+					
+			        $('.wrapper-g').animate({scrollLeft:amount}, function(){
 				        reAdjust(1);
 				        });
 			    }
@@ -1382,7 +1499,8 @@ body {
 			$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 				var newUrl;
 				var url = e.target.toString();
-				var nTargetSecIndex = $(e.target).closest('li').index();
+				//var nTargetSecIndex = $(e.target).closest('li').index();
+				var nTargetSecIndex = $(e.target).attr("index");
 
 				var secPattern = /&sec=[0-9]+/g;
 				newUrl = url.replace(secPattern, "&sec="+nTargetSecIndex);
