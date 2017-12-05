@@ -21,6 +21,10 @@
 		 */
 		static function LogDataInFile($file_name, $data, $bAry=false, $mode="w")
 		{
+			if (!CConfig::DEBUG_APP) {
+				return;
+			}
+				 
 			$handle = fopen($file_name, $mode);
 			
 			if(bAry) {
@@ -29,6 +33,9 @@
 			else {
 				fwrite($handle, $data);
 			}
+			
+			//fwrite($handle,"\r\n\r\n-------------------------------------\r\n\r\n");
+			//fwrite($handle, print_r(debug_backtrace(), true));
 			
 			fclose($handle);
 		}

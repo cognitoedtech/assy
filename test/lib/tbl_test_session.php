@@ -310,14 +310,38 @@
 			$secIndex 			 = 0;
 			$arySecAttemptedQues = array();
 				
-			$nRight = 0;
-			$nWrong = 0;
-			$nUnans = 0;
-			$qCount = 0;
+			$nRight   = 0;
+			$nPartial = 0;
+			$nWrong   = 0;
+			$nUnans   = 0;
+			$qCount   = 0;
 			
 			foreach ($qusAry as $key => $ques_id)
 			{
-				if(isset($aryCorrectAns[$ques_id]))
+				//CUtils::LogDataInFile("ary_correct_ans.txt", $aryCorrectAns[$ques_id], true, "a");
+				//CUtils::LogDataInFile("ary_answered_user.txt", $ansAry[$key], true, "a");
+				
+				$ques_dtls = $objQuestion->GetQuestionByID($ques_id);
+				
+				if($ques_dtls['ques_type'] == CConfig::QT_MATRIX && isset($aryCorrectAns[$ques_id])) {
+					$bPartial = false;
+					foreach($aryCorrectAns[$ques_id] as $opt => $correct) {
+						//CUtils::LogDataInFile("ary_correct_ans.txt", $correct."\r\n", false, "a");
+						//CUtils::LogDataInFile("ary_answered_user.txt", $ansAry[$key][$opt]."\r\n", false, "a");
+						
+						if($correct == $ansAry[$key][$opt]) {
+							$bPartial = true;
+							$nPartial++;
+						}
+						else if (empty($ansAry[$key][$opt])) {
+							$nUnans++;
+						}
+						else {
+							$nWrong++;
+						}
+					}
+				}
+				else if(isset($aryCorrectAns[$ques_id]))
 				{
 					/*file_put_contents("diff_data.txt", print_r($aryCorrectAns[$ques_id], true)."\r\n", FILE_APPEND);
 					file_put_contents("diff_data.txt", print_r($ansAry[$key], true)."\r\n", FILE_APPEND);
@@ -333,34 +357,52 @@
 					}
 					else
 					{
-						$nWrong++;
+						if($ques_dtls['mca'] == 1) {
+							$difference = array_diff($aryCorrectAns[$ques_id], $ansAry[$key]) ;
+							$difference = $difference + array_diff($ansAry[$key], $aryCorrectAns[$ques_id]) ;
+								
+							if(count(array_intersect($difference, $aryCorrectAns[$ques_id])) != 0) {
+								$nPartial++;
+							}
+							else {
+								$nWrong++;
+							}
+						}
+						else
+						{
+							$nWrong++;
+						}
 					}
 						
 					$qCount++;
 						
 					if($arySecQuestions[$secIndex] == $qCount)
 					{
-						$arySecAttemptedQues[$secIndex]['right'] = $nRight;
-						$arySecAttemptedQues[$secIndex]['unans'] = $nUnans;
-						$arySecAttemptedQues[$secIndex]['wrong'] = $nWrong;
+						$arySecAttemptedQues[$secIndex]['right']   = $nRight;
+						$arySecAttemptedQues[$secIndex]['partial'] = $nPartial; // Partially Correct
+						$arySecAttemptedQues[$secIndex]['unans']   = $nUnans;
+						$arySecAttemptedQues[$secIndex]['wrong']   = $nWrong;
 			
 						$secIndex++;
 			
-						$nRight = 0;
-						$nWrong = 0;
-						$nUnans = 0;
-						$qCount = 0;
+						$nRight   = 0;
+						$nPartial = 0;
+						$nWrong   = 0;
+						$nUnans   = 0;
+						$qCount   = 0;
 					}
 				}
 			}
 				
 			$secIndex = 0;
 			$arySecPerformance = array();
+			//CUtils::LogDataInFile("sec_details.txt", $objSecDetails, true);
+			
 			foreach($objSecDetails as $key => $objSection)
 			{
 				if(!empty($objSection['questions']))
 				{
-					$arySecPerformance[$objSection['name']]['marks'] 	 = ($arySecAttemptedQues[$secIndex]['right'] * $objSection['mark_for_correct']) - ($arySecAttemptedQues[$secIndex]['wrong'] * $objSection['mark_for_incorrect']);
+					$arySecPerformance[$objSection['name']]['marks'] 	 = ($arySecAttemptedQues[$secIndex]['right'] * $objSection['mark_for_correct']) + ($arySecAttemptedQues[$secIndex]['partial'] * $objSection['partial_marks']) - ($arySecAttemptedQues[$secIndex]['wrong'] * $objSection['mark_for_incorrect']);
 					$arySecPerformance[$objSection['name']]['max_marks'] = ($objSection['questions'] * $objSection['mark_for_correct']);
 					
 					$max_marks = $arySecPerformance[$objSection['name']]['max_marks'] * ($objSection['max_cutoff']/100);

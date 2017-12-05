@@ -227,7 +227,7 @@ if ($qry [0] == "test_id") {
 		$nAns = array(-1);
 	}
 	
-	CUtils::LogDataInFile("ans_ary_pre.txt", $nAns, true);
+	//CUtils::LogDataInFile("ans_ary_pre.txt", $nAns, true);
 	if($nLastQuesType== CConfig::QT_MATRIX) {
 		$bMatStr = false;
 		foreach($nAns as $key => $ans_row) {
@@ -242,7 +242,6 @@ if ($qry [0] == "test_id") {
 			}
 		}
 	}
-	CUtils::LogDataInFile("ans_ary_post.txt", $nAns, true);
 	
 	if(count ( $nAns ) > 0 && ! in_array ( - 1, $nAns ))
 	{
@@ -507,10 +506,6 @@ function PopulateMatrixOptions($optAry, $ansAry)
 			$highestAlpha 		= $alphabets[$highestAlphaPos];
 		}
 	}
-	
-	CUtils::LogDataInFile("populate_mat_details.txt", $highestAlphaPos." - ".$highestAlpha);
-	CUtils::LogDataInFile("populate_mat_opt_ary.txt", $optAry, true);
-	CUtils::LogDataInFile("populate_mat_ans_ary.txt", $ansAry, true);
 	
 	printf("<tr><td><input type='hidden' name='mat_rows' value='%s'/></td>", $num_options);
 	for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
@@ -857,7 +852,6 @@ body {
 							printf ( "<li %s><a href='#%s~%s_questions' aria-controls='#%s~%s_questions' data-toggle='tab' index='%s'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", 
 									$active ? "class='active'" : "", $group[0]['grp_name'], $group[0]['sec_name'], $group[0]['grp_name'], $group[0]['sec_name'], $group[0]['sec_index'], $group[0]['grp_name'] );
 						}
-						CUtils::LogDataInFile("params.txt", $secStop, true);
 						?>
 						</ul>
 					</div>

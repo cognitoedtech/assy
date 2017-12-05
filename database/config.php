@@ -11,6 +11,10 @@
 		//const PAYPAL_URL				= "https://www.sandbox.paypal.com/cgi-bin/webscr";
 		const PAYPAL_URL				= "https://www.paypal.com/cgi-bin/webscr";
 		
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		// Debug mode on (true) or off (false)
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		const DEBUG_APP = true;
 		
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		// Site Name Configuration
