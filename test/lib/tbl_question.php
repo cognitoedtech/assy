@@ -102,7 +102,7 @@
 		    $array = $ret;
 		}
 		
-		private function GetAnswerFromOptions($options)
+		private function GetAnswerFromOptions($options, $ques_type)
 		{
 			$AnsAry = array();
 			
@@ -114,7 +114,11 @@
 			echo "</pre>";*/
 			foreach($opt_ary as $key => $option)
 			{
-				if($option['answer'] != 0)
+				if($ques_type == CConfig::QT_MATRIX)
+				{
+					$AnsAry[$index++] = base64_decode($option['option']);
+				}
+				else if($option['answer'] != 0)
 				{
 					//echo $option['answer']." ".$key."<br />";
 					//$AnsAry[$index++] = $option['answer'];
@@ -407,7 +411,8 @@
 			$aryCorrectAns = array();
 			while($row = mysql_fetch_array($result))
 			{
-				$aryCorrectAns[$row['ques_id']] = $this->GetAnswerFromOptions($row['options']);
+				//json_decode($row['options'], true)
+				$aryCorrectAns[$row['ques_id']] = $this->GetAnswerFromOptions($row['options'], $row['ques_type']);
 				
 				$aryParticulars[$row['ques_id']]['subject_id'] 		= $row['subject_id'];
 				$aryParticulars[$row['ques_id']]['topic_id'] 		= $row['topic_id'];
@@ -415,6 +420,7 @@
 				$aryParticulars[$row['ques_id']]['ques_type'] 		= $row['ques_type'];
 				$aryParticulars[$row['ques_id']]['linked_to'] 		= $row['linked_to'];
 				$aryParticulars[$row['ques_id']]['language'] 		= $row['language'];
+				$aryParticulars[$row['ques_id']]['options'] 		= $row['options'];
 			}
 			
 			return $aryCorrectAns;

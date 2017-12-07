@@ -50,7 +50,6 @@ $objIncludeJsCSS->IncludeIconFontCSS ( "../../" );
 $objIncludeJsCSS->IncludeBootStrapWYSIHTML5CSS( "../../" );
 $objIncludeJsCSS->IncludeJqueryStepyCSS("../../");
 $objIncludeJsCSS->IncludeFuelUXCSS ("../../");
-
 $objIncludeJsCSS->CommonIncludeJS("../../");
 $objIncludeJsCSS->IncludeMetroNotificationJS("../../");
 $objIncludeJsCSS->IncludeMetroAccordionJS("../../");
@@ -181,18 +180,8 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 						</div>
 						<div class="row fluid">
 							<div class="col-sm-6 col-md-6 col-lg-6">
-								<label>Number of Groups : </label>
-								<input type="text" class="form-control input-sm" onchange="pageDirty.SetDirty(1);" name="group_count" value="1" />
-							</div>
-							<div class="col-sm-4 col-md-4 col-lg-4" style="padding-left: 0px;">
-								<br /><br /><br />
-								<i class="icon-help mip-help" data-toggle="tooltip" trigger="click hover focus" data-placement="right" title="Total number of Groups in test, you then set details of each group in coming steps of this wizard."></i>
-							</div>
-						</div>
-						<div class="row fluid">
-							<div class="col-sm-6 col-md-6 col-lg-6">
 								<label>Number of Sections : </label>
-								<input type="text" class="form-control input-sm" onchange="pageDirty.SetDirty(1);" onkeyup="OnSecCountChange(this)" name="sec_count" value="1" />
+								<input type="text" class="form-control input-sm" onchange="pageDirty.SetDirty(1);" name="sec_count" value="1" />
 							</div>
 							<div class="col-sm-4 col-md-4 col-lg-4" style="padding-left: 0px;">
 								<br /><br /><br />
@@ -216,16 +205,6 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 								<div class="col-sm-4 col-md-4 col-lg-4" style="padding-left: 0px;">
 									<br /><br /><br />
 									<i class="icon-help mip-help" data-toggle="tooltip" trigger="click hover focus" data-placement="right" title="If you choose 2 marks for correct answer and Max Questions: 100, then total marks for test will be 200."></i>
-								</div>
-							</div>
-							<div class="row fluid">
-								<div class="col-sm-6 col-md-6 col-lg-6">
-									<label>Partial Marks (on MCA) :</label>
-									<input type="text" class="form-control input-sm" name="p_marks" value="0" onchange="OnPartialMarksChange(this);" />
-								</div>
-								<div class="col-sm-4 col-md-4 col-lg-4" style="padding-left: 0px;">
-									<br /><br /><br />
-									<i class="icon-help mip-help" data-toggle="tooltip" trigger="click hover focus" data-placement="right" title="If you choose 4 marks for correct answer and for Multiple Correct Answer question or Matrix Question, if answered partially correct then every correct option will be allocated partial marks."></i>
 								</div>
 							</div>
 							<div class="row fluid">
@@ -263,13 +242,13 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 									<input type="radio" name="visibility" value="0"> None</input>
 									<i class="icon-help mip-help" data-toggle="tooltip" data-html="true" data-placement="right" html="true" title="" data-original-title="<span style='color: red'>None:</span>After exam completion, candidate will only be able to see question attempted and questions unanswered."></i>
 									
-									<input type="radio" name="visibility" value="1"> Minimal</input>
+									<input <?php echo ($user_type == CConfig::UT_CONTRIBUTOR?"":"checked"); ?> type="radio" name="visibility" value="1"> Minimal</input>
 									<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span style='color: red'>Minimal:</span> After exam
 										completion - candidate will be able to see number of right, wrong
 										and unanswered questions.">
 									</i> 
 									
-									<input checked type="radio" name="visibility" value="2"> Detailed</input>
+									<input <?php echo ($user_type == CConfig::UT_CONTRIBUTOR?"checked":""); ?> type="radio" name="visibility" value="2"> Detailed</input>
 									<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span style='color: red'>Detailed</span> After exam
 										completion - candidate will be able to see detailed performance
 										analysis in result analytics section.">
@@ -324,99 +303,12 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 											<script type="text/javascript">
 												$("#pref_lang").bind( "change", function() { pageDirty.SetDirty(1); } );
 											</script>
-											<hr />
-										</div>
-									</div>
-									<div class="row fluid" hidden="hidden">
-										<div class="col-sm-2 col-md-2 col-lg-2">
-											<label>Test Expiration: </label>
-											<select class="form-control input-sm" id="test_expiration" name="test_expiration">
-												<option value="-1">Never</option>
-												<option value="0.25">06 HRS</option>
-												<option value="0.50">12 HRS</option>
-												<option value="1">1 Day</option>
-												<option value="2">2 Days</option>
-												<option value="3">3 Days</option>
-												<option value="4">4 Days</option>
-												<option value="5">5 Days</option>
-												<option value="6">6 Days</option>
-												<option value="7">7 Days</option>
-											</select>
-										</div>
-										<div class="col-sm-4 col-md-4 col-lg-4" style="padding-left: 0px;">
-											<!-- <br /><br /><br /> -->
-											<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span   style='color:red'>Test Expiration:</span> Once the test is started, it has to be finished before expiration period.This period is including number of atempts."></i>
-										</div>
-									</div><!-- <br /> -->
-									<div class="row fluid" hidden="hidden">
-										<div class="col-sm-2 col-md-2 col-lg-2">
-											<label>Number of Attempts: </label>
-											<select class="form-control input-sm" id="attempts" name="attempts">
-												<option value="-1">Unlimited</option>
-												<option value="1">One (01)</option>
-												<option value="2">Two (02)</option>
-												<option value="5">Five (05)</option>
-												<option value="10">Ten (10)</option>
-												<option value="15">Fifteen (15)</option>
-												<option value="20">Twenty (20)</option>
-												<option value="30">Thirty (30)</option>
-												<option value="40">Fourty (40)</option>
-												<option value="50">Fifty (50)</option>
-											</select>
-										</div>
-										<div class="col-sm-4 col-md-4 col-lg-4" style="padding-left: 0px;">
-											<br /><br /><br />
-											<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span   style='color:red'>Attempts:</span> It may be possible	that test may get interupted due to network issues, browser crash, power failuer or manual error. Considering those cases you may choose number of attempts."></i>
-										</div>
-									</div><br />
-									<div class="row fluid">
-										<div class="col-sm-12 col-md-12 col-lg-12">
-											<label><i class="icon-cycle"></i> Flash Question (MCPA Security Parameter): </label> 
-											<input type="radio"	name="flash_ques" value="1">Yes</input> 
-											<input checked type="radio" name="flash_ques" value="0">No</input> 
-											<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span   style='color: red'>MCPA Flash:</span> If selected	yes, the question seen in adaptive test but not ansered by candidate - will be changed from question of same topic and difficulty level."></i>
-										</div>
-									</div><br />
-									<div class="row fluid">
-										<div class="col-sm-12 col-md-12 col-lg-12">
-											<label><i class="icon-locked"></i> Lock Question (MCPA Security Parameter): </label>
-											<input type="radio" name="lock_ques" value="1" />Yes
-											<input checked type="radio" name="lock_ques" value="0" />No
-											<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span   style='color: red'>MCPA Lock:</span> If selected yes, the question answered by candidate will be locked - i.e. once answered candidate will not be able to change the answer."></i>
-										</div>
-									</div><br />
-									<div class="row fluid">
-										<div class="col-sm-11 col-md-11 col-lg-11">
-											<label id="tag_label">Question Set (Tag): </label>
-											<select class="form-control input-sm" id="tag" name="tag" OnChange="ShowShuffleOption(this)">
-											</select>
-										</div>
-										<script type="text/javascript">
-											$("#tag").bind( "change", function() { pageDirty.SetDirty(1); } );
-										</script>
-									</div>
-									
-									<div class="row fluid" id="div_shuffle" style="display:none">
-										<div class="col-sm-12 col-md-12 col-lg-12">
-											<label id="tag_label">Shuffe Questions:
-											<input type ="checkbox"  id="shuffle" name="shuffle" checked="true" />
-											 </label>
-										</div>
-										<script type="text/javascript">
-											$("#shuffle").bind( "change", function() { pageDirty.SetDirty(1); } );
-										</script>
-									</div>
-									<div class="row fluid" >
-										<div class="col-sm-11 col-md-11 col-lg-11" >
-											<label>* <span style="color: blue">MCPA</span> stands for <span
-												style="color: blue">Mastishka Cheating Prevention Algorithm &copy; <?php echo(date('Y')); ?></span>.
-											</label>
 										</div>
 									</div>
 								</div>
 							</div>
 						</fieldset>
-						<br /><br /> 
+						<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /> 
 					</div>
 				</fieldset>
 		
@@ -443,18 +335,96 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 					</div>
 				</fieldset>
 		
-				<fieldset title="Group" style="padding: 12px;">
+				<fieldset title="Test Security" style="padding: 12px;">
 					<legend>
-						Create Groups <br/>for Sections 
+						Cheating Prevention
 					</legend>
 		
-					<div class="row fluid" id="group_div">
-						<div id='group_remaining_section'>
-							<div class='row'>
-								<div class='col-sm-offset-1 col-sm-10' style='margin-bottom: 15px;'>
-								<div class='col-sm-3'><label>Sections to distribute :</label></div>
-								<div class='col-sm-2'><input class='form-control input-sm' type='text' id='RemainingSections' name='RemainingSections' value='' readonly='readonly'/></div>
-							</div>
+					<div class="row fluid" hidden="hidden">
+						<div class="col-sm-2 col-md-2 col-lg-2">
+							<label>Test Expiration: </label>
+							<select class="form-control input-sm" id="test_expiration" name="test_expiration">
+								<option value="-1">Never</option>
+								<option value="0.25">06 HRS</option>
+								<option value="0.50">12 HRS</option>
+								<option value="1">1 Day</option>
+								<option value="2">2 Days</option>
+								<option value="3">3 Days</option>
+								<option value="4">4 Days</option>
+								<option value="5">5 Days</option>
+								<option value="6">6 Days</option>
+								<option value="7">7 Days</option>
+							</select>
+						</div>
+						<div class="col-sm-4 col-md-4 col-lg-4" style="padding-left: 0px;">
+							<!-- <br /><br /><br /> -->
+							<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span   style='color:red'>Test Expiration:</span> Once the test is started, it has to be finished before expiration period.This period is including number of atempts."></i>
+						</div>
+					</div><!-- <br /> -->
+					<div class="row fluid" hidden="hidden">
+						<div class="col-sm-2 col-md-2 col-lg-2">
+							<label>Number of Attempts: </label>
+							<select class="form-control input-sm" id="attempts" name="attempts">
+								<option value="-1">Unlimited</option>
+								<option value="1">One (01)</option>
+								<option value="2">Two (02)</option>
+								<option value="5">Five (05)</option>
+								<option value="10">Ten (10)</option>
+								<option value="15">Fifteen (15)</option>
+								<option value="20">Twenty (20)</option>
+								<option value="30">Thirty (30)</option>
+								<option value="40">Fourty (40)</option>
+								<option value="50">Fifty (50)</option>
+							</select>
+						</div>
+						<div class="col-sm-4 col-md-4 col-lg-4" style="padding-left: 0px;">
+							<br /><br /><br />
+							<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span   style='color:red'>Attempts:</span> It may be possible	that test may get interupted due to network issues, browser crash, power failuer or manual error. Considering those cases you may choose number of attempts."></i>
+						</div>
+					</div><br />
+					<div class="row fluid">
+						<div class="col-sm-5 col-md-5 col-lg-5">
+							<label><i class="icon-cycle"></i> Flash Question (MCPA Security Parameter): </label> 
+							<input type="radio"	name="flash_ques" value="1">Yes</input> 
+							<input checked type="radio" name="flash_ques" value="0">No</input> 
+							<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span   style='color: red'>MCPA Flash:</span> If selected	yes, the question seen in adaptive test but not ansered by candidate - will be changed from question of same topic and difficulty level."></i>
+						</div>
+					</div><br />
+					<div class="row fluid">
+						<div class="col-sm-5 col-md-5 col-lg-5">
+							<label><i class="icon-locked"></i> Lock Question (MCPA Security Parameter): </label>
+							<input type="radio" name="lock_ques" value="1" />Yes
+							<input checked type="radio" name="lock_ques" value="0" />No
+							<i class="icon-help mip-help" data-html="true" data-toggle="tooltip" trigger="click hover focus" data-placement="right" html="true" title="<span   style='color: red'>MCPA Lock:</span> If selected yes, the question answered by candidate will be locked - i.e. once answered candidate will not be able to change the answer."></i>
+						</div>
+					</div><br />
+					<div class="row fluid">
+						<div class="col-sm-3 col-md-3 col-lg-3">
+							<label id="tag_label">Question Set (Tag): </label>
+							<select class="form-control input-sm" id="tag" name="tag" OnChange="ShowShuffleOption(this)">
+							</select>
+						</div>
+						<script type="text/javascript">
+							$("#tag").bind( "change", function() { pageDirty.SetDirty(1); } );
+						</script>
+					</div>
+					
+					<div class="row fluid" id="div_shuffle" style="display:none">
+						<div class="col-sm-3 col-md-3 col-lg-3"  >
+							<label id="tag_label">Shuffe Questions:
+							<input type ="checkbox"  id="shuffle" name="shuffle" checked="true" />
+							 </label>
+						</div>
+						<script type="text/javascript">
+							$("#tag").bind( "change", function() { pageDirty.SetDirty(1); } );
+						</script>
+					</div>
+					<hr />
+					<div class="row fluid" >
+						<div class="col-sm-6 col-md-6 col-lg-6" >
+							<label>* <span style="color: blue">MCPA</span> stands for <span
+								style="color: blue">Mastishka Cheating Prevention Algorithm &copy; <?php echo(date('Y')); ?></span>.
+							</label>
 						</div>
 					</div>
 				</fieldset>
@@ -623,8 +593,7 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 				}
 				else if(index == 3)
 				{
-					//var ques_src = $("input[name='ques_source']:checked").val() ;
-					GroupAddPanel(parseInt($('input[name="group_count"]').val()));
+					var ques_src = $("input[name='ques_source']:checked").val() ;
 				}
 				else if(index == 4)
 				{
@@ -660,8 +629,7 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 				}
 				else if(index == 3)
 				{
-					//var ques_src = $("input[name='ques_source']:checked").val() ;
-					GroupAddPanel(parseInt($('input[name="group_count"]').val()));
+					var ques_src = $("input[name='ques_source']:checked").val() ;
 				}
 				else if(index == 4)
 				{
@@ -722,10 +690,6 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 			return this.optional(element) || /^[a-zA-Z0-9_]+$/.test(value);
 		}, "Field required only alphanumeric letters (underscore is allowed) !");
 
-		jQuery.validator.addMethod("GroupAlphanumeric", function(value, element) {
-			return this.optional(element) || /^[a-zA-Z0-9_\~]+$/.test(value);
-		}, "Field required only alphanumeric letters (underscore and tilde are allowed) !");
-
 		jQuery.validator.addMethod("SectionNameExists", function(value, element) {
 			return (!bSectionExist);
 		}, "Section name should be unique !");
@@ -741,13 +705,8 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 				'cutoff_max':		{required:true, digits: true},
 				'top':				{required:true, digits: true},
 				'r_marks':			{required:true, number: true, 'NegetiveNumber' : true},
-				'p_marks':			{required:true, number: true, 'NegetiveNumber' : true},
 				'w_marks':			{required:true, number: true, 'NegetiveNumber' : true},
-				'group_count':		{required:true, digits: true, min:1},
 				'sec_count':		{required:true, digits: true, min:1},
-				'RemainingSections': {min:0, max:0},
-				'GroupName[]': 		 {required:true, 'alphanumeric': true},		
-				'GroupSection[]' :	 {required:true, digits: true, min: 1},
 				'ques_remaining':	{min:0, max:0}
 			}, messages: {
 				'test_name':		{required: "Please provide a name for the test!"},
@@ -757,13 +716,8 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 				'cutoff_max':		{required: "Please provide maximum cutoff marks for the test!", digits: "Please only enter numeric digits for maximum cutoff marks!"},
 				'top':				{required: "Please provide top N as passing criteria!", digits: "Please only enter digits for top N as passing criteria!"},
 				'r_marks':			{required: "Please provide marks for every correct answer!", number: "Please only enter numeric value for marks for every correct answer!"},
-				'p_marks':			{required: "Please provide marks for every partial correct answer!", number: "Please only enter numeric value for marks for every partial correct answer!"},
 				'w_marks':			{required: "Please provide marks for every wrong answer!", number: "Please only enter numeric value for marks for every wrong answer!"},
-				'group_count':		{required: "Please enter number of sections you will be needing for test!", digits: "Please only enter digits for number of groups!", min: "There should be atleast one group!"},
 				'sec_count':		{required: "Please enter number of sections you will be needing for test!", digits: "Please only enter digits for number of sections!", min: "There should be atleast one section!"},
-				'RemainingSections':	{min: "Please distribute sections properly to every group (remaining sections should be zero)!", max:"Please distribute sections properly to every group (remaining sections should be zero)!"},
-				'GroupName[]': 		{required: "Please enter group name!", 'alphanumeric': "Please only enter alphanumeric group name!"},
-				'GroupSection[]' :	{required: "Please assign atleast one section to group!", digits: "Please only enter digits for number of sections in group!"},
 				'ques_remaining':	{min: "Please distribute questions properly to every section (remaining questions should be zero)!", max:"Please distribute questions properly to every section (remaining questions should be zero)!"}
 			}
 		});
@@ -841,12 +795,7 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 				document.getElementById("top").style.display='none';
 			}
 		}
-
-		function OnSecCountChange(obj)
-		{
-			$('input[name="RemainingSections"]').val(obj.value);
-		}
-
+		
 		function OnSectionQuesEnter()
 		{
 			var sec_count = parseInt($('input[name="sec_count"]').val());
@@ -871,57 +820,10 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 			pageDirty.SetDirty(2);
 		}
 
-		var bGroupExist = false;
-		function OnGroupNameEnter(obj)
-		{
-			$('input[name*="GroupName"]').each(function(){
-				if($(this).attr('name') != obj.name)
-				{
-					if($(this).val() == $(obj).val())
-					{
-						bGroupExist = true;
-						return;
-					}
-					else
-					{
-						bGroupExist = false;
-					}
-				}
-			});
-			
-			pageDirty.SetDirty(3);
-		}
-
-		function OnGroupSectionEnter(obj)
-		{
-			var sec_count = parseInt($('input[name="sec_count"]').val());
-			var group_count = parseInt($('input[name="group_count"]').val());
-			//alert($('input[name="RemainingSections"]').val() +" - "+sec_count+" - "+group_count);
-
-			var sec_used = 0;
-			$('input[name*="GroupSection"]').each(function(){
-				if(!isNaN(parseInt($(this).val())))
-				{
-					sec_used += parseInt($(this).val());
-				}
-				else
-				{
-					sec_used += 0;
-				}
-			});
-			
-			$('input[name="RemainingSections"]').val(sec_count-sec_used);
-			$('input[name="RemainingSections"]').keyup();
-			pageDirty.SetDirty(3);
-		}
-		
 		var bSectionExist = false;
-		function OnSectionNameEnter(obj, sGroup)
+		function OnSectionNameEnter(obj)
 		{
-			if(obj.value.indexOf(sGroup+'~') !== 0) {
-		        $(obj).val(sGroup+'~'+obj.value);
-		    }
-		    
+
 			$('input[name*="SectionName"]').each(function(){
 				if($(this).attr('name') != obj.name)
 				{
@@ -938,7 +840,7 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 			});
 			var nDiv = $(obj).parent().parent();
 			var nH3 = nDiv.find("a");
-			nH3.html(sGroup+"~Section - "+$(obj).val());
+			nH3.html("Section - "+$(obj).val());
 			
 			pageDirty.SetDirty(2);
 		}
@@ -1506,80 +1408,29 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 				pg_2_dirty ? pageDirty.UnsetDirty(2) : '';
 			}
 		}
-
-		function GroupAddPanel(group_count)
-		{
-			var section_count = parseInt($('input[name="sec_count"]').val());
-
-			if(GroupAddPanel.GroupCount != group_count || GroupAddPanel.SecCount != section_count)
-			{
-				GroupAddPanel.GroupCount = 0;
-				GroupAddPanel.SecCount = section_count;
-				$('#group_remaining_section').next().remove();
-
-				var sGroupElement = "";
-				for(var i = 0; i < group_count; i++)
-				{
-					sGroupElement += "<div class='row'><div class='col-sm-offset-1 col-sm-10' style='border: 1px solid #ddd; padding: 5px;'>";
-					sGroupElement += "<div class='col-sm-offset-1 col-sm-2'><label>Group "+(i+1)+" :</label></div>";
-					sGroupElement += "<div class='col-sm-4'><input placeholder='Group "+(i+1)+" Name' class='form-control input-sm' onkeyup='OnGroupNameEnter(this)' type='text' name='GroupName[]'/></div>";
-					sGroupElement += "<div class='col-sm-4'><input placeholder='Sections in group "+(i+1)+"' class='form-control input-sm' onkeyup='OnGroupSectionEnter(this)' type='text' name='GroupSection[]'/></div>";
-					//sGroupElement += "<div class='col-sm-3'><input placeholder='Time in minutes "+(i+1)+"' class='form-control input-sm' type='text' name='GroupTime[]'/></div>";
-					sGroupElement += "</div></div>";
-					
-					GroupAddPanel.GroupCount++;
-				}
-				
-				sGroupElement += "</div><br/><br/><br/><br/>";
-
-				$('#group_remaining_section').append(sGroupElement);
-			}
-		}
 		
 		function SectionAddPanel(section_count)
 		{
-			var objGroupNames = [];
-			var objGroupSections = [];
-			var question_count = parseInt($('input[name="max_ques"]').val());
-
-			var i = 0;
-			$('input[name="GroupName[]"]').each(function(){
-				objGroupNames[i] = $(this).val();
-				i++;
-			});
-			var i = 0;
-			$('input[name="GroupSection[]"]').each(function(){
-				objGroupSections[i] = $(this).val();
-				i++;
-			});
+			//pg_1_dirty = pageDirty.CheckPage(1);
+			question_count = parseInt($('input[name="max_ques"]').val());
 			
-			if(SectionAddPanel.SecCount != section_count || SectionAddPanel.QuesCount != question_count || pageDirty.CheckPage(3))
+			if(SectionAddPanel.SecCount != section_count || SectionAddPanel.QuesCount != question_count)
 			{
-				pageDirty.UnsetDirty(3);
-				
 				SectionAddPanel.SecCount = 0;
 				SectionAddPanel.QuesCount = question_count;
 				$('#accordion').empty();
 				$('#accordion').accordion('destroy');
 				
-				var fields = new Array("SectionName", "SectionQuestions", "SectionMinCutoff", "SectionMaxCutoff", "SectionMarksForCorrectAnswer", "SectionPartialMarks", "SectionNegetiveMarking");
-
-				var nGroupOffset = 0;
-				var nGroupSecPos = objGroupSections[nGroupOffset];
+				var fields = new Array("SectionName", "SectionQuestions", "SectionMinCutoff", "SectionMaxCutoff", "SectionMarksForCorrectAnswer", "SectionNegetiveMarking");
+				
 				for (var i = 0; i < section_count; i++)
 				{
-					if(i == nGroupSecPos) {
-						nGroupOffset++;
-						nGroupSecPos = parseInt(nGroupSecPos) + parseInt(objGroupSections[nGroupOffset]);
-					}
-					//alert("("+nGroupSecPos+") "+"Section: "+i+" - "+objGroupNames[nGroupOffset]+" - "+objGroupSections[nGroupOffset]);
-					
 					var sPanel = "<div class='accordion-frame'>";
 					
 					if(i == 0)
-						sPanel += "<a class='heading bg-lightBlue fg-white active' style='font-size: 15px;' href='#'>Section - "+objGroupNames[nGroupOffset]+"~"+(i+1)+"</a>";
+						sPanel += "<a class='heading bg-lightBlue fg-white active' style='font-size: 15px;' href='#'>Section - "+(i+1)+"</a>";
 					else
-						sPanel += "<a class='heading bg-lightBlue fg-white' style='font-size: 15px;' href='#'>Section - "+objGroupNames[nGroupOffset]+"~"+(i+1)+"</a>";
+						sPanel += "<a class='heading bg-lightBlue fg-white' style='font-size: 15px;' href='#'>Section - "+(i+1)+"</a>";
 					
 					sPanel += "<div class='content'>";
 					for (index in fields)
@@ -1589,7 +1440,7 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 						switch(index)
 						{
 							case '0':
-								sPanel += "<input class='form-control input-mini' onkeyup='OnSectionNameEnter(this,\""+objGroupNames[nGroupOffset]+"\")' type='text' name='"+fields[index]+"["+SectionAddPanel.SecCount+"]' value='"+objGroupNames[nGroupOffset]+"~Sec_"+(i+1)+"'/><br/>";
+								sPanel += "<input class='form-control input-mini' onkeyup='OnSectionNameEnter(this)' type='text' name='"+fields[index]+"["+SectionAddPanel.SecCount+"]' value='Sec_"+(i+1)+"'/><br/>";
 								break;
 							case '1':
 								sPanel += "<input class='form-control input-mini' onkeyup='OnSectionQuesEnter()' type='text' name='"+fields[index]+"["+SectionAddPanel.SecCount+"]' value='0'/><br/>";
@@ -1604,9 +1455,6 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 								sPanel += "<input class='form-control input-mini' type='text' name='"+fields[index]+"["+SectionAddPanel.SecCount+"]' value='"+$('input[name="r_marks"]').val()+"'/><br/>";
 								break;
 							case '5':
-								sPanel += "<input class='form-control input-mini' type='text' name='"+fields[index]+"["+SectionAddPanel.SecCount+"]' value='"+$('input[name="p_marks"]').val()+"'/><br/>";
-								break;
-							case '6':
 								sPanel += "<input class='form-control input-mini' type='text' name='"+fields[index]+"["+SectionAddPanel.SecCount+"]' value='"+$('input[name="w_marks"]').val()+"'/><br/>";
 								break;
 						}
@@ -1629,7 +1477,7 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 						$('input[name*="' + fields[i] + '"]').each(function(){
 							$(this).rules("add", {
 								required: true,
-								'GroupAlphanumeric': true,
+								'alphanumeric': true,
 								'SectionNameExists': true,
 								messages: { required: "Section-"+j+" "+fields[i]+" required!" }
 							});
@@ -1690,7 +1538,10 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 			}
 
 			OnMarkingSchemeChange();
+
 			
+			
+
 			return pageDirty.CheckPage(1);
 		}
 
@@ -1704,10 +1555,6 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 				$('input[name*="SectionMarksForCorrectAnswer"]').each(function(){
 					$(this).removeAttr("readonly");
 				});
-
-				$('input[name*="SectionPartialMarks"]').each(function(){
-					$(this).removeAttr("readonly");
-				});
 				
 				$('input[name*="SectionNegetiveMarking"]').each(function(){
 					$(this).removeAttr("readonly");
@@ -1716,10 +1563,6 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 			else if(marking_scheme == "consistent")
 			{
 				$('input[name*="SectionMarksForCorrectAnswer"]').each(function(){
-					$(this).attr("readonly", "readonly");
-				});
-
-				$('input[name*="SectionPartialMarks"]').each(function(){
 					$(this).attr("readonly", "readonly");
 				});
 				
@@ -1738,12 +1581,6 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 			{
 				$('input[name*="SectionMarksForCorrectAnswer"]').each(function(){
 					$(this).val($('input[name="r_marks"]').val());
-				});
-			}
-			else if(objName == "p_marks")
-			{
-				$('input[name*="SectionPartialMarks"]').each(function(){
-					$(this).val($('input[name="p_marks"]').val());
 				});
 			}
 			else if(objName == "w_marks")
@@ -1936,7 +1773,6 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 			var objSectionMinCutoff = new Array();
 			var objSectionMaxCutoff = new Array();
 			var objSectionRMarks = new Array();
-			var objSectionPMarks = new Array();
 			var objSectionWMarks = new Array();
 			sPreview += "<h3>Section Details:</h3>";
 			sPreview += "<table class='js-responsive-table' width='100%' border='1' style='font: inherit; border-collapse:collapse;'>";
@@ -1946,7 +1782,6 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 			sPreview += "<th style='color:green'>Min Cutoff</th>";
 			sPreview += "<th style='color:green'>Max Cutoff</th>";
 			sPreview += "<th style='color:green'>Marks for Correct</th>";
-			sPreview += "<th style='color:green'>Partial Marks</th>";
 			sPreview += "<th style='color:green'>Marks for Incorrect</th>";
 			sPreview += "</tr>";
 			$('input[name*="SectionName"]').each(function(){
@@ -1982,13 +1817,6 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 				objSectionRMarks[i] = $(this).val();
 				i++;
 			});
-			
-			i = 0;
-			$('input[name*="SectionPartialMarks"]').each(function(){
-				//sPreview += "<th style='color:blue'>"+$(this).val()+"</th>";
-				objSectionPMarks[i] = $(this).val();
-				i++;
-			});
 
 			i = 0;
 			$('input[name*="SectionNegetiveMarking"]').each(function(){
@@ -2005,7 +1833,6 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 				sPreview += "<th style='color:blue'>" + objSectionMinCutoff[i] + "</th>";
 				sPreview += "<th style='color:blue'>" + objSectionMaxCutoff[i] + "</th>";
 				sPreview += "<th style='color:blue'>" + objSectionRMarks[i] + "</th>";
-				sPreview += "<th style='color:blue'>" + objSectionPMarks[i] + "</th>";
 				sPreview += "<th style='color:blue'>" + objSectionWMarks[i] + "</th>";
 				sPreview += "</tr>";
 			}

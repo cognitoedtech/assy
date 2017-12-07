@@ -49,6 +49,7 @@
     $cutoff_max 		= clean($_POST['cutoff_max']);
     $top 				= clean($_POST['top']);
     $r_marks 			= clean($_POST['r_marks']);
+    $p_marks 			= clean($_POST['p_marks']);
     $w_marks 			= clean($_POST['w_marks']);
     $sec_count 			= clean($_POST['sec_count']);
     $ques_source 		= clean($_POST['ques_source']);
@@ -90,6 +91,7 @@
     $SectionMinCutoff 				= $_POST['SectionMinCutoff'];
     $SectionMaxCutoff 				= $_POST['SectionMaxCutoff'];
     $SectionMarksForCorrectAnswer	= $_POST['SectionMarksForCorrectAnswer'];
+    $SectionPartialMarks			= $_POST['SectionPartialMarks'];
     $SectionNegetiveMarking			= $_POST['SectionNegetiveMarking'];
 	$SubjectId 						= $_POST['SubjectId'];
 	$SubjectQues 					= $_POST['SubjectQues'];
@@ -130,9 +132,10 @@
 		    	$sec_min_cutoff 		= $SectionMinCutoff[$index_1] ;
 		    	$sec_max_cutoff 		= $SectionMaxCutoff[$index_1] ;
 		    	$sec_mark_for_correct	= $SectionMarksForCorrectAnswer[$index_1];
+		    	$sec_partial_marks		= $SectionPartialMarks[$index_1];
 		    	$sec_negetive_mark		= $SectionNegetiveMarking[$index_1];
 		    	
-		    	$section_details .= $section."#".$SectionQuestions[$index_1]."(".$sec_min_cutoff.",".$sec_max_cutoff.",".$sec_mark_for_correct.",".$sec_negetive_mark.");";		    	
+		    	$section_details .= $section."#".$SectionQuestions[$index_1]."(".$sec_min_cutoff.",".$sec_max_cutoff.",".$sec_mark_for_correct.",".$sec_partial_marks.",".$sec_negetive_mark.");";		    	
 		    	// Process Subject Details
 			    foreach ($SubjectId[$index_1] as $index_2 => $subject_id)
 			    {
@@ -158,7 +161,7 @@
 		    //echo "Topic Details: ".$topic_in_subject."<br/><br/>";
 		    $objDB->InsertIntoTestDynamic($test_id, $duration,
 		    							  $max_ques, $criteria, $cutoff_min,
-		    							  $cutoff_max, $top, $r_marks, $w_marks,
+		    							  $cutoff_max, $top, $r_marks, $p_marks, $w_marks,
 		    							  $sec_count, $ques_source, $section_details,
 		    							  $subject_in_section, $topic_in_subject, $ques_source, $visibility);
     	}
@@ -209,7 +212,7 @@
 		    }
     		$objDB->InsertIntoTestStatic($user_id, $test_id, $duration,
 		    							  $max_ques, $criteria, $cutoff_min,
-		    							  $cutoff_max, $top, $r_marks, $w_marks,
+		    							  $cutoff_max, $top, $r_marks, $p_marks, $w_marks,
 		    							  $sec_count, $ques_source, $questions,
 		    							  $section_details, $subject_in_section, 
 		    							  $topic_in_subject, $ques_source, $visibility);
