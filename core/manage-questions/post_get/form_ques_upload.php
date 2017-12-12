@@ -182,13 +182,25 @@
 			exit();
 		}
 		
-		$data_row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]]    = trim($_POST['topic']);
+		$topic_with_suffix = trim($_POST['topic']);
+			
+		if ($ques_type == CConfig::QT_INT || $ques_type == CConfig::QT_MATRIX)
+		{
+			$suffix = ($ques_type == CConfig::QT_INT) ? "{IN}" : "{MT}";
+			$topic_with_suffix = $topic_with_suffix.$suffix;
+		}
+		
+		$data_row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]]    = $topic_with_suffix;
 		$data_row[CConfig::$QUES_XLS_HEADING_ARY["Subject"]]  = trim($_POST['subject']);
 		$data_row[CConfig::$QUES_XLS_HEADING_ARY["Language"]] = $_POST['language'];
 		
 		if($ques_type == CConfig::QT_NORMAL && $mca == 0)
 		{
 			$mca = $objDB->IsMCAQuestion($data_row);
+			if ($ques_type != CConfig::QT_INT && $ques_type != CConfig::QT_MATRIX)
+			{
+				$data_row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]] = $topic_with_suffix."{MC}";
+			}
 		}
 		else 
 		{

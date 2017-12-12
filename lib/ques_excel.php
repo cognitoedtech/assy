@@ -440,6 +440,10 @@
 					
 					$suffix = ($ques_type == CConfig::QT_INT)? "{IN}" : (($ques_type == CConfig::QT_MATRIX)? "{MT}" : "") ;
 					
+					if(empty($suffix) && $mca == 1) {
+						$suffix = "{MC}";
+					}
+					
 					$data_row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]] = $data_row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]].$suffix;
 					
 					$group_title = $this->objDB->InsertQuestion($data_row, $user_id, $mca, $ques_type, $group_title, $tag_id, NULL, $is_eq);

@@ -682,7 +682,8 @@ span.username {
 	}
 	
 	#question-area {
-		overflow-y: auto;
+		resize: both;
+    	overflow: auto;
 	}
 	
 	#toggle_para {
