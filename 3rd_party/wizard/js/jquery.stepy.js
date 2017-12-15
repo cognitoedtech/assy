@@ -229,7 +229,7 @@
         	return isValid || isValid === undefined;
         }, step: function(index) {
         	index--;
-			
+
 			var $steps = this.children('fieldset');
 
 			if (index > $steps.length - 1) {
@@ -243,16 +243,15 @@
 	    		var isValid = true;
 
 	        	for (var i = 0; i < index; i++) {
-					alert ("Pre-Validating: "+i);
 					isValid &= methods.validate.call(this, i);
-					
+
 					if (opt.block && !isValid) {
 						max = i;
 						break;
 					}
-				} 
+				}
 	    	}
-			
+
 			$steps.hide().eq(max).show();
 
 			var $titles	= $('#' + this.attr('id') + '-titles').children();
@@ -280,16 +279,16 @@
 			if (!this.is('form')) {
 				return true;
 			}
-			
+
 			var $step		= this.children('fieldset').eq(index),
 				isValid		= true,
 				$title		= $('#' + this.attr('id') + '-titles').children().eq(index),
 				opt			= this.data('options'),
 				$validate	= this.validate();
-			
+
 			$($step.find(':input:enabled').get().reverse()).each(function() {
 				var fieldIsValid = $validate.element($(this));
-				
+
 				if (fieldIsValid === undefined) {
 					fieldIsValid = true;
 				}

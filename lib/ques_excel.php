@@ -756,7 +756,7 @@
 												{
 													$generated_errors .= "[".$cell_index.$row->getRowIndex()."](row ".$row->getRowIndex(). " : column ".$cell_index.") :   Answer should contain only numeric values which can be comma separated. If you do not find such issue then please check specified row for blank cells.;";
 												}
-												else if(intval($ans_ary[$ans_index]) > ($col_count - (count(CConfig::$QUES_XLS_HEADING_ARY) - 2)) || intval($ans_ary[$ans_index]) < 1)
+												else if(intval($ans_ary[$ans_index]) > ($col_count - (count(CConfig::$QUES_XLS_HEADING_ARY) - 2)) || intval($ans_ary[$ans_index]) < 0)
 												{
 													$generated_errors .= "[".$cell_index.$row->getRowIndex()."](row ".$row->getRowIndex(). " : column ".$cell_index.") :   Answer should only be between 1 and ".($col_count - (count(CConfig::$QUES_XLS_HEADING_ARY) - 2))." for this question. If you do not find such issue then please check specified row for blank cells.;";
 												}
