@@ -954,7 +954,7 @@ body {
 				
 			</div>
 		</div>
-		<form id="question-form" action="mipcat-tcs.php" onReset="return ResetForm();" method="POST">
+		<form id="question-form" action="mipcat-tcs.php" onSubmit="SubmitQuesForm();" onReset="return ResetForm();" method="POST">
 			<div class="row" id="md-container">
 				<div class="col-xs-12 col-sm-9 border">
 					<div class="row border" id="question-info">
@@ -1656,6 +1656,7 @@ body {
 		}
 		
 		TestTimer.CurTime = <?php echo($nCurTime); ?>;
+		TestTimer.bStop = false;
 		function TestTimer()
 		{
 			if(TestTimer.CurTime < 0)
@@ -1673,7 +1674,9 @@ body {
 			$("#cur_timer").val(TestTimer.CurTime);
 			
 			TestTimer.CurTime--;
-			TestTimer.hTimer = setTimeout(function(){TestTimer()}, 1000);
+			if(!TestTimer.bStop) {
+				TestTimer.hTimer = setTimeout(function(){TestTimer()}, 1000);
+			}
 		}
 		
 		var connection_error_count = 0;
@@ -1752,6 +1755,11 @@ body {
 
 			$("#question-form").submit();
 			return false;
+		}
+
+		function SubmitQuesForm()
+		{
+			TestTimer.bStop = true;
 		}
 		
 		$("input:checkbox[name='answer[]']").click(function(){
