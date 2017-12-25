@@ -369,9 +369,9 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 				    	
 				    	$.each(data, function (qIndex, qInfoAry){
 							//alert(dump(qInfoAry));
-							console.log(qInfoAry);
-							console.log(qInfoAry['selected']);
-							console.log(qInfoAry['answer']);
+							//console.log(qInfoAry);
+							//console.log(qInfoAry['selected']);
+							//console.log(qInfoAry['answer']);
 							tColor = "";
 							sStatus = "";
 							bgColor = "";
