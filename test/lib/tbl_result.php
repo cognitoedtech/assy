@@ -186,7 +186,7 @@
 			$aryA = array_values($ques_map);
 			
 			//print_r($aryA);
-			CUtils::LogDataInFile("question-map.txt", $ques_map, true);
+			//CUtils::LogDataInFile("question-map.txt", $ques_map, true);
 			$qIndex = 0;
 			foreach ($aryQ as $key => $qID)
 			{
@@ -198,7 +198,7 @@
 					$qIndex++;
 				}
 			}
-			
+			//CUtils::LogDataInFile("question-map.txt", $objResult, true);
 			return $objResult;
 		}
 		
@@ -810,6 +810,7 @@
 			}
 			
 			//echo $query."<br/>";
+			//CUtils::LogDataInFile("select.txt", $query);
 			$result = mysql_query($query, $this->objDBLink) or die('Get Completed Test Candidate error : ' . mysql_error());
 			
 			$index = 0;
@@ -886,8 +887,12 @@
 						
 						$NameAry = $this->GetUserName($row['user_id']);
 						
-						//$ResultAry[$test_pnr]['result'] = sprintf("%s %s (Time: %s)",$NameAry['firstname'], $NameAry['lastname'],$testDtime->format("[H:i:s]"));
-						$ResultAry[$test_pnr]['result'] = sprintf("%s %s",$NameAry['firstname'], $NameAry['lastname']);
+						if($row['tschd_id'] < 0) {
+							$ResultAry[$test_pnr]['result'] = sprintf("%s %s (Time: %s)",$NameAry['firstname'], $NameAry['lastname'],$testDtime->format("[H:i:s]"));
+						}
+						else {
+							$ResultAry[$test_pnr]['result'] = sprintf("%s %s",$NameAry['firstname'], $NameAry['lastname']);
+						}
 					}
 				}
 				//date_default_timezone_set($reset);
