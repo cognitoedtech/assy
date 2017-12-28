@@ -17,6 +17,7 @@
 	$nUserType = CSessionManager::Get(CSessionManager::INT_USER_TYPE);
 	
 	$TNameAry = $objTR->GetCompletedTestNames($user_id, $nUserType);
+	//CUtils::LogDataInFile("CompletedTests.txt", $TNameAry, true);
 	
 	$objIncludeJsCSS = new IncludeJSCSS();
 	

@@ -369,6 +369,9 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 				    	
 				    	$.each(data, function (qIndex, qInfoAry){
 							//alert(dump(qInfoAry));
+							//console.log(qInfoAry);
+							//console.log(qInfoAry['selected']);
+							//console.log(qInfoAry['answer']);
 							tColor = "";
 							sStatus = "";
 							bgColor = "";
@@ -471,6 +474,30 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 							{
 								lbl_cls = "success";
 							}
+
+							// ------------------------------------------
+							var selectedAns = "";
+							if (Array.isArray(qInfoAry['selected']) && qInfoAry['ques_type'] == <?php echo(CConfig::QT_MATRIX);?>) {
+								$.map( qInfoAry['selected'], function( val, i ) {
+									val = val ? val : "-" ;
+									selectedAns = selectedAns + "(" + val + "), ";  
+								});
+							}
+							else {
+								selectedAns = qInfoAry['selected'];
+							}
+							
+							var actualAns = "";
+							if (Array.isArray(qInfoAry['answer']) && qInfoAry['ques_type'] == <?php echo(CConfig::QT_MATRIX);?>) {
+								$.map( qInfoAry['answer'], function( val, i ) {
+									val = val ? val : "-" ;
+									actualAns = actualAns + "(" + val + "), ";  
+								});
+							}
+							else {
+								actualAns = qInfoAry['answer'];
+							}
+							// ------------------------------------------
 							
 							if(qInfoAry['selected'] == -1 || qInfoAry['selected'] == -2 || qInfoAry['selected'] == -3)
 							{
@@ -478,7 +505,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 							}
 							else
 							{
-								sPara += "<span class='label label-"+lbl_cls+"'>Your Choice: "+qInfoAry['selected']+"</span>";
+								sPara += "<span class='label label-"+lbl_cls+"'>Your Choice: "+selectedAns+"</span>";
 							}
 							sPara += "</b>";
 							

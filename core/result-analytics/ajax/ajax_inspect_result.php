@@ -55,9 +55,15 @@
 				
 				if($ResultAry[$qIndex]['options'][$opt_idx]['answer'] == 1)
 				{
-					array_push($ansAry, ($opt_idx + 1));
+					if($ResultAry[$qIndex]['ques_type'] == CConfig::QT_MATRIX) {
+						array_push($ansAry, "(".$ResultAry[$qIndex]['options'][$opt_idx]['option'].") ");
+					}
+					else {
+						array_push($ansAry, ($opt_idx + 1));
+					}
 				}
 			}
+			$ResultAry[$qIndex]['ques_type'] = $ResultAry[$qIndex]['ques_type'];
 			$ResultAry[$qIndex]['subject'] = ucwords($objDB->GetSubjectName($ResultAry[$qIndex]['subject_id']));
 			$ResultAry[$qIndex]['topic'] = ucwords($objDB->GetTopicName($ResultAry[$qIndex]['topic_id']));
 			$ResultAry[$qIndex]['answer'] = implode(",", $ansAry);

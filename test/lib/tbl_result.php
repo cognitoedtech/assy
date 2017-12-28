@@ -186,6 +186,7 @@
 			$aryA = array_values($ques_map);
 			
 			//print_r($aryA);
+			//CUtils::LogDataInFile("question-map.txt", $ques_map, true);
 			$qIndex = 0;
 			foreach ($aryQ as $key => $qID)
 			{
@@ -197,7 +198,7 @@
 					$qIndex++;
 				}
 			}
-			
+			//CUtils::LogDataInFile("question-map.txt", $objResult, true);
 			return $objResult;
 		}
 		
@@ -660,6 +661,24 @@
 			}
 		}
 		
+		public function IsResultExistForTest($test_id)
+		{
+			$bReturn = false;
+			
+			$query = sprintf("select count(*) as num_of_rows from result where test_id = %d", $test_id);
+			
+			$result = mysql_query($query, $this->objDBLink) or die('Is Result Exist For Test error : ' . mysql_error());
+			
+			if(mysql_num_rows($result) > 0)
+			{
+				$row = mysql_fetch_array($result);
+				
+				$bReturn = $row['num_of_rows'];
+			}
+			
+			return $bReturn;
+		}
+		
 		public function GetCompletedTestNames($owner_id, $user_type, $bIncludePackageTest = false)
 		{
 			$ResultAry = array();
@@ -674,7 +693,7 @@
 			if($user_type != CConfig::UT_INDIVIDAL)
 			{
 				//$query = sprintf("select test.test_id, test.owner_id, test_name, result.tschd_id from result, test, test_schedule where test.test_id = result.test_id and (test.owner_id='%s' %s) and test.deleted is null and result.tschd_id != '%s'", $owner_id, $includePackageCond, CConfig::FEUC_TEST_SCHEDULE_ID);
-				$query = sprintf("select distinct(test.test_id), test.owner_id, test_name, ta.allocation_id, result.tschd_id from result inner join test on test.test_id = result.test_id inner JOIN test_schedule  on test.test_id = test_schedule.test_id and test_schedule.schd_id = result.tschd_id  left join test_allocation ta on result.test_id = ta.test_id where (test.owner_id='%s' or ta.assignee_id ='%s' %s) and test.deleted is null and result.tschd_id != '%s'  ", $owner_id,$owner_id, $includePackageCond, CConfig::FEUC_TEST_SCHEDULE_ID);
+				$query = sprintf("select distinct(test.test_id), test.owner_id, test_name, ta.allocation_id, result.tschd_id from result inner join test on test.test_id = result.test_id inner JOIN test_schedule on (test.test_id = test_schedule.test_id or result.tschd_id < 0) and (test_schedule.schd_id = result.tschd_id or result.tschd_id < 0) left join test_allocation ta on result.test_id = ta.test_id where (test.owner_id='%s' or ta.assignee_id ='%s' %s) and test.deleted is null", $owner_id,$owner_id, $includePackageCond);
 				
 			}
 			else 
@@ -685,10 +704,17 @@
 			//echo $query."<br/>";
 			$result = mysql_query($query, $this->objDBLink) or die('Get Completed Test Names error : ' . mysql_error());
 			
-			
+			//CUtils::LogDataInFile("Test.txt", $query."\r\n", false, "a");
 			while($row = mysql_fetch_array($result))
 			{
-				$schdld_test_ary = $this->GetScheduledTest($row['tschd_id']);
+				//CUtils::LogDataInFile("Test.txt", $row['test_id']."\r\n", false, "a");
+				if($row['tschd_id'] > 0) {
+					$schdld_test_ary = $this->GetScheduledTest($row['tschd_id']);
+				}
+				else if ($this->IsResultExistForTest($row['test_id']) > 0 && $user_type != CConfig::UT_INDIVIDAL) {
+					$schdld_test_ary = array();
+					$schdld_test_ary['scheduler_id'] = $owner_id;
+				}
 				
 				
 				/*$isTestFromAssignedTestPackage  = false;
@@ -784,6 +810,7 @@
 			}
 			
 			//echo $query."<br/>";
+			//CUtils::LogDataInFile("select.txt", $query);
 			$result = mysql_query($query, $this->objDBLink) or die('Get Completed Test Candidate error : ' . mysql_error());
 			
 			$index = 0;
@@ -860,8 +887,12 @@
 						
 						$NameAry = $this->GetUserName($row['user_id']);
 						
-						//$ResultAry[$test_pnr]['result'] = sprintf("%s %s (Time: %s)",$NameAry['firstname'], $NameAry['lastname'],$testDtime->format("[H:i:s]"));
-						$ResultAry[$test_pnr]['result'] = sprintf("%s %s",$NameAry['firstname'], $NameAry['lastname']);
+						if($row['tschd_id'] < 0) {
+							$ResultAry[$test_pnr]['result'] = sprintf("%s %s (Time: %s)",$NameAry['firstname'], $NameAry['lastname'],$testDtime->format("[H:i:s]"));
+						}
+						else {
+							$ResultAry[$test_pnr]['result'] = sprintf("%s %s",$NameAry['firstname'], $NameAry['lastname']);
+						}
 					}
 				}
 				//date_default_timezone_set($reset);
