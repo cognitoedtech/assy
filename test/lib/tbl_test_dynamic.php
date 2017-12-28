@@ -42,8 +42,8 @@
 					$objSecDetails[$i]['questions'] 			= $params[1];
 					$objSecDetails[$i]['min_cutoff'] 			= empty($params[2]) ? 0 : $params[2];
 					$objSecDetails[$i]['max_cutoff'] 			= empty($params[3]) ? 100 : $params[3];
-					$objSecDetails[$i]['partial_marks']			= $params[4];
-					$objSecDetails[$i]['mark_for_correct'] 		= $params[5];
+					$objSecDetails[$i]['mark_for_correct'] 		= $params[4];
+					$objSecDetails[$i]['partial_marks']			= $params[5];					
 					$objSecDetails[$i]['mark_for_incorrect'] 	= $params[6];
 				}
 				$i++;
