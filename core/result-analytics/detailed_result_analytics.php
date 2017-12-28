@@ -313,7 +313,8 @@ $objIncludeJsCSS->IncludeResultAnalyticsJS("../../");
 					    data: {'resultView' : resultView},
 						type: 'POST',
 					    success: function(data) {
-					    	if(jQuery.isEmptyObject(data))
+						    //alert("Test");
+						    if(jQuery.isEmptyObject(data))
 					    	{
 					    		$("#result_charts").empty();
 					    		$("#result_charts").append("<h2>No results found, test was not attempted properly.</h2>");
@@ -441,6 +442,9 @@ $objIncludeJsCSS->IncludeResultAnalyticsJS("../../");
 					    			   nTotalCorrectAns, nTotalWrongAns, nTotalUnanswered);
 							$(".modal1").hide();
 					    },
+					    error: function (xhr, ajaxOptions, thrownError) {
+					    	$(".modal1").hide();
+					      },
 					    url: 'ajax/ajax_fetch_result.php?test_pnr='+test_pnr
 					});
 				}	

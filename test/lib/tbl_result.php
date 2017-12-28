@@ -1320,6 +1320,8 @@
         					$topicNameAry[$aryParticulars[$ques_id]['topic_id']] = ucfirst($objTestDynamic->GetTopicName($aryParticulars[$ques_id]['topic_id']));
         					$Topic = $topicNameAry[$aryParticulars[$ques_id]['topic_id']];
         				}
+        				//$braces = array("{", "}");
+        				//$Topic = str_replace($braces, "-", $Topic);
         				
         				if(!isset($marksArray[$Subject]['max_marks']))
         				{
