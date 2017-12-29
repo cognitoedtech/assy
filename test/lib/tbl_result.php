@@ -744,11 +744,14 @@
 			
 			if($user_type != CConfig::UT_INDIVIDAL)
 			{
-				$query = sprintf("select test_date, owner_id, tschd_id from result,test,test_schedule where (test.owner_id='%s' %s) and test.test_id='%s' and test.test_id=result.test_id and test.deleted is null and result.tschd_id != '%s'", $owner_id, $includePackageCond, $test_id, CConfig::FEUC_TEST_SCHEDULE_ID);
+				//$query = sprintf("select test_date, owner_id, tschd_id from result,test,test_schedule where (test.owner_id='%s' %s) and test.test_id='%s' and test.test_id=result.test_id and test.deleted is null and result.tschd_id != '%s'", $owner_id, $includePackageCond, $test_id, CConfig::FEUC_TEST_SCHEDULE_ID);
+				$query = sprintf("select DISTINCT test_date, owner_id, tschd_id from result inner join 
+				test on result.test_id= test.test_id left join test_schedule on test_schedule.schd_id = result.tschd_id
+				where (test.owner_id='%s' or test_schedule.scheduler_id='%s') and test.test_id='%s'",$owner_id,$owner_id,$test_id);
 			}
 			else 
 			{
-				$query = sprintf("select test_date, owner_id, tschd_id from result,test where result.user_id='%s' and test.test_id='%s' and test.test_id=result.test_id and test.deleted is null", $owner_id, $test_id);
+				$query = sprintf("select test_date, owner_id, tschd_id from result inner join test on test.test_id=result.test_id where result.user_id='%s' and test.test_id='%s' and test.deleted is null", $owner_id, $test_id);
 			}
 			
 			//echo $query."<br/>";
@@ -798,15 +801,18 @@
 			$ResultAry = array();
 			$query = "";
 			
-			$includePackageCond = sprintf("or (test_schedule.scheduler_id='%s' AND test_schedule.schd_id = result.tschd_id)", $owner_id);
+			//$includePackageCond = sprintf("or (test_schedule.scheduler_id='%s')", $owner_id);
 			
 			if($user_type != CConfig::UT_INDIVIDAL)
 			{
-				$query = sprintf("select tschd_id, test_pnr, user_id, test_date, owner_id from result,test,test_schedule where (test.owner_id='%s' %s) and test.test_id='%s' and test.test_id=result.test_id and result.tschd_id != '%s'", $owner_id, $includePackageCond, $test_id, CConfig::FEUC_TEST_SCHEDULE_ID);
+				//$query = sprintf("select tschd_id, test_pnr, user_id, test_date, owner_id from result,test,test_schedule where (test.owner_id='%s' %s) and test.test_id='%s' and test.test_id=result.test_id and result.tschd_id != '%s'", $owner_id, $includePackageCond, $test_id, CConfig::FEUC_TEST_SCHEDULE_ID);								
+				$query = sprintf("select tschd_id, test_pnr, user_id, test_date, owner_id from result inner join test on test.test_id = result.test_id left JOIN
+				test_schedule on test_schedule.schd_id = result.tschd_id  where
+						 (test.owner_id='%s ' or test_schedule.scheduler_id='%s')  and test.test_id='%s'", $owner_id,  $owner_id,$test_id);
 			}
 			else 
 			{
-				$query = sprintf("select test_pnr, user_id, test_date, tschd_id, owner_id from result,test where result.user_id='%s' and test.test_id='%s' and test.test_id=result.test_id", $owner_id, $test_id);
+				$query = sprintf("select test_pnr, user_id, test_date, tschd_id, owner_id from result inner join test on test.test_id=result.test_id where result.user_id='%s' and test.test_id='%s' ", $owner_id, $test_id);
 			}
 			
 			//echo $query."<br/>";
