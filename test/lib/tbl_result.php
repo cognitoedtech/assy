@@ -966,7 +966,7 @@
             {
                 //$query = sprintf("select DISTINCT result.*, test.*, test_dynamic.marks_for_correct, test_dynamic.max_question, test_dynamic.cutoff_min, test_dynamic.cutoff_max from result, test, test_dynamic where test.test_id = result.test_id and test.test_id = test_dynamic.test_id and test.owner_id='%s' and test.deleted is null and result.tschd_id != '%s'", $owner_id, CConfig::FEUC_TEST_SCHEDULE_ID);
                 
-            	$query = sprintf("select DISTINCT result.*, test.*, test_dynamic.marks_for_correct, test_dynamic.max_question, test_dynamic.cutoff_min, test_dynamic.cutoff_max from result inner join test on test.test_id = result.test_id inner join test_dynamic on test.test_id = test_dynamic.test_id left join 
+            	$query = sprintf("select DISTINCT result.*, test.*, test_dynamic.marks_for_correct, test_dynamic.max_question, test_dynamic.cutoff_min, test_dynamic.cutoff_max, test_dynamic.partial_marks from result inner join test on test.test_id = result.test_id inner join test_dynamic on test.test_id = test_dynamic.test_id left join 
 				test_allocation ta on test.test_id = ta.test_id where (test.owner_id='%s' or ta.assignee_id = '%s') and test.deleted is null and result.tschd_id != '%s'", $owner_id,$owner_id, CConfig::FEUC_TEST_SCHEDULE_ID);                
             }
             else
@@ -1519,9 +1519,9 @@
         	$objHTML = "";
         	$AnsStatus = array(1, 0, -1);
         	$objSome = $this->GetResultInspectionFromPNR($test_pnr);
-        	echo "<pre>";
+        	/*echo "<pre>";
         	print_r($objSome);
-        	echo "</pre>";
+        	echo "</pre>";*/
         	return $objHTML;
         }
 

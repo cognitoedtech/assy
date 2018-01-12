@@ -307,10 +307,6 @@
 				}
 			}
 			
-			print_r($qusAry);
-			
-			
-			
 			$secIndex 			 = 0;
 			$arySecAttemptedQues = array();
 				
@@ -320,6 +316,7 @@
 			$nUnans   = 0;
 			$qCount   = 0;
 			
+			//CUtils::LogDataInFile("qusary.txt", $qusAry, true);
 			foreach ($qusAry as $key => $ques_id)
 			{
 				//CUtils::LogDataInFile("ary_correct_ans.txt", $aryCorrectAns[$ques_id], true, "a");
@@ -331,18 +328,35 @@
 					$bPartial = false;
 					foreach($aryCorrectAns[$ques_id] as $opt => $correct) {
 						//CUtils::LogDataInFile("ary_correct_ans.txt", $correct."\r\n", false, "a");
-						//CUtils::LogDataInFile("ary_answered_user.txt", $ansAry[$key][$opt]."\r\n", false, "a");
+						//CUtils::LogDataInFile("ary_mapping.txt", "< ".$ansAry[$key][$opt]." > - < ".$correct." >\r\n", false, "a");
 						
 						if($correct == $ansAry[$key][$opt]) {
 							$bPartial = true;
 							$nPartial++;
 						}
-						else if (empty($ansAry[$key][$opt])) {
+						else if (empty($ansAry[$key][$opt]) || $ansAry[$key][$opt] <= -1  ) {
 							$nUnans++;
 						}
 						else {
 							$nWrong++;
 						}
+					}
+					$qCount++;
+					
+					if($arySecQuestions[$secIndex] == $qCount)
+					{
+						$arySecAttemptedQues[$secIndex]['right']   = $nRight;
+						$arySecAttemptedQues[$secIndex]['partial'] = $nPartial; // Partially Correct
+						$arySecAttemptedQues[$secIndex]['unans']   = $nUnans;
+						$arySecAttemptedQues[$secIndex]['wrong']   = $nWrong;
+							
+						$secIndex++;
+							
+						$nRight   = 0;
+						$nPartial = 0;
+						$nWrong   = 0;
+						$nUnans   = 0;
+						$qCount   = 0;
 					}
 				}
 				else if(isset($aryCorrectAns[$ques_id]))
@@ -362,14 +376,20 @@
 					else
 					{
 						if($ques_dtls['mca'] == 1) {
-							$difference = array_diff($aryCorrectAns[$ques_id], $ansAry[$key]) ;
-							$difference = $difference + array_diff($ansAry[$key], $aryCorrectAns[$ques_id]) ;
-								
-							if(count(array_intersect($difference, $aryCorrectAns[$ques_id])) != 0) {
-								$nPartial++;
+							$crtCount = 0;
+							foreach($ansAry as $ansKey => $ansVal) {
+								if(in_array($ansVal, $aryCorrectAns)) {
+									$crtCount++;
+								}
+								else {
+									$nWrong++;
+									$crtCount = 0;
+									break;
+								}	
 							}
-							else {
-								$nWrong++;
+							
+							if($crtCount > 0) {
+								$nPartial++;
 							}
 						}
 						else
@@ -401,6 +421,8 @@
 			$secIndex = 0;
 			$arySecPerformance = array();
 			//CUtils::LogDataInFile("sec_details.txt", $objSecDetails, true);
+			//CUtils::LogDataInFile("attempted_details.txt", $arySecAttemptedQues, true);
+			
 			
 			foreach($objSecDetails as $key => $objSection)
 			{
@@ -416,6 +438,9 @@
 				}
 				$secIndex++;
 			}
+			
+			//CUtils::LogDataInFile("sec_performance.txt", $arySecPerformance, true);
+			
 			return $arySecPerformance;
 		}
 		
