@@ -1,0 +1,35 @@
+Array
+(
+    [0] => Array
+        (
+            [right] => 0
+            [partial] => 0
+            [unans] => 10
+            [wrong] => 0
+        )
+
+    [1] => Array
+        (
+            [right] => 0
+            [partial] => 0
+            [unans] => 2
+            [wrong] => 0
+        )
+
+    [2] => Array
+        (
+            [right] => 0
+            [partial] => 0
+            [unans] => 3
+            [wrong] => 0
+        )
+
+    [3] => Array
+        (
+            [right] => 0
+            [partial] => 0
+            [unans] => 8
+            [wrong] => 0
+        )
+
+)

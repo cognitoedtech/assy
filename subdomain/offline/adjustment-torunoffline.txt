@@ -1,0 +1,48 @@
+1. test/mipcat-tcs.php comment out following code
+
+/*$sOrgName = $objDB->GetOrganizationNameByTestID($nTestID);
+	
+	if(!empty($sOrgName))
+	{
+		$sOrgName = "by ".$sOrgName;
+	}*/
+
+
+2. test/lib/tbl_session.php
+
+Function EndSession() comment following code
+
+	/*if($this->bResultExist == FALSE)
+			{
+				$amount = null;
+				$objBilling = new CBilling();
+				$scheduler_id = $objBilling->GetTestSchedulerID($tschd_id);
+				if($objBilling->GetQuesSource($test_id) == "mipcat")
+				{
+					$amount = $objBilling->GetMIpCATQuesRate($scheduler_id);
+				}
+				else 
+				{
+					$amount = $objBilling->GetPersonalQuesRate($scheduler_id);
+				}
+				
+				$isTestFromAssignedPackage = $objBilling->IsTestAssignedFromPackage($test_id, $scheduler_id);
+				$assignedPackageTestRate = 0;
+				if($isTestFromAssignedPackage)
+				{
+					$assignedPackageTestRate = $objBilling->GetAssignedPackageTestRate($test_id, $scheduler_id);
+				}
+				$objBilling->SubBalance($scheduler_id, ($amount+$assignedPackageTestRate));
+			} */
+
+
+3. tbl_result.php
+
+Function PrepareResult()
+
+Disable GetSubjectName and GetTopicName call
+
+
+$Subject 	= $aryParticulars[$QuesID]['subject_id'];//$objTD->GetSubjectName($aryParticulars[$QuesID]['subject_id']);
+				$Topic 		= $aryParticulars[$QuesID]['topic_id'];//$objTD->GetTopicName($aryParticulars[$QuesID]['topic_id']);
+
