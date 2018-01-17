@@ -33,6 +33,7 @@
 		const THREE_D_CORNER_RIBBONS_CSS		= "3rd_party/corner-ribbon/css/3d-corner-ribbons.css";
 		const SR_SIDE_NAV_BAR					= "css/sr-navbar.css";
 		const TCS_BUTTON_LEGEND					= "css/aec-instructions.css";
+		const JQUERY_NUMPAD_CSS					= "3rd_party/jquery.numpad/jquery.numpad.css";
 
 		const JQUERY_JS							= "js/jquery.js";
 		const JQUERY_2_1_1_JS					= "js/jquery-2.1.1.js";
@@ -74,6 +75,8 @@
 		const CLIPBOARD_JS						= "3rd_party/clipboard-js/clipboard.min.js";
 		const CK_EDITOR_JS						= "3rd_party/ckeditor_4.6.2_00314f970ab3/ckeditor/ckeditor.js";//"3rd_party/ckeditor_4.6.2_7883c55d92b3/ckeditor/ckeditor.js";
 		const MATH_JAX_JS						= "3rd_party/MathJax-2.7/MathJax.js?config=TeX-AMS_HTML";
+		const BOOTSTRAP_NUMBER_SPINNER			= "js/bootstrap-number-input.js";
+		const JQUERY_NUMPAD_JS					= "3rd_party/jquery.numpad/jquery.numpad.js";
 		
 		//---------------------------------
 		// Nivo-slider-theams CSS
@@ -256,6 +259,11 @@
 		public function Include3DCornerRibbonsCSS($include_base_path)
 		{
 			printf("<link rel='stylesheet' type='text/css' href='%s' />\n", $include_base_path.self::THREE_D_CORNER_RIBBONS_CSS);
+		}
+		
+		public function IncludeJqueryNumpadCSS($include_base_path)
+		{
+			printf("<link rel='stylesheet' type='text/css' href='%s' />\n", $include_base_path.self::JQUERY_NUMPAD_CSS);
 		}
 		
 		/* ------------------------------------------------------------ */
@@ -459,6 +467,16 @@
 		public function IncludeMathJAXJS($include_base_path)
 		{
 			printf("<script type='text/javascript' src='%s'></script>\n", $include_base_path.self::MATH_JAX_JS);
+		}
+		
+		public function IncludeBootstrapNumberSpinnerJS($include_base_path)
+		{
+			printf("<script type='text/javascript' src='%s'></script>\n", $include_base_path.self::BOOTSTRAP_NUMBER_SPINNER);
+		}
+		
+		public function IncludeJqueryNumpadJS($include_base_path)
+		{
+			printf("<link rel='stylesheet' type='text/css' href='%s' />\n", $include_base_path.self::JQUERY_NUMPAD_JS);
 		}
 		
 		public function CommonIncludeCSS($include_base_path)

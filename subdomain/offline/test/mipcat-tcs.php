@@ -92,9 +92,10 @@ if ($qry [0] == "test_id") {
 	}
 	
 	// Get Org Name who owns the test
-	//$sOrgName = $objDB->GetOrganizationNameByTestID($nTestID);
-	$sOrgName = "";
-	/*if(!empty($sOrgName))
+	$sOrgName ="";
+	/* $objDB->GetOrganizationNameByTestID($nTestID);
+	
+	if(!empty($sOrgName))
 	{
 		$sOrgName = "by ".$sOrgName;
 	}*/
@@ -175,38 +176,14 @@ if ($qry [0] == "test_id") {
 	$nTestID = $_POST ['test_id'];
 	$nSection = $_POST ['section'];
 	$nQuestion = $_POST ['question'];
-	$nAns = $_POST ['answer'];
-	
-	$langofchoice = $_POST ['langofchoice'];
-	CSessionManager::Set ( CSessionManager::BOOL_SEL_TEST_LANG, $langofchoice );
 	
 	/*
-	$handle = fopen("post_submit_ans.txt","w");
-	fwrite($handle, print_r($_POST, TRUE));
-	fclose($handle);
-	*/
-	
-	if(count ( $nAns ) > 0 && ! in_array ( - 1, $nAns ))
-	{
-		$_POST ['flag_choice'] = 0;
-	}
-	
-	if (isset ( $_POST ['flag_choice'] ) ) {
-	if ($_POST ['flag_choice'] == QUES_FLAG_UNANSWERED) {
-			$nAns = array ("-1" );
-		} else if ($_POST ['flag_choice'] == QUES_FLAG_MARKED_FOR_REVIEW) {
-			$nAns = array ("-2" );
-		} else if ($_POST ['flag_choice'] == QUES_FLAG_VISITED) {
-			$nAns = array ("-3" );
-		}
-	}
-	
+	 * -----------------------------------------------------------------------
+	 * Initiate test block
+	 * -----------------------------------------------------------------------
+	 */
 	$nCurTime = $_POST ['cur_timer'];
 	$nTSchdID = $_POST ['tschd_id'];
-	
-	// printf("TestID: %s, SectionID: %s, Question#: %s, Answer: %s, Tschd_ID:
-	// %s<br/>", $nTestID, $nSection, $nQuestion, $nAns, $nTSchdID);
-	
 	$objMCPAParams = $objTH->GetMCPAParams ( $nTestID );
 	
 	$bTranslation = $objMCPAParams ['allow_trans'];
@@ -220,10 +197,71 @@ if ($qry [0] == "test_id") {
 	} else {
 		$bNewTest = $objTH->StartTest ( $sUserID, $nTestID, $nTSchdID, $objMCPAParams ['pref_lang'] );
 	}
-	
 	/*
-	 * echo("<pre>"); print_r($nAns); echo("</pre>");
+	 * -----------------------------------------------------------------------
 	 */
+	
+	$nLastQuesType = $objTH->GetQuesType($nSection, $nQuestion);
+	$nAns = ($nLastQuesType== CConfig::QT_INT) ? $_POST ['int_answer'] : $_POST ['answer'];
+	
+	//CUtils::LogDataInFile("iterator.txt", $objTH->GetIterator(), true);
+	//CUtils::LogDataInFile("answer.txt", $nAns, true, "a");
+	
+	$langofchoice = $_POST ['langofchoice'];
+	CSessionManager::Set ( CSessionManager::BOOL_SEL_TEST_LANG, $langofchoice );
+	
+	if($nLastQuesType== CConfig::QT_INT && !is_array($nAns) && $nAns != -1) {
+		$tempAns = base64_decode($objTH->GetIntQuesAns($nSection, $nQuestion));
+		
+		//CUtils::LogDataInFile("temp_act_answer.txt", $tempAns." : ".$nAns);
+		
+		if($tempAns == $nAns)
+		{
+			// Mark the first option correct if answer matches 
+			$nAns = array(1);
+		}
+		else {
+			// Record the wrong answer
+			$nAns = array($nAns);
+		}
+	}
+	else if($nLastQuesType == CConfig::QT_INT) {
+		$nAns = array(-1);
+	}
+	
+	//CUtils::LogDataInFile("ans_ary_pre.txt", $nAns, true);
+	if($nLastQuesType== CConfig::QT_MATRIX) {
+		$bMatStr = false;
+		foreach($nAns as $key => $ans_row) {
+			if(strlen($ans_row) > 0 && !is_numeric($ans_row)) {
+				$bMatStr = true;
+				break;
+			}	
+		}
+		if($bMatStr) {
+			foreach($nAns as $key => $ans_row) {
+				$nAns[$key] = ($ans_row < 0) ? 0 : $ans_row;
+			}
+		}
+	}
+	
+	if(count ( $nAns ) > 0 && ! in_array ( - 1, $nAns ))
+	{
+		$_POST ['flag_choice'] = 0;
+	}
+		
+	//CUtils::LogDataInFile("post_submit_ans.txt", $_POST, true);
+	//CUtils::LogDataInFile("ans_ary_pre.txt", $nAns, true);
+	
+	if (isset ( $_POST ['flag_choice'] ) ) {
+		if ($_POST ['flag_choice'] == QUES_FLAG_UNANSWERED) {
+			$nAns = array ("-1" );
+		} else if ($_POST ['flag_choice'] == QUES_FLAG_MARKED_FOR_REVIEW) {
+			$nAns = array ("-2" );
+		} else if ($_POST ['flag_choice'] == QUES_FLAG_VISITED) {
+			$nAns = array ("-3" );
+		}
+	}
 	
 	if (count ( $nAns ) > 0 && ! in_array ( - 1, $nAns )) {
 		// echo("Test 1");
@@ -246,7 +284,6 @@ if ($qry [0] == "test_id") {
 	}
 	
 	$aryQues = $objTH->GetNextQuestion ( $nSection, $nQuestion, $nCurTime );
-	//print_r($aryQues);
 	
 	CSessionManager::Set ( CSessionManager::INT_LAST_SECTION, $nSection );
 	CSessionManager::Set ( CSessionManager::INT_LAST_QUESTION, $nQuestion );
@@ -278,6 +315,7 @@ if ($objAnsAry == null) {
 }
 
 $sSectionName = $objTH->GetSectionName ( $nSection );
+$sSectionName = substr($sSectionName, strpos($sSectionName, strpos($sSectionName,"~")+1, strlen($sSectionName)));
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Adjust attempts
@@ -335,9 +373,7 @@ $nNotVisitedLegend = 0;
 $nReviewLegend = 0;
 $nUnansweredLegend = 0;
 
-/*$handle = fopen("post_sec_ques.txt","w");
-fwrite($handle, print_r($objAnsAry[$nSection], TRUE));
-fclose($handle);*/
+//CUtils::LogDataInFile("post_sec_ques.txt", $objAnsAry[$nSection], TRUE);
 
 foreach ( $objAnsAry[$nSection] as $qusIndex => $Answer ) 
 {
@@ -356,6 +392,190 @@ foreach ( $objAnsAry[$nSection] as $qusIndex => $Answer )
 	else if (in_array(-3, $Answer))
 	{
 		$nUnansweredLegend = $nUnansweredLegend + 1;
+	}
+}
+
+// Populate Section Details
+$arySection = $objTH->GetSectionDetails ( $nTestID );
+
+$grpIndex = -1;
+$secIndex = 0;
+$grpSecIndex = 0;
+$aryGroup = array();
+foreach ( $arySection as $key => $Section ) {
+	if (! empty ( $Section ['name'] )) {
+		$grpName = substr($Section ['name'], 0, strpos($Section ['name'],"~"));
+		
+		if (strcmp($grpName, $aryGroup[$grpIndex][$grpSecIndex-1]['grp_name']) != 0) {
+			$grpIndex++;
+			$grpSecIndex = 0;
+			$aryGroup[$grpIndex] = array();
+		}
+		
+		$aryGroup[$grpIndex][$grpSecIndex] = array();
+		$aryGroup[$grpIndex][$grpSecIndex]['sec_index'] = $secIndex;
+		$aryGroup[$grpIndex][$grpSecIndex]['sec_name'] = substr($Section ['name'], strpos($Section ['name'],"~")+1, strlen($Section ['name']));
+		$aryGroup[$grpIndex][$grpSecIndex]['grp_name'] = $grpName;
+		
+		$grpSecIndex++;
+	}
+	$secIndex ++;
+}
+
+//CUtils::LogDataInFile("group_ary.txt", $aryGroup, true);
+
+function PopulateIntegerOptionsWithNumPad($correctOpt, $ansAry)
+{
+	//CUtils::LogDataInFile("populate_int_opts.txt", $correctOpt, false, "a");
+	//CUtils::LogDataInFile("populate_int_opts.txt", $ansAry, true, "a");
+
+	$min_cols = 4;
+	$correct_opt_len = strlen($correctOpt);
+	$numOfDigits = ($correct_opt_len < $min_cols) ? $min_cols : $correct_opt_len;
+
+	$answer = 0;
+	$answer_ary = array();
+	$bAnswered = false;
+	if(count(array_intersect(array(-1,-2,-3), $ansAry)) == 0)
+	{
+		$answer = ($ansAry[0] == 1) ? $correctOpt : $ansAry[0];
+		$answer_ary = str_split(strrev($answer));
+		$bAnswered = true;
+	}
+
+	printf("<tr class='info'><td>");
+	printf("<div style='border: 1px solid blue; background-color: #fff;'><span id='int_ans_sel' style='margin-left: 5px;'>%s</span></div>", $answer);
+	printf("<input type='hidden' name='int_answer' id='text_int_opt' value='%s'>", $bAnswered ? $answer : -1);
+	printf("</td>");
+	for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
+	{
+		$label = pow(10, $digitPos);
+		if(strlen($label) == 1) {
+			$label = "<small>Unit Place</small>";
+		}
+		else {
+			$label = "<small>".$label."<sup>th</sup> Place </small>";
+		}
+		printf("<td style='color:red;'><b>%s</b></td>", $label);
+	}
+	printf("</tr>");
+
+	for ($index = 0; $index < 10; $index++)
+	{
+		printf("<tr>");
+		printf("<td style='color:blue;' class='info'><b>%s</b></td>", $index);
+		for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
+		{
+			$sel_opt = 0;
+			if(array_key_exists($digitPos, $answer_ary)) {
+				$sel_opt = $answer_ary[$digitPos];
+			}
+			//CUtils::LogDataInFile("ans_ary.txt", $answer_ary, true);
+			printf("<td>");
+			printf("&nbsp; <input type='radio' onclick='UpdateIntAnswer(this, %d, %d);' name='opt_pos_%s' value='%s' %s>",
+					$digitPos, $numOfDigits, $digitPos, $index, $bAnswered && $sel_opt == $index ? "checked": "");
+			printf("</td>");
+		}
+		printf("</tr>");
+	}
+}
+
+function PopulateIntegerOptions($correctOpt, $ansAry)
+{
+	//CUtils::LogDataInFile("populate_int_opts.txt", $correctOpt, false, "a");
+	//CUtils::LogDataInFile("populate_int_opts.txt", $ansAry, true, "a");
+	
+	$min_cols = 4;
+	$correct_opt_len = strlen($correctOpt);
+	$numOfDigits = ($correct_opt_len < $min_cols) ? $min_cols : $correct_opt_len;
+	
+	$answer = 0;
+	$answer_ary = array();
+	$bAnswered = false;
+	if(count(array_intersect(array(-1,-2,-3), $ansAry)) == 0)
+	{
+		$answer = ($ansAry[0] == 1) ? $correctOpt : $ansAry[0];
+		$answer_ary = str_split(strrev($answer));
+		$bAnswered = true;
+	}
+	
+	printf("<tr class='info'><td>");
+	printf("<div style='border: 1px solid blue; background-color: #fff;'><span id='int_ans_sel' style='margin-left: 5px;'>%s</span></div>", $answer);
+	printf("<input type='hidden' name='int_answer' id='text_int_opt' value='%s'>", $bAnswered ? $answer : -1);
+	printf("</td>");
+	for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
+	{
+		$label = pow(10, $digitPos);
+		if(strlen($label) == 1) {
+			$label = "<small>Unit Place</small>";
+		}
+		else {
+			$label = "<small>".$label."<sup>th</sup> Place </small>";
+		}
+		printf("<td style='color:red;'><b>%s</b></td>", $label);
+	}
+	printf("</tr>");
+	
+	for ($index = 0; $index < 10; $index++)
+	{
+		printf("<tr>");
+		printf("<td style='color:blue;' class='info'><b>%s</b></td>", $index);
+		for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
+		{
+			$sel_opt = 0;
+			if(array_key_exists($digitPos, $answer_ary)) {
+				$sel_opt = $answer_ary[$digitPos];
+			}
+			//CUtils::LogDataInFile("ans_ary.txt", $answer_ary, true);
+			printf("<td>");
+			printf("&nbsp; <input type='radio' onclick='UpdateIntAnswer(this, %d, %d);' name='opt_pos_%s' value='%s' %s>", 
+					$digitPos, $numOfDigits, $digitPos, $index, $bAnswered && $sel_opt == $index ? "checked": "");
+			printf("</td>");
+		}
+		printf("</tr>");
+	}
+}
+
+function PopulateMatrixOptions($optAry, $ansAry)
+{
+	$highestAlpha	  = '';
+	$highestAlphaPos  = 0;
+	$alphabets 		  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$romans			  = array("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+							 "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
+							 "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX");
+	
+	$num_options = $GLOBALS['aryQues']['opt_count'];
+	
+	$bEmptyAnsAry = (count($ansAry) > 0 ) ? false : true;
+	foreach ($optAry as $key => $val) {
+		if($bEmptyAnsAry) {
+			array_push($ansAry, -1);
+		}
+		foreach( explode(",", $val['option']) as  $opt_part) {
+			$pos = strpos($alphabets, $opt_part);
+			
+			$highestAlphaPos 	= ($highestAlphaPos < $pos) ? $pos : $highestAlphaPos;
+			$highestAlpha 		= $alphabets[$highestAlphaPos];
+		}
+	}
+	
+	printf("<tr><td><input type='hidden' name='mat_rows' value='%s'/></td>", $num_options);
+	for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
+		printf("<td><b>%s</b></td>", $alphabets[$opt_col]);
+	}
+	printf("</tr>");
+	
+	//$optAry[$opt_row];
+	for($opt_row = 0; $opt_row < $num_options; $opt_row ++) {
+		printf("<tr>");
+		printf("<td><b>%s</b><input type='hidden' id='mat_opt_%s' name='answer[]' value='$ansAry[$opt_row]'/></td>", 
+				$romans[$opt_row], $opt_row, $opt_row);
+		for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
+			printf("<td><input type='checkbox' onclick='UpdateMatrixAnswer(this, %d, %d, %d, %d);' name='mat_row_%s' value='%s' %s/></td>", 
+					$opt_row, $opt_col, $num_options, $highestAlphaPos, $opt_row, $alphabets[$opt_col], in_array($alphabets[$opt_col], explode(",", $ansAry[$opt_row])) ? "checked": "");
+		}
+		printf("</tr>");
 	}
 }
 ?>
@@ -390,11 +610,13 @@ span.username {
 		$objIncludeJsCSS->CommonIncludeCSS ( "../" );
 		$objIncludeJsCSS->IncludeJquerySnippetCSS ( "../" );
 		$objIncludeJsCSS->IncludeTCSButtonsCSS ( "../" );
+		$objIncludeJsCSS->IncludeJqueryNumpadCSS( "../" );
 		
 		$objIncludeJsCSS->CommonIncludeJS ( "../" );
 		$objIncludeJsCSS->IncludeJquerySnippetJS ( "../" );
 		$objIncludeJsCSS->IncludeMathJAXJS ( "../" );
 		$objIncludeJsCSS->IncludeJqueryUI_1_12_1_JS ( "../" );
+		$objIncludeJsCSS->IncludeJqueryNumpadJS( "../" );
 		
 		?>
 
@@ -415,7 +637,7 @@ span.username {
 /* Group or Section Scroller Style*/
 /*---------------------------------------------------------------*/
 
-.wrapper {
+.wrapper, .wrapper-g {
     position:relative;
     margin:0 auto;
     overflow:hidden;
@@ -423,7 +645,7 @@ span.username {
   	height:50px;
 }
 
-.list {
+.list, .list-g {
     position:relative;
     left:0px;
     top:0px;
@@ -437,7 +659,7 @@ span.username {
     -webkit-overflow-scrolling: touch;
 }
 
-.list li{
+.list li, .list-g li{
 	display:table-cell;
     position:relative;
     text-align:center;
@@ -447,7 +669,7 @@ span.username {
     vertical-align:middle;
 }
 
-.scroller {
+.scroller, .scroller-g {
   text-align:center;
   cursor:pointer;
   display:none;
@@ -458,11 +680,11 @@ span.username {
   background-color:#fff;
 }
 
-.scroller-right{
+.scroller-right, .scroller-right-g {
   float:right;
 }
 
-.scroller-left {
+.scroller-left, .scroller-left-g {
   float:left;
 }
 
@@ -515,7 +737,8 @@ span.username {
 	}
 	
 	#question-area {
-		overflow-y: auto;
+		resize: both;
+    	overflow: auto;
 	}
 	
 	#toggle_para {
@@ -525,7 +748,7 @@ span.username {
 	#dir-para {
 		resize: both;
     	overflow: auto;
-		display: <?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "none" : "block");?> !important;
+		display: <?php echo(($aryQues['ques_type'] == CConfig::QT_NORMAL || $aryQues['ques_type'] == CConfig::QT_INT || $aryQues['ques_type'] == CConfig::QT_MATRIX) ? "none" : "block");?> !important;
 		position: relative;
 		border:1px solid #aaa;
 	}
@@ -563,7 +786,7 @@ span.username {
 	}
 	
 	#group-strip {
-		display: none;
+		
 	}
 	
 	#timer-strip {
@@ -663,11 +886,35 @@ body {
 		
 		<div class="row row-eq-height countme">
 			<div class="col-xs-12 col-sm-9">
-				<div class="row row-eq-height" id="group-strip">
+				<div class="row border row-eq-height" id="group-strip">
+					<div class="scroller-g scroller-left-g"><i class="fa fa-chevron-left" aria-hidden="false"></i>
+					</div>
+	  				<div class="scroller-g scroller-right-g"><i class="fa fa-chevron-right" aria-hidden="false"></i>
+	  				</div>
+					<div class="wrapper-g">
+						<ul class="nav nav-tabs list-g">
+						<?php
+						$secStop = array(0, 0); 
+						foreach ($aryGroup as $key => $group) {
+							$active = false;
+							foreach($group as $section) {
+								if($section['sec_index'] == $nSection) {
+									$active = true;
+									$secStop[0] = $group[0]['sec_index'];
+									$secStop[1] = $group[count($group)-1]['sec_index'];
+								}
+							}
+							
+							printf ( "<li %s><a href='#%s~%s_questions' aria-controls='#%s~%s_questions' data-toggle='tab' index='%s'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", 
+									$active ? "class='active'" : "", $group[0]['grp_name'], $group[0]['sec_name'], $group[0]['grp_name'], $group[0]['sec_name'], $group[0]['sec_index'], $group[0]['grp_name'] );
+						}
+						?>
+						</ul>
+					</div>
 				</div>
 				<div class="row border" id="timer-strip">
 					<div class="col-sm-6" id="cur-section-label">
-						<span class="selected_sec_name"><?php printf("<b><i class='icon-tasks icon-black'></i>&nbsp;Current Section: <span style='color:FireBrick;'>%s</span></b>",$sSectionName);?></span>
+						<span class="selected_sec_name"><?php printf("<b><i class='icon-tasks icon-black'></i>&nbsp;Current Section: <span style='color:FireBrick;'>%s</span></b>", $sSectionName);?></span>
 					</div>
 					<div class="col-sm-6">
 						<span class="timer"><input type="text"
@@ -683,15 +930,17 @@ body {
 						<div class="wrapper">
 							<ul class="nav nav-tabs list">
 							<?php
-							$arySection = $objTH->GetSectionDetails ( $nTestID );
-							
 							$secIndex = 0;
 							foreach ( $arySection as $key => $Section ) {
 								if (! empty ( $Section ['name'] )) {
 									if ($secIndex == $nSection)
-										printf ( "<li class='active'><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", $Section ['name'], $Section ['name'], $Section ['name'] );
+										printf ( "<li class='active'><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab' index='%s' style='%s'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", 
+												$Section ['name'], $Section ['name'], $secIndex, ($secIndex < $secStop[0] || $secIndex > $secStop[1]) ? "display:none;" : "", 
+												substr($Section ['name'], strpos($Section ['name'],"~")+1, strlen($Section ['name'])) );
 									else
-										printf ( "<li ><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", $Section ['name'], $Section ['name'], $Section ['name'] );
+										printf ( "<li ><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab' index='%s' style='%s'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", 
+												$Section ['name'], $Section ['name'], $secIndex, ($secIndex < $secStop[0] || $secIndex > $secStop[1]) ? "display:none;" : "", 
+												substr($Section ['name'], strpos($Section ['name'],"~")+1, strlen($Section ['name'])) );
 								
 								}
 								$secIndex ++;
@@ -760,21 +1009,21 @@ body {
 				
 			</div>
 		</div>
-		<form id="question-form" action="mipcat-tcs.php" onReset="return ResetForm();" method="POST">
+		<form id="question-form" action="mipcat-tcs.php" onSubmit="SubmitQuesForm();" onReset="return ResetForm();" method="POST">
 			<div class="row" id="md-container">
 				<div class="col-xs-12 col-sm-9 border">
 					<div class="row border" id="question-info">
 					
 					</div>
 					<div class="row" id="question-area">
-						<div id="dir-para" class="<?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "col-sm-0" : "col-xs-12 col-sm-6");?>">
-							<!-- <button type="button" class="btn btn-primary" onclick="TogglePara()" id="toggle_para" style="<?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "display:none;" : "");?>">
+						<div id="dir-para" class="<?php echo(($aryQues['ques_type'] == CConfig::QT_NORMAL) ? "col-sm-0" : "col-xs-12 col-sm-6");?>">
+							<!-- <button type="button" class="btn btn-primary" onclick="TogglePara()" id="toggle_para" style="<?php echo(($aryQues['ques_type'] == CConfig::QT_NORMAL || $aryQues['ques_type'] == CConfig::QT_INT || $aryQues['ques_type'] == CConfig::QT_MATRIX) ? "display:none;" : "");?>">
 							</button> -->
 							<div class="well" id="base_para">
 								<blockquote>
 									<p>
 		    					<?php
-											if ($aryQues ['ques_type'] != CConfig::QT_NORMAL && $aryQues ['ques_type'] != - 1) {
+											if ($aryQues ['ques_type'] != CConfig::QT_NORMAL && $aryQues ['ques_type'] != CConfig::QT_INT && $aryQues ['ques_type'] != CConfig::QT_MATRIX && $aryQues ['ques_type'] != - 1) {
 												echo ($objTH->GetRCDirectionPara ( $aryQues ['ques_id'], $aryQues ['ques_type'] ));
 											}
 											?>
@@ -802,10 +1051,10 @@ body {
 							}
 							?>
 						</div>
-						<div class="col-xs-12 <?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL ? "col-sm-12" : "col-sm-6");?>">
-							<table width="100%" cellpadding="4" cellspacing="4">
-								<tr>
-									<td colspan="2" id="td_question" style="color: DarkSlateBlue;">
+						<div class="table-responsive col-xs-12 <?php echo($aryQues['ques_type'] == CConfig::QT_NORMAL || $aryQues['ques_type'] == CConfig::QT_INT || $aryQues['ques_type'] == CConfig::QT_MATRIX ? "col-sm-12" : "col-sm-6");?>">
+							<table class="table <?php echo($aryQues['ques_type'] == CConfig::QT_INT || $aryQues['ques_type'] == CConfig::QT_MATRIX? "table-striped table-bordered table-condensed" : "");?>" cellpadding="4" cellspacing="4">
+								<thead><tr>
+									<td colspan="11" id="td_question" style="color: DarkSlateBlue;">
 									<?php
 									$ques_cnts = "";
 									if (CUtils::getMimeType ( $aryQues ['question'] ) == "application/octet-stream") {
@@ -845,33 +1094,42 @@ body {
 									}
 									?><br />
 									</td>
-								</tr>
+								</tr></thead>
 								<?php
-								for($opt_idx = 0; $opt_idx < $aryQues ['opt_count']; $opt_idx ++) {
-									if ($opt_idx == 0) {
-										printf ( "<tr>\n" );
-									} 
-	
-									else //if (($opt_idx % 2) == 0) {
-									{
-										printf ( "</tr>\n<tr>\n" );
-									}
-									
-									$ip_type = "radio";
-									if ($objMCPAParams ['mcq_type'] == 1) {
-										$ip_type = "checkbox";
-									}
-								?>
-								<td class="info" id="td_opts" style="<?php echo((empty($opt_ary[$opt_idx]) && !is_numeric($opt_ary[$opt_idx])) ? "display:none;" : "");?>"><label><?php echo($opt_idx+1);?>). <input
-										style="position: relative; top: -4px;"
-										id="rb_opt_<?php echo($opt_idx+1);?>"
-										type="<?php echo($ip_type);?>" name="answer[]"
-										value="<?php echo($opt_idx+1);?>"
-										<?php echo(in_array(($opt_idx+1), $objAnsAry[$nSection][$nQuestion])?"checked='checked'":""); ?> />
-										<span id="base_opt_<?php echo($opt_idx+1);?>"><?php echo($opt_ary[$opt_idx]);?></span><?php printf(!empty($aryTransQues)?"<span id='trans_opt_%d' style='display :none;'>%s</span>":"", ($opt_idx+1), $trans_opt_ary[$opt_idx]);?></label></td>
-									<?php
-									if ($opt_idx == ($aryQues ['opt_count'] - 1)) {
-										printf ( "</tr>\n" );
+								if($aryQues['ques_type'] == CConfig::QT_INT) {
+									PopulateIntegerOptions($opt_ary[0], $objAnsAry[$nSection][$nQuestion]);
+								}
+								else if($aryQues['ques_type'] == CConfig::QT_MATRIX) {
+									PopulateMatrixOptions($opt_ary, $objAnsAry[$nSection][$nQuestion]);
+								}
+								else {
+									for($opt_idx = 0; $opt_idx < $aryQues ['opt_count']; $opt_idx ++) {
+										if ($opt_idx == 0) {
+											printf ( "<tr>\n" );
+										} 
+		
+										else //if (($opt_idx % 2) == 0) {
+										{
+											printf ( "</tr>\n<tr>\n" );
+										}
+										
+										$ip_type = "radio";
+										//if ($objMCPAParams ['mcq_type'] == 1) {
+										if ($aryQues['mca'] == 1) {
+											$ip_type = "checkbox";
+										}
+									?>
+									<td class="info" id="td_opts" style="<?php echo((empty($opt_ary[$opt_idx]) && !is_numeric($opt_ary[$opt_idx])) ? "display:none;" : "");?>"><label><?php echo($opt_idx+1);?>). <input
+											style="position: relative; top: -4px;"
+											id="rb_opt_<?php echo($opt_idx+1);?>"
+											type="<?php echo($ip_type);?>" name="answer[]"
+											value="<?php echo($opt_idx+1);?>"
+											<?php echo(in_array(($opt_idx+1), $objAnsAry[$nSection][$nQuestion])?"checked='checked'":""); ?> />
+											<span id="base_opt_<?php echo($opt_idx+1);?>"><?php echo($opt_ary[$opt_idx]);?></span><?php printf(!empty($aryTransQues)?"<span id='trans_opt_%d' style='display :none;'>%s</span>":"", ($opt_idx+1), $trans_opt_ary[$opt_idx]);?></label></td>
+										<?php
+										if ($opt_idx == ($aryQues ['opt_count'] - 1)) {
+											printf ( "</tr>\n" );
+											}
 										}
 									}
 								?>
@@ -884,7 +1142,7 @@ body {
 								id="question" name="question" value="<?php echo($nQuestion);?>" />
 							<input type="hidden" id="langofchoice" name="langofchoice"
 								value="0" /> <input type="hidden" id="showParaChoice"
-								name="showParaChoice" /> <input type="hidden"
+								name="showParaChoice" value="0"/> <input type="hidden"
 								id="prev_linked_to" name="prev_linked_to"
 								value="<?php echo($aryQues['linked_to']);?>"> <input
 								type="hidden" id="showSectionChoice" name="showSectionChoice">
@@ -938,7 +1196,7 @@ body {
 								printf ( "<div style='padding: 5px; overflow-y: auto;' role='tabpanel' class='tab-pane %s' id='%s_questions'>", $secIndex == $nSection ? 'active' : '', $Section ['name'] );
 								printf("<button style='margin-top: 5px;'><i class='fa fa-align-justify on-left' aria-hidden='true'></i>&nbsp;Reading Comprehension Group</button>");
 								printf("<button style='margin-top: 5px;margin-bottom: 5px;'><i class='fa fa-arrow-right on-left' aria-hidden='true'></i>&nbsp;Direction Group</button>");
-								printf("<div class='sec-name-questios'>%s</div>", $Section ['name']);
+								printf("<div class='sec-name-questios'>%s</div>", substr($Section ['name'], strpos($Section ['name'],"~")+1, strlen($Section ['name'])) );
 								printf("<div class='instruction_area'>");
 								
 								//printf("<script language='JavaScript' type='text/javascript'>alert('%s')</script>", print_r($objAnsAry, TRUE));
@@ -960,9 +1218,20 @@ body {
 			<div class="row row-eq-height countme" id="test-buttons-desktop">
 				<div class="col-sm-9 border" style="padding-top: 10px;">
 					<?php
-						if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
+						if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
 							$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
-							$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
+							
+							if(in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_UNANSWERED;
+							}
+							else if(in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;
+							}
+							else if(in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_VISITED;
+							}
+							
+							//$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ?  : QUES_FLAG_MARKED_FOR_REVIEW;
 							echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-primary" id="flag_ques" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
 							echo ('<input type="reset" class="btn btn-default" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
 							echo ('<input type="submit" id="submit_ans" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
@@ -984,9 +1253,19 @@ body {
 			<div class="row row-eq-height countme" id="test-buttons-mobile">
 				<div class="col-xs-12 border" style="padding: 5px;">
 					<?php
-						if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
+						if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )  || in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
 							$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
-							$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
+							
+							if(in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_UNANSWERED;
+							}
+							else if(in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;
+							}
+							else if(in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_VISITED;
+							}
+							//$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
 							echo ('<input type="reset" class="btn btn-default btn-sm pull-left" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
 							echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-primary btn-sm pull-right" id="flag_ques_m" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
 						} else {
@@ -1097,12 +1376,14 @@ body {
 			var hidWidth;
 			var scrollBarWidths = 40;
 			var nItemsCount = 0;
+			var nItemsCountGrp = 0;
 			var nScrollLen;
+			var nScrollLenGrp;
 			
 			var widthOfList = function(){
  				var itemsWidth = 0;
  				nItemsCount = 0;
-				$('.list li').each(function(){
+				$('.list li > a:visible').each(function(){
   					var itemWidth = $(this).outerWidth();
  					itemsWidth+=itemWidth;
 					
@@ -1111,12 +1392,32 @@ body {
   			return itemsWidth;
 			};
 
+			var widthOfListGrp = function(){
+ 				var itemsWidth = 0;
+ 				nItemsCount = 0;
+				$('.list-g li > a:visible').each(function(){
+  					var itemWidth = $(this).outerWidth();
+ 					itemsWidth+=itemWidth;
+					
+ 					nItemsCountGrp++;
+				});
+  			return itemsWidth;
+			};
+
 			var widthOfHidden = function(){
 				return (($('.wrapper').outerWidth())-widthOfList()-getLeftPosi())-scrollBarWidths;
 			};
 
+			var widthOfHiddenGrp = function(){
+				return (($('.wrapper-g').outerWidth())-widthOfList()-getLeftPosi())-scrollBarWidths;
+			};
+
 			var getLeftPosi = function(){
 				return $('.list').position().left;
+			};
+
+			var getLeftPosiGrp = function(){
+				return $('.list-g').position().left;
 			};
 
 			var heightExceptQArea = function(){
@@ -1136,12 +1437,25 @@ body {
 					var amount = $(".list li.active").position().left;
 					$('.wrapper').animate({scrollLeft:amount}, function(){});
 				}
+
+				if($( window ).width() <= widthOfListGrp() && !bFromScroller)
+				{
+					var amount = $(".list-g li.active").position().left;
+					$('.wrapper-g').animate({scrollLeft:amount}, function(){});
+				}
 								
 				if (($('.wrapper').outerWidth()) < widthOfList()) {
 			    	$('.scroller-right').show();
 			  	}
 			  	else {
 					$('.scroller-right').hide();
+			  	}
+
+				if (($('.wrapper-g').outerWidth()) < widthOfListGrp()) {
+			    	$('.scroller-right-g').show();
+			  	}
+			  	else {
+					$('.scroller-right-g').hide();
 			  	}
 
 				if (getLeftPosi()<0) {
@@ -1152,6 +1466,14 @@ body {
 			    	$('.scroller-left').hide();
 			  	}
 
+				if (getLeftPosiGrp()<0) {
+			    	$('.scroller-left-g').show();
+			  	}
+			  	else {
+			    	//$('.item').animate({left:"-="+getLeftPosiGrp()+"px"},'slow');
+			    	$('.scroller-left-g').hide();
+			  	}
+
 			  	//alert("Window Height: " + $( window ).height() + ", RowsHeight: " + heightExceptQArea());
 			  	$("#question-area").css("height", $( window ).height() - heightExceptQArea() - 40);
 			  	$("#dir-para").css("height", $( window ).height() - heightExceptQArea() - 60);
@@ -1159,6 +1481,9 @@ body {
 				
 			  	var nItemsWidth = $('.wrapper').width();
 			  	nScrollLen  = nItemsWidth / nItemsCount;
+
+			  	var nItemsWidthGrp = $('.wrapper-g').width();
+			  	nScrollLenGrp  = nItemsWidthGrp / nItemsCountGrp;
 			}
 			
 			reAdjust();
@@ -1166,7 +1491,7 @@ body {
 			$(window).on('resize',function(e){
 				if($( window ).width() <= widthOfList())
 				{
-					var amount = $(".list li.active").position().left;
+					var amount = $(".list li.active:visible").position().left;
 					$('.wrapper').animate({scrollLeft:amount}, function(){
 			        	reAdjust();
 				        });
@@ -1192,6 +1517,22 @@ body {
 			    	var amount = (direction === "left" ? "-="+ nScrollLen : "+="+nScrollLen);
 					
 			        $('.wrapper').animate({scrollLeft:amount}, function(){
+				        reAdjust(1);
+				        });
+			    }
+
+			    $(".scroller-right-g").bind("click", function(event) {
+			    	scrollContentGrp("right");
+			    });
+
+			    $(".scroller-left-g").bind("click", function(event) {
+			    	scrollContentGrp("left");
+			    });
+
+			    function scrollContentGrp(direction) {
+			    	var amount = (direction === "left" ? "-="+ nScrollLenGrp : "+="+nScrollLenGrp);
+					
+			        $('.wrapper-g').animate({scrollLeft:amount}, function(){
 				        reAdjust(1);
 				        });
 			    }
@@ -1229,7 +1570,8 @@ body {
 			$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 				var newUrl;
 				var url = e.target.toString();
-				var nTargetSecIndex = $(e.target).closest('li').index();
+				//var nTargetSecIndex = $(e.target).closest('li').index();
+				var nTargetSecIndex = $(e.target).attr("index");
 
 				var secPattern = /&sec=[0-9]+/g;
 				newUrl = url.replace(secPattern, "&sec="+nTargetSecIndex);
@@ -1390,6 +1732,7 @@ body {
 		}
 		
 		TestTimer.CurTime = <?php echo($nCurTime); ?>;
+		TestTimer.bStop = false;
 		function TestTimer()
 		{
 			if(TestTimer.CurTime < 0)
@@ -1407,7 +1750,9 @@ body {
 			$("#cur_timer").val(TestTimer.CurTime);
 			
 			TestTimer.CurTime--;
-			TestTimer.hTimer = setTimeout(function(){TestTimer()}, 1000);
+			if(!TestTimer.bStop) {
+				TestTimer.hTimer = setTimeout(function(){TestTimer()}, 1000);
+			}
 		}
 		
 		var connection_error_count = 0;
@@ -1470,6 +1815,7 @@ body {
 		{
 			$("input:radio[name='answer[]']").prop('checked', false);
 			$("input:checkbox[name='answer[]']").prop('checked', false);
+			$("input:hidden[name='int_answer']").val(-1);
 			
 			<?php
 			if ((count ( $objAnsAry [$nSection] [$nQuestion] ) > 0 && ! in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) && ! in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) {
@@ -1485,6 +1831,11 @@ body {
 
 			$("#question-form").submit();
 			return false;
+		}
+
+		function SubmitQuesForm()
+		{
+			TestTimer.bStop = true;
 		}
 		
 		$("input:checkbox[name='answer[]']").click(function(){
@@ -1559,7 +1910,7 @@ body {
 		
 		foreach ( $objAnsAry as $secIndex => $ansSection ) {
 			foreach ( $ansSection as $qusIndex => $ansQuestion ) {
-				if ($linked_to != $objIter [$secIndex] [$qusIndex] ['linked_to'] && $objIter [$secIndex] [$qusIndex] ['ques_type'] != CConfig::QT_NORMAL) {
+				if ($linked_to != $objIter [$secIndex] [$qusIndex] ['linked_to'] && ($objIter [$secIndex] [$qusIndex] ['ques_type'] == CConfig::QT_READ_COMP || $objIter [$secIndex] [$qusIndex] ['ques_type'] == CConfig::QT_DIRECTIONS) ) {
 					$linked_to = $objIter [$secIndex] [$qusIndex] ['linked_to'];
 					$index ++;
 					
@@ -1591,17 +1942,17 @@ body {
 					} else {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered');\n");
 					}
-				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 1, $objAnsAry [$secIndex] [$qusIndex] ))) {
+				} else if ((count ( array_filter($objAnsAry [$secIndex] [$qusIndex]) ) == 1 && in_array ( - 1, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_visited highlight-button');\n");
 					}
-				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 2, $objAnsAry [$secIndex] [$qusIndex] ))) {
+				} else if ((count ( array_filter($objAnsAry [$secIndex] [$qusIndex]) ) == 1 && in_array ( - 2, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review highlight-button');\n");
 					} else {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review');\n");
 					}
-				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 3, $objAnsAry [$secIndex] [$qusIndex] ))) {
+				} else if ((count ( array_filter($objAnsAry [$secIndex] [$qusIndex]) ) == 1 && in_array ( - 3, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered highlight-button');\n");
 					} else {
@@ -1638,10 +1989,59 @@ body {
 			}
 		}
 
+		function UpdateIntAnswer(obj, pos, max_digits)
+		{
+			var sVal = '';
+			for(i=max_digits-1; i>=0;i--)
+			{
+				var selection = $("input[name=opt_pos_"+i+"]:checked").val();
+				if(selection == undefined) {
+					$("input[name=opt_pos_"+i+"][value=0]").prop('checked', 'checked');
+					selection = 0;
+				}
+				sVal = sVal + selection;
+			}
+			//alert(sVal);
+			
+			/*int_val = $("#int_ans_sel").text();
+			pos = pos == 0 ? 1 : pos;
+			
+			alert(pos.length+" # "+int_val + " : " + pos+" - "+ ($(obj).val() / pos));
+
+			int_val[pos.length - pos - 1] = $(obj).val() / pos;
+
+			alert(int_val);*/
+
+			$("#text_int_opt").val( parseInt(sVal) );
+			$("#int_ans_sel").text( parseInt(sVal) );
+
+			ChangeSubmitBtnName("Save & Next");
+		}
+
+		function UpdateMatrixAnswer(obj, row, col, max_rows, max_cols)
+		{
+			var selection = [];
+			$("input[name=mat_row_"+row+"]:checked").each(function () {
+	            selection.push($(this).val());
+	        });
+			//var selection = $("input[name=mat_row_"+row+"]:checked").val();
+
+			if (selection.length > 0) {
+				$("#mat_opt_"+row).val(selection.join(","));
+			}
+			else {
+				$("#mat_opt_"+row).val(-1);
+			}
+			
+			//alert(" Value: " + selection.join(","));
+			
+			ChangeSubmitBtnName("Save & Next");
+		}
+
 		<?php
 		if ($aryQues ['ques_type'] != CConfig::QT_NORMAL) {
 			?>
-		var bShowPara = <?php echo($bShowPara);?>;
+		var bShowPara = <?php echo(empty($bShowPara) ? 0 : $bShowPara);?>;
 		function TogglePara()
 		{
 			var trans_val = $("input[name=trans_choice]:checked").val();
