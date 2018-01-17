@@ -32,14 +32,24 @@
 		// ----------------------------------------------------------
 		// Public Functions
 		// ----------------------------------------------------------
-		public function PostTestAdjustBilling($owner_id, $user_id)
+		public function PostTestAdjustBilling($schedular_id, $student_id)
 		{
-			$this->objPlan->PostTestAdjustBilling($owner_id, $user_id);
+			$this->objPlan->PostTestAdjustBilling($schedular_id, $student_id);
 		}
 		
-		public function CanSchedule($user_id)
+		public function CanSchedule($schedular_id)
 		{
-			$this->objPlan->CanSchedule($user_id);
+			$this->objPlan->CanSchedule($schedular_id);
+		}
+		
+		public function GetBillingHistory($schedular_id)
+		{
+			
+		}
+		
+		public function GenerateInvoice($schedular_id, $period_in_days)
+		{
+			
 		}
 	}
 ?>

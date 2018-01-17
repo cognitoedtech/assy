@@ -204,6 +204,7 @@ if ($qry [0] == "test_id") {
 	$nAns = ($nLastQuesType== CConfig::QT_INT) ? $_POST ['int_answer'] : $_POST ['answer'];
 	
 	//CUtils::LogDataInFile("iterator.txt", $objTH->GetIterator(), true);
+	//CUtils::LogDataInFile("answer.txt", $nAns, true, "a");
 	
 	$langofchoice = $_POST ['langofchoice'];
 	CSessionManager::Set ( CSessionManager::BOOL_SEL_TEST_LANG, $langofchoice );
@@ -231,7 +232,7 @@ if ($qry [0] == "test_id") {
 	if($nLastQuesType== CConfig::QT_MATRIX) {
 		$bMatStr = false;
 		foreach($nAns as $key => $ans_row) {
-			if(!is_numeric($ans_row)) {
+			if(strlen($ans_row) > 0 && !is_numeric($ans_row)) {
 				$bMatStr = true;
 				break;
 			}	
@@ -249,9 +250,10 @@ if ($qry [0] == "test_id") {
 	}
 		
 	//CUtils::LogDataInFile("post_submit_ans.txt", $_POST, true);
+	//CUtils::LogDataInFile("ans_ary_pre.txt", $nAns, true);
 	
 	if (isset ( $_POST ['flag_choice'] ) ) {
-	if ($_POST ['flag_choice'] == QUES_FLAG_UNANSWERED) {
+		if ($_POST ['flag_choice'] == QUES_FLAG_UNANSWERED) {
 			$nAns = array ("-1" );
 		} else if ($_POST ['flag_choice'] == QUES_FLAG_MARKED_FOR_REVIEW) {
 			$nAns = array ("-2" );
@@ -259,10 +261,6 @@ if ($qry [0] == "test_id") {
 			$nAns = array ("-3" );
 		}
 	}
-	
-	/*
-	 * echo("<pre>"); print_r($nAns); echo("</pre>");
-	 */
 	
 	if (count ( $nAns ) > 0 && ! in_array ( - 1, $nAns )) {
 		// echo("Test 1");
@@ -374,9 +372,7 @@ $nNotVisitedLegend = 0;
 $nReviewLegend = 0;
 $nUnansweredLegend = 0;
 
-/*$handle = fopen("post_sec_ques.txt","w");
-fwrite($handle, print_r($objAnsAry[$nSection], TRUE));
-fclose($handle);*/
+//CUtils::LogDataInFile("post_sec_ques.txt", $objAnsAry[$nSection], TRUE);
 
 foreach ( $objAnsAry[$nSection] as $qusIndex => $Answer ) 
 {
@@ -426,6 +422,62 @@ foreach ( $arySection as $key => $Section ) {
 }
 
 //CUtils::LogDataInFile("group_ary.txt", $aryGroup, true);
+
+function PopulateIntegerOptionsWithNumPad($correctOpt, $ansAry)
+{
+	//CUtils::LogDataInFile("populate_int_opts.txt", $correctOpt, false, "a");
+	//CUtils::LogDataInFile("populate_int_opts.txt", $ansAry, true, "a");
+
+	$min_cols = 4;
+	$correct_opt_len = strlen($correctOpt);
+	$numOfDigits = ($correct_opt_len < $min_cols) ? $min_cols : $correct_opt_len;
+
+	$answer = 0;
+	$answer_ary = array();
+	$bAnswered = false;
+	if(count(array_intersect(array(-1,-2,-3), $ansAry)) == 0)
+	{
+		$answer = ($ansAry[0] == 1) ? $correctOpt : $ansAry[0];
+		$answer_ary = str_split(strrev($answer));
+		$bAnswered = true;
+	}
+
+	printf("<tr class='info'><td>");
+	printf("<div style='border: 1px solid blue; background-color: #fff;'><span id='int_ans_sel' style='margin-left: 5px;'>%s</span></div>", $answer);
+	printf("<input type='hidden' name='int_answer' id='text_int_opt' value='%s'>", $bAnswered ? $answer : -1);
+	printf("</td>");
+	for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
+	{
+		$label = pow(10, $digitPos);
+		if(strlen($label) == 1) {
+			$label = "<small>Unit Place</small>";
+		}
+		else {
+			$label = "<small>".$label."<sup>th</sup> Place </small>";
+		}
+		printf("<td style='color:red;'><b>%s</b></td>", $label);
+	}
+	printf("</tr>");
+
+	for ($index = 0; $index < 10; $index++)
+	{
+		printf("<tr>");
+		printf("<td style='color:blue;' class='info'><b>%s</b></td>", $index);
+		for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
+		{
+			$sel_opt = 0;
+			if(array_key_exists($digitPos, $answer_ary)) {
+				$sel_opt = $answer_ary[$digitPos];
+			}
+			//CUtils::LogDataInFile("ans_ary.txt", $answer_ary, true);
+			printf("<td>");
+			printf("&nbsp; <input type='radio' onclick='UpdateIntAnswer(this, %d, %d);' name='opt_pos_%s' value='%s' %s>",
+					$digitPos, $numOfDigits, $digitPos, $index, $bAnswered && $sel_opt == $index ? "checked": "");
+			printf("</td>");
+		}
+		printf("</tr>");
+	}
+}
 
 function PopulateIntegerOptions($correctOpt, $ansAry)
 {
@@ -557,11 +609,13 @@ span.username {
 		$objIncludeJsCSS->CommonIncludeCSS ( "../" );
 		$objIncludeJsCSS->IncludeJquerySnippetCSS ( "../" );
 		$objIncludeJsCSS->IncludeTCSButtonsCSS ( "../" );
+		$objIncludeJsCSS->IncludeJqueryNumpadCSS( "../" );
 		
 		$objIncludeJsCSS->CommonIncludeJS ( "../" );
 		$objIncludeJsCSS->IncludeJquerySnippetJS ( "../" );
 		$objIncludeJsCSS->IncludeMathJAXJS ( "../" );
 		$objIncludeJsCSS->IncludeJqueryUI_1_12_1_JS ( "../" );
+		$objIncludeJsCSS->IncludeJqueryNumpadJS( "../" );
 		
 		?>
 
@@ -1163,9 +1217,20 @@ body {
 			<div class="row row-eq-height countme" id="test-buttons-desktop">
 				<div class="col-sm-9 border" style="padding-top: 10px;">
 					<?php
-						if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
+						if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
 							$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
-							$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
+							
+							if(in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_UNANSWERED;
+							}
+							else if(in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;
+							}
+							else if(in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_VISITED;
+							}
+							
+							//$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ?  : QUES_FLAG_MARKED_FOR_REVIEW;
 							echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-primary" id="flag_ques" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
 							echo ('<input type="reset" class="btn btn-default" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
 							echo ('<input type="submit" id="submit_ans" class="btn btn-success pull-right" name="btn1" value="Go to Next" disabled/>');
@@ -1187,9 +1252,19 @@ body {
 			<div class="row row-eq-height countme" id="test-buttons-mobile">
 				<div class="col-xs-12 border" style="padding: 5px;">
 					<?php
-						if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
+						if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )  || in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
 							$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
-							$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
+							
+							if(in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_UNANSWERED;
+							}
+							else if(in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;
+							}
+							else if(in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_VISITED;
+							}
+							//$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
 							echo ('<input type="reset" class="btn btn-default btn-sm pull-left" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
 							echo (($objMCPAParams ['mcpa_flash_ques'] != 1) ? '<input type="submit" onclick="SetFlag(' . $flag_val . ');" class="btn btn-primary btn-sm pull-right" id="flag_ques_m" name="btn2" value="' . $flag_btn_val . '" disabled/>&nbsp;&nbsp;&nbsp;&nbsp;' : '');
 						} else {
@@ -1866,17 +1941,17 @@ body {
 					} else {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','answered');\n");
 					}
-				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 1, $objAnsAry [$secIndex] [$qusIndex] ))) {
+				} else if ((count ( array_filter($objAnsAry [$secIndex] [$qusIndex]) ) == 1 && in_array ( - 1, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_visited highlight-button');\n");
 					}
-				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 2, $objAnsAry [$secIndex] [$qusIndex] ))) {
+				} else if ((count ( array_filter($objAnsAry [$secIndex] [$qusIndex]) ) == 1 && in_array ( - 2, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review highlight-button');\n");
 					} else {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','review');\n");
 					}
-				} else if ((count ( $objAnsAry [$secIndex] [$qusIndex] ) == 1 && in_array ( - 3, $objAnsAry [$secIndex] [$qusIndex] ))) {
+				} else if ((count ( array_filter($objAnsAry [$secIndex] [$qusIndex]) ) == 1 && in_array ( - 3, $objAnsAry [$secIndex] [$qusIndex] ))) {
 					if ($nSection == $secIndex && $nQuestion == $qusIndex) {
 						echo ("document.getElementById('" . ((($secIndex + 1) * 1000) + ($qusIndex + 1)) . "').setAttribute('class','not_answered highlight-button');\n");
 					} else {
