@@ -30,7 +30,7 @@
 		}
 		else 
 		{
-			$data_row[CConfig::$QUES_XLS_HEADING_ARY["Question"]] = str_ireplace(CConfig::OPER_CODE_END,"</div>",str_ireplace(CConfig::OPER_CODE_START,"<div class='mipcat_code_ques'>",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",str_replace("’", "'", trim($_POST['question_choice_text'])))))));
+			$data_row[CConfig::$QUES_XLS_HEADING_ARY["Question"]] = str_ireplace(CConfig::OPER_CODE_END,"</div>",str_ireplace(CConfig::OPER_CODE_START,"<div class='mipcat_code_ques'>",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",str_replace("ï¿½", "'", trim($_POST['question_choice_text'])))))));
 		}
 	}
 	else 
@@ -41,6 +41,7 @@
 	$ans_ary = array();
 	for($opt_index = CConfig::$QUES_XLS_HEADING_ARY["Option 1"], $opt_count = 1; $opt_count <= intval($_POST['options_count']); $opt_count++, $opt_index++)
 	{
+				
 		if($ques_type == CConfig::QT_MATRIX)
 		{
 			$data_row[$opt_index] = implode(",", $_POST['option'.$opt_count.'_choice_select']);
@@ -55,7 +56,7 @@
 			}
 			else 
 			{
-				$data_row[$opt_index] = str_ireplace(CConfig::OPER_CODE_END,"</div>",str_ireplace(CConfig::OPER_CODE_START,"<div class='mipcat_code_ques'>",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",str_replace("’", "'", trim($_POST['option'.$opt_count.'_choice_text'])))))));
+				$data_row[$opt_index] = str_ireplace(CConfig::OPER_CODE_END,"</div>",str_ireplace(CConfig::OPER_CODE_START,"<div class='mipcat_code_ques'>",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",str_replace("ï¿½", "'", trim($_POST['option'.$opt_count.'_choice_text'])))))));
 			}
 		}
 		else
@@ -80,7 +81,7 @@
 		}
 		else
 		{
-			$data_row[CConfig::$QUES_XLS_HEADING_ARY["Explanation"]] = str_ireplace(CConfig::OPER_CODE_END,"</div>",str_ireplace(CConfig::OPER_CODE_START,"<div class='mipcat_code_ques'>",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",str_replace("’", "'", trim($_POST['explanation_text'])))))));
+			$data_row[CConfig::$QUES_XLS_HEADING_ARY["Explanation"]] = str_ireplace(CConfig::OPER_CODE_END,"</div>",str_ireplace(CConfig::OPER_CODE_START,"<div class='mipcat_code_ques'>",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",str_replace("ï¿½", "'", trim($_POST['explanation_text'])))))));
 		}
 	}
 	else 
@@ -144,7 +145,7 @@
 					}
 					else if(empty($code_error))
 					{
-						$linked_to = $objDB->InsertReadComp(str_ireplace(CConfig::OPER_CODE_END,"</div>",str_ireplace(CConfig::OPER_CODE_START,"<div class='mipcat_code_ques'>",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",str_replace("’", "'", trim($_POST['para_text']))))))));
+						$linked_to = $objDB->InsertReadComp(str_ireplace(CConfig::OPER_CODE_END,"</div>",str_ireplace(CConfig::OPER_CODE_START,"<div class='mipcat_code_ques'>",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",str_replace("ï¿½", "'", trim($_POST['para_text']))))))));
 					}
 				}
 				else
@@ -162,7 +163,7 @@
 					}
 					else if(empty($code_error)) 
 					{
-						$linked_to = $objDB->InsertDirectionsPara(str_ireplace(CConfig::OPER_CODE_END,"</div>",str_ireplace(CConfig::OPER_CODE_START,"<div class='mipcat_code_ques'>",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",str_replace("’", "'", trim($_POST['para_text']))))))));
+						$linked_to = $objDB->InsertDirectionsPara(str_ireplace(CConfig::OPER_CODE_END,"</div>",str_ireplace(CConfig::OPER_CODE_START,"<div class='mipcat_code_ques'>",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",str_replace("ï¿½", "'", trim($_POST['para_text']))))))));
 					}
 				}
 				else
@@ -197,14 +198,10 @@
 		if($ques_type == CConfig::QT_NORMAL && $mca == 0)
 		{
 			$mca = $objDB->IsMCAQuestion($data_row);
-			if ($ques_type != CConfig::QT_INT && $ques_type != CConfig::QT_MATRIX)
+			if ($mca && $ques_type != CConfig::QT_INT && $ques_type != CConfig::QT_MATRIX)
 			{
 				$data_row[CConfig::$QUES_XLS_HEADING_ARY["Topic"]] = $topic_with_suffix."{MC}";
 			}
-		}
-		else 
-		{
-			$mca = 0;
 		}
 	}
 	ksort($data_row);
@@ -214,6 +211,7 @@
 	{
 		$tag = trim($_POST['ques_tag']);
 	}
+	
 	
 	if(empty($code_error)) 
 	{

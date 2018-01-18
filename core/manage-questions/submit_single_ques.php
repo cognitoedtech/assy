@@ -646,7 +646,7 @@ $objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 					AddOption();
 				}
 				
-				$("input[name='option1_choice']").prop( "disabled", false );
+				$("input[name='option1_choice'][value='image']").prop( "disabled", false );
 				$("#add_option").show();
 				$("#image").removeAttr("checked");
 				$("#text").attr("checked","checked");
@@ -674,7 +674,7 @@ $objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 					bOpt2Removed = false;
 					AddOption();
 				}
-        		$("input[name='option1_choice']").prop( "disabled", false );
+        		$("input[name='option1_choice'][value='image']").prop( "disabled", false );
 				$("#add_option").show();
 				$("#image").removeAttr("checked");
 				$("#text").attr("checked","checked");
@@ -703,7 +703,7 @@ $objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 				}
 				//$("#answers option[value='option1']").nextAll().remove();
 
-				$("input[name='option1_choice']").prop( "disabled", true );
+				$("input[name='option1_choice'][value='image']").prop( "disabled", true );
 				$("#add_option").hide();
 				$("#topic_label").text("Topic :");
 				$("#topic_selection_msg").text("(Topic should be different from RC or directions para title already submitted.)");
@@ -724,7 +724,7 @@ $objIncludeJsCSS->IncludeBootstrapNumberSpinnerJS("../../");
 				$("#rc_dir_id").hide();
 				$("#rc_dir_questions").hide();
 				$("#rc_dir_existing").hide();
-				$("input[name='option1_choice']").prop( "disabled", false );
+				$("input[name='option1_choice'][value='image']").prop( "disabled", false );
 				$("#add_option").show();
 				$("#topic_label").text("Topic :");
 				$("#topic_selection_msg").text("(Topic should be different from RC or directions para title already submitted.)");
