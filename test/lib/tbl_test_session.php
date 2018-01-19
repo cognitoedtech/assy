@@ -324,7 +324,8 @@
 				
 				$ques_dtls = $objQuestion->GetQuestionByID($ques_id);
 				
-				if($ques_dtls['ques_type'] == CConfig::QT_MATRIX && isset($aryCorrectAns[$ques_id])) {
+				if($ques_dtls['ques_type'] == CConfig::QT_MATRIX && isset($aryCorrectAns[$ques_id])) 
+				{
 					$bPartial = false;
 					foreach($aryCorrectAns[$ques_id] as $opt => $correct) {
 						//CUtils::LogDataInFile("ary_correct_ans.txt", $correct."\r\n", false, "a");
@@ -770,6 +771,7 @@
 				/*echo "Prev<pre>";
 				print_r($ansAry);
 				echo "</pre><br/>";*/
+				
 				
 				foreach($objSecDetails as $key => $objSection)
 				{

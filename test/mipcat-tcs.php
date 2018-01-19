@@ -1393,7 +1393,7 @@ body {
 
 			var widthOfListGrp = function(){
  				var itemsWidth = 0;
- 				nItemsCount = 0;
+ 				nItemsCountGrp = 0;
 				$('.list-g li > a:visible').each(function(){
   					var itemWidth = $(this).outerWidth();
  					itemsWidth+=itemWidth;
@@ -1505,7 +1505,7 @@ body {
 
 			if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 			    $(".scroller-right").bind("click", function(event) {
-			    	scrollContent("right");
+				    scrollContent("right");
 			    });
 
 			    $(".scroller-left").bind("click", function(event) {
@@ -1514,8 +1514,8 @@ body {
 
 			    function scrollContent(direction) {
 			    	var amount = (direction === "left" ? "-="+ nScrollLen : "+="+nScrollLen);
-					
-			        $('.wrapper').animate({scrollLeft:amount}, function(){
+
+			    	$('.wrapper').animate({scrollLeft:amount}, function(){
 				        reAdjust(1);
 				        });
 			    }
