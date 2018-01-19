@@ -1394,7 +1394,7 @@ body {
 
 			var widthOfListGrp = function(){
  				var itemsWidth = 0;
- 				nItemsCount = 0;
+ 				nItemsCountGrp = 0;
 				$('.list-g li > a:visible').each(function(){
   					var itemWidth = $(this).outerWidth();
  					itemsWidth+=itemWidth;

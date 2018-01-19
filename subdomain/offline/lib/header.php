@@ -61,7 +61,7 @@
 								class="icon-user"></i></span> <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li class="dropdown-header"><?php echo CSessionManager::Get(CSessionManager::STR_EMAIL_ID);?></li>
-							<li><a href="<?php echo CSiteConfig::ROOT_URL;?>/login/logout.php">Logout</a></li>
+							<li><a href="../../login/logout.php">Logout</a></li>
 						</ul></li>
 				<?php 
 				}
