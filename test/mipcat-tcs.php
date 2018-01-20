@@ -1487,8 +1487,8 @@ body {
 			
 			reAdjust();
 
-			$(window).on('resize',function(e){
-				if($( window ).width() <= widthOfList())
+			var OnPageLoadAdjustSectionScroller = function () {
+				if($('.wrapper').outerWidth() <= widthOfList())
 				{
 					var amount = $(".list li.active:visible").position().left;
 					$('.wrapper').animate({scrollLeft:amount}, function(){
@@ -1501,6 +1501,12 @@ body {
 			        	reAdjust();
 				        });
 				}
+			}
+
+			OnPageLoadAdjustSectionScroller();
+			
+			$(window).on('resize',function(e){
+				OnPageLoadAdjustSectionScroller();
 			});
 
 			if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {

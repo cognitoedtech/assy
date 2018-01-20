@@ -92,10 +92,9 @@ if ($qry [0] == "test_id") {
 	}
 	
 	// Get Org Name who owns the test
-	$sOrgName ="";
-	/* $objDB->GetOrganizationNameByTestID($nTestID);
+	$sOrgName = "";//$objDB->GetOrganizationNameByTestID($nTestID);
 	
-	if(!empty($sOrgName))
+	/*if(!empty($sOrgName))
 	{
 		$sOrgName = "by ".$sOrgName;
 	}*/
@@ -1484,12 +1483,12 @@ body {
 
 			  	var nItemsWidthGrp = $('.wrapper-g').width();
 			  	nScrollLenGrp  = nItemsWidthGrp / nItemsCountGrp;
-			}
+			};
 			
 			reAdjust();
 
-			$(window).on('resize',function(e){
-				if($( window ).width() <= widthOfList())
+			var OnPageLoadAdjustSectionScroller = function () {
+				if($('.wrapper').outerWidth() <= widthOfList())
 				{
 					var amount = $(".list li.active:visible").position().left;
 					$('.wrapper').animate({scrollLeft:amount}, function(){
@@ -1502,11 +1501,17 @@ body {
 			        	reAdjust();
 				        });
 				}
+			}
+
+			OnPageLoadAdjustSectionScroller();
+			
+			$(window).on('resize',function(e){
+				OnPageLoadAdjustSectionScroller();
 			});
 
 			if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 			    $(".scroller-right").bind("click", function(event) {
-			    	scrollContent("right");
+				    scrollContent("right");
 			    });
 
 			    $(".scroller-left").bind("click", function(event) {
@@ -1515,8 +1520,8 @@ body {
 
 			    function scrollContent(direction) {
 			    	var amount = (direction === "left" ? "-="+ nScrollLen : "+="+nScrollLen);
-					
-			        $('.wrapper').animate({scrollLeft:amount}, function(){
+
+			    	$('.wrapper').animate({scrollLeft:amount}, function(){
 				        reAdjust(1);
 				        });
 			    }

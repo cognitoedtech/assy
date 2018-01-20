@@ -17,6 +17,29 @@
 		}
 		
 		/*
+		 * Produce log file
+		 */
+		static function LogDataInFile($file_name, $data, $bAry=false, $mode="w")
+		{
+			if (!CConfig::DEBUG_APP) {
+				return;
+			}
+				 
+			$handle = fopen($file_name, $mode);
+			
+			if(bAry) {
+				fwrite($handle, print_r($data, TRUE));
+			}
+			else {
+				fwrite($handle, $data);
+			}
+			
+			//fwrite($handle,"\r\n\r\n-------------------------------------\r\n\r\n");
+			//fwrite($handle, print_r(debug_backtrace(), true));
+			
+			fclose($handle);
+		}
+		/*
 		 * Encode Mp3 file, adds MX as first two chars.
 		 */
 		static function EncodeMp3($filepath)
@@ -769,8 +792,8 @@
             );
            
             $Signature = substr($data,0,60); //get first 60 bytes shouldnt need more then that to determine signature
-			$values = unpack("H*",$Signature);
-            $Signature = array_shift($values); //String representation of the hex values
+            $Signature_ary = unpack("H*",$Signature);
+            $Signature = array_shift($Signature_ary); //String representation of the hex values
            
             foreach($Types as $MagicNumber => $Mime)
             {

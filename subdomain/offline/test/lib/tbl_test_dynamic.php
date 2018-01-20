@@ -25,14 +25,27 @@
 			$i = 0;
 			foreach ($secAry as $section)
 			{
-				$params = split('[#(,,,)]', $section);
-				
-				$objSecDetails[$i]['name'] 					= $params[0];
-				$objSecDetails[$i]['questions'] 			= $params[1];
-				$objSecDetails[$i]['min_cutoff'] 			= empty($params[2]) ? 0 : $params[2];
-				$objSecDetails[$i]['max_cutoff'] 			= empty($params[3]) ? 100 : $params[3];
-				$objSecDetails[$i]['mark_for_correct'] 		= $params[4];
-				$objSecDetails[$i]['mark_for_incorrect'] 	= $params[5];
+				if(substr_count($section, ",") == 3) {
+					$params = split('[#(,,,)]', $section);
+					
+					$objSecDetails[$i]['name'] 					= $params[0];
+					$objSecDetails[$i]['questions'] 			= $params[1];
+					$objSecDetails[$i]['min_cutoff'] 			= empty($params[2]) ? 0 : $params[2];
+					$objSecDetails[$i]['max_cutoff'] 			= empty($params[3]) ? 100 : $params[3];
+					$objSecDetails[$i]['mark_for_correct'] 		= $params[4];
+					$objSecDetails[$i]['mark_for_incorrect'] 	= $params[5];
+				}
+				else if(substr_count($section, ",") == 4) {
+					$params = split('[#(,,,)]', $section);
+						
+					$objSecDetails[$i]['name'] 					= $params[0];
+					$objSecDetails[$i]['questions'] 			= $params[1];
+					$objSecDetails[$i]['min_cutoff'] 			= empty($params[2]) ? 0 : $params[2];
+					$objSecDetails[$i]['max_cutoff'] 			= empty($params[3]) ? 100 : $params[3];
+					$objSecDetails[$i]['mark_for_correct'] 		= $params[4];
+					$objSecDetails[$i]['partial_marks']			= $params[5];					
+					$objSecDetails[$i]['mark_for_incorrect'] 	= $params[6];
+				}
 				$i++;
 			}
 			

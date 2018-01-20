@@ -2,6 +2,7 @@
 	include_once(dirname(__FILE__)."/../../lib/utils.php");
 	include_once("tbl_test_dynamic.php");
 	include_once("tbl_test_schedule.php");
+	include_once("tbl_question.php");
 	
 	include_once(dirname(__FILE__)."/../../database/config.php");
 	include_once(dirname(__FILE__)."/../../lib/billing.php");
@@ -309,13 +310,57 @@
 			$secIndex 			 = 0;
 			$arySecAttemptedQues = array();
 				
-			$nRight = 0;
-			$nWrong = 0;
-			$nUnans = 0;
-			$qCount = 0;
+			$nRight   = 0;
+			$nPartial = 0;
+			$nWrong   = 0;
+			$nUnans   = 0;
+			$qCount   = 0;
+			
+			//CUtils::LogDataInFile("qusary.txt", $qusAry, true);
 			foreach ($qusAry as $key => $ques_id)
 			{
-				if(isset($aryCorrectAns[$ques_id]))
+				//CUtils::LogDataInFile("ary_correct_ans.txt", $aryCorrectAns[$ques_id], true, "a");
+				//CUtils::LogDataInFile("ary_answered_user.txt", $ansAry[$key], true, "a");
+				
+				$ques_dtls = $objQuestion->GetQuestionByID($ques_id);
+				
+				if($ques_dtls['ques_type'] == CConfig::QT_MATRIX && isset($aryCorrectAns[$ques_id])) 
+				{
+					$bPartial = false;
+					foreach($aryCorrectAns[$ques_id] as $opt => $correct) {
+						//CUtils::LogDataInFile("ary_correct_ans.txt", $correct."\r\n", false, "a");
+						//CUtils::LogDataInFile("ary_mapping.txt", "< ".$ansAry[$key][$opt]." > - < ".$correct." >\r\n", false, "a");
+						
+						if($correct == $ansAry[$key][$opt]) {
+							$bPartial = true;
+							$nPartial++;
+						}
+						else if (empty($ansAry[$key][$opt]) || $ansAry[$key][$opt] <= -1  ) {
+							$nUnans++;
+						}
+						else {
+							$nWrong++;
+						}
+					}
+					$qCount++;
+					
+					if($arySecQuestions[$secIndex] == $qCount)
+					{
+						$arySecAttemptedQues[$secIndex]['right']   = $nRight;
+						$arySecAttemptedQues[$secIndex]['partial'] = $nPartial; // Partially Correct
+						$arySecAttemptedQues[$secIndex]['unans']   = $nUnans;
+						$arySecAttemptedQues[$secIndex]['wrong']   = $nWrong;
+							
+						$secIndex++;
+							
+						$nRight   = 0;
+						$nPartial = 0;
+						$nWrong   = 0;
+						$nUnans   = 0;
+						$qCount   = 0;
+					}
+				}
+				else if(isset($aryCorrectAns[$ques_id]))
 				{
 					/*file_put_contents("diff_data.txt", print_r($aryCorrectAns[$ques_id], true)."\r\n", FILE_APPEND);
 					file_put_contents("diff_data.txt", print_r($ansAry[$key], true)."\r\n", FILE_APPEND);
@@ -331,34 +376,60 @@
 					}
 					else
 					{
-						$nWrong++;
+						if($ques_dtls['mca'] == 1) {
+							$crtCount = 0;
+							foreach($ansAry as $ansKey => $ansVal) {
+								if(in_array($ansVal, $aryCorrectAns)) {
+									$crtCount++;
+								}
+								else {
+									$nWrong++;
+									$crtCount = 0;
+									break;
+								}	
+							}
+							
+							if($crtCount > 0) {
+								$nPartial++;
+							}
+						}
+						else
+						{
+							$nWrong++;
+						}
 					}
 						
 					$qCount++;
 						
 					if($arySecQuestions[$secIndex] == $qCount)
 					{
-						$arySecAttemptedQues[$secIndex]['right'] = $nRight;
-						$arySecAttemptedQues[$secIndex]['unans'] = $nUnans;
-						$arySecAttemptedQues[$secIndex]['wrong'] = $nWrong;
+						$arySecAttemptedQues[$secIndex]['right']   = $nRight;
+						$arySecAttemptedQues[$secIndex]['partial'] = $nPartial; // Partially Correct
+						$arySecAttemptedQues[$secIndex]['unans']   = $nUnans;
+						$arySecAttemptedQues[$secIndex]['wrong']   = $nWrong;
 			
 						$secIndex++;
 			
-						$nRight = 0;
-						$nWrong = 0;
-						$nUnans = 0;
-						$qCount = 0;
+						$nRight   = 0;
+						$nPartial = 0;
+						$nWrong   = 0;
+						$nUnans   = 0;
+						$qCount   = 0;
 					}
 				}
 			}
 				
 			$secIndex = 0;
 			$arySecPerformance = array();
+			//CUtils::LogDataInFile("sec_details.txt", $objSecDetails, true);
+			//CUtils::LogDataInFile("attempted_details.txt", $arySecAttemptedQues, true);
+			
+			
 			foreach($objSecDetails as $key => $objSection)
 			{
 				if(!empty($objSection['questions']))
 				{
-					$arySecPerformance[$objSection['name']]['marks'] 	 = ($arySecAttemptedQues[$secIndex]['right'] * $objSection['mark_for_correct']) - ($arySecAttemptedQues[$secIndex]['wrong'] * $objSection['mark_for_incorrect']);
+					$arySecPerformance[$objSection['name']]['marks'] 	 = ($arySecAttemptedQues[$secIndex]['right'] * $objSection['mark_for_correct']) + ($arySecAttemptedQues[$secIndex]['partial'] * $objSection['partial_marks']) - ($arySecAttemptedQues[$secIndex]['wrong'] * $objSection['mark_for_incorrect']);
 					$arySecPerformance[$objSection['name']]['max_marks'] = ($objSection['questions'] * $objSection['mark_for_correct']);
 					
 					$max_marks = $arySecPerformance[$objSection['name']]['max_marks'] * ($objSection['max_cutoff']/100);
@@ -368,6 +439,9 @@
 				}
 				$secIndex++;
 			}
+			
+			//CUtils::LogDataInFile("sec_performance.txt", $arySecPerformance, true);
+			
 			return $arySecPerformance;
 		}
 		
@@ -631,6 +705,8 @@
 			//echo($query."<br/>");
 			$bResult = mysql_query($query, $this->objDBLink) or die('Update Answer error : ' . mysql_error());
 			
+			//CUtils::LogDataInFile("question_map.txt", $ques_map, true);
+			
 			return $bResult;
 		}
 		
@@ -696,6 +772,7 @@
 				print_r($ansAry);
 				echo "</pre><br/>";*/
 				
+				
 				foreach($objSecDetails as $key => $objSection)
 				{
 					for($qIndex = 0; $qIndex < $objSection['questions']; $qIndex++)
@@ -744,7 +821,7 @@
 					$assignedPackageTestRate = $objBilling->GetAssignedPackageTestRate($test_id, $scheduler_id);
 				}
 				$objBilling->SubBalance($scheduler_id, ($amount+$assignedPackageTestRate));
-			} */
+			}*/
 			
 			return $SessionID;
 		}
@@ -757,5 +834,76 @@
                
             return $result;
         }
+        
+        public function updateResult($test_schid)
+        {
+        	 
+        	$query =  sprintf("select * from result where tschd_id='%s'", $test_schid);
+        	
+        	$result = mysql_query($query, $this->objDBLink) or die('Select result pnr error : ' . mysql_error());
+        	
+        	// Loop throught  the test pnr for above scheudle id
+        	
+        	$counter = 0;
+        	while($row = mysql_fetch_array($result))
+        	{
+        	
+        		 
+        		$objTestParam = $this->objTestDynamic->GetTestParams($row['test_id']);
+        		$ques_map = $row['ques_map'];
+				
+        		
+        		
+        		
+        		
+        		
+        		$marks = 0;
+        		$secPerformance = array();
+        		if($test_type == CConfig::TT_DEFAULT)
+        		{
+        			$marks = $this->CalculateMarks($ques_map, $objTestParam);
+        			$secPerformance = $this->CalculateSectionMarks($ques_map, $objTestParam);
+        		}
+        		else if($test_type == CConfig::TT_EQ)
+        		{
+        			$marks = $this->CalculateEQScore($ques_map, $objTestParam);
+        			$secPerformance = $this->CalculateSectionEQScores($ques_map, $objTestParam);
+        		}
+        		
+        		
+        		//$time_taken = $this->CalculateTimeTaken($row['cur_chronological_time'], $objTestParam);
+        		 
+        		$query = sprintf("update result set marks = '%s', section_marks = '%s' where test_pnr = '%s'", $marks, json_encode($secPerformance),$row['test_pnr']);
+        	
+        		$updateres = mysql_query($query, $this->objDBLink) or die('Update result error : ' . mysql_error());
+        		$counter++;        	        	
+        	}
+        	
+        	return $counter;
+        	 
+        }
+        
+        // THis is for generating consolidated result sheet as required by Allen
+        
+        public function GenerateResultSheet($test_schid)
+        {
+        	$query =  sprintf("select rs.*, us.email from result rs inner join users us on rs.user_id = us.user_id  where tschd_id='%s'", $test_schid);        	 
+        	$result = mysql_query($query, $this->objDBLink) or die('Select result pnr error : ' . mysql_error());
+        	 
+        	// Loop throught  the test pnr for above scheudle id
+        	 
+        	$counter = 0;
+        	while($row = mysql_fetch_array($result))
+        	{        		         		 
+        		//$objTestParam = $this->objTestDynamic->GetTestParams($row['test_id']);
+        		$ques_map = $row['ques_map'];
+        	
+        		
+        		
+        	}
+        }
+        
+        
+        
 	}
 ?>

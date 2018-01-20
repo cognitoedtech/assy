@@ -1533,6 +1533,9 @@
 				
 			$ResultAry = $this->objResult->GetResultInspectionFromPNR($test_pnr);
 				
+			//file_put_contents("result_ins.txt", print_r($ResultAry,true));
+			
+			
 			$qIndex = 0;
 			$secIndex = 0;
 			$secQuesIndex = 0;
@@ -1562,7 +1565,7 @@
 					$this->ImprovedTable($header,$data,$pdf);
 					//$pdf->MultiCell(190, 5, "Summary: Correct->".$correct_count." Wrong->".$s_no -($correct_count + $unans_count)."Unans->".$unans_count);
 					$pdf->Ln(2);
-					$wrong = $s_no - ($correct_count + $unans_count);
+					$wrong = $s_no -1 - ($correct_count + $unans_count);
 					$summary = "Summary-> Correct:".$correct_count . " Wrong:".$wrong . " Un Answered:".$unans_count;
 					$pdf->Cell(190, 5,$summary);
 					
@@ -1581,6 +1584,30 @@
 				$qid = $ResultAry[$qIndex]['ques_id'];
 			 
 				$ansAry = array();
+				
+				$question_type = $ResultAry[$qIndex]['ques_type'];
+				
+				if($question_type == CConfig::QT_MATRIX)
+				{
+					
+					//$ResultAry[$qIndex]['options']['option'];
+					
+					
+				}
+				
+				else
+				{
+					
+					
+					
+				}
+					
+					
+				
+				
+				
+				
+				
 				for($opt_idx = 0; $opt_idx < count($ResultAry[$qIndex]['options']); $opt_idx++)
 				{
 		
@@ -1592,6 +1619,13 @@
 				
 				$correct_options = implode(",", $ansAry);
 				$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+				
+				CUtils::LogDataInFile("op.txt", $ResultAry[$qIndex], true);
+				//CUtils::LogDataInFile("selected_op.txt", $ResultAry[$qIndex]['selected'], true);
+				
+				
+				
+				
 				$conclusion = "Wrong";
 				if(strcasecmp($correct_options, $selected_answer) == 0)
 				{
