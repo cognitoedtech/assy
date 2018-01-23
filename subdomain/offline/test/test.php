@@ -306,8 +306,8 @@ $test_type = $objDB->GetTestType ( $test_id );
 				<?php
 				if ($test_type == CConfig::TT_DEFAULT) {
 					?>
-				<li style="color: red">For every correct answer you will be awarded <?php echo($nCorrect);?> marks and for every wrong answer <?php echo($nWrong);?> marks will be subtracted from total.<br />
-						<br /></li>
+				<!-- <li style="color: red">For every correct answer you will be awarded <?php echo($nCorrect);?> marks and for every wrong answer <?php echo($nWrong);?> marks will be subtracted from total.<br />
+						<br /></li>-->
 				<?php
 				} else if ($test_type == CConfig::TT_EQ) {
 					?>

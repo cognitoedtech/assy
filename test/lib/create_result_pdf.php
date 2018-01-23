@@ -1584,48 +1584,56 @@
 				$qid = $ResultAry[$qIndex]['ques_id'];
 			 
 				$ansAry = array();
+				$ansOptArray = array();
+				$selectedOptArray = array();
+				
+				
+				for($opt_idx = 0; $opt_idx < count($ResultAry[$qIndex]['options']); $opt_idx++)
+				{ 
+				
+				if($ResultAry[$qIndex]['options'][$opt_idx]['answer'] == 1)
+				{
+				 array_push($ansAry, ($opt_idx + 1));
+				 $right_opt = base64_decode($ResultAry[$qIndex]['options'][$opt_idx]['option']);				 
+				 array_push($ansOptArray, $right_opt);
+				}			
+				}
+				$correct_options = "";
+				$selected_answer = "";
+				
+				//CUtils::LogDataInFile("opans.txt", $ansOptArray, true);
 				
 				$question_type = $ResultAry[$qIndex]['ques_type'];
 				
 				if($question_type == CConfig::QT_MATRIX)
 				{
 					
-					//$ResultAry[$qIndex]['options']['option'];
-					
+					$correct_options = implode(",", $ansOptArray);
+					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);				
 					
 				}
 				
+				else if($question_type == CConfig::QT_INT)
+				{
+					
+					$correct_options = implode(",", $ansOptArray);
+				    $selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+				    if($selected_answer == "1") // Correct Ans Selected
+				    {
+				    	$selected_answer = $correct_options;
+				    }
+				    
+
+				}
 				else
 				{
 					
-					
+					$correct_options = implode(",", $ansAry);
+					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
 					
 				}
-					
-					
-				
-				
-				
-				
-				
-				for($opt_idx = 0; $opt_idx < count($ResultAry[$qIndex]['options']); $opt_idx++)
-				{
 		
-				if($ResultAry[$qIndex]['options'][$opt_idx]['answer'] == 1)
-				{
-					array_push($ansAry, ($opt_idx + 1));
-				}
-				}
-				
-				$correct_options = implode(",", $ansAry);
-				$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
-				
-				CUtils::LogDataInFile("op.txt", $ResultAry[$qIndex], true);
-				//CUtils::LogDataInFile("selected_op.txt", $ResultAry[$qIndex]['selected'], true);
-				
-				
-				
-				
+			
 				$conclusion = "Wrong";
 				if(strcasecmp($correct_options, $selected_answer) == 0)
 				{
