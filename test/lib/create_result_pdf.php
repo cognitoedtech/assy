@@ -1427,6 +1427,8 @@
 				}
 					
 				$ansAry = array();
+				$ansValAry = array();
+				
 				for($opt_idx = 0; $opt_idx < count($ResultAry[$qIndex]['options']); $opt_idx++)
 				{
 					if(CUtils::getMimeType(base64_decode($ResultAry[$qIndex]['options'][$opt_idx]['option'])) != "application/octet-stream")
@@ -1461,17 +1463,53 @@
 					if($ResultAry[$qIndex]['options'][$opt_idx]['answer'] == 1)
 					{
 						array_push($ansAry, ($opt_idx + 1));
+						
+						$right_opt = base64_decode($ResultAry[$qIndex]['options'][$opt_idx]['option']);
+						array_push($ansValAry, $right_opt);						
 					}
+					
+					
 				}
+				
+				$question_type = $ResultAry[$qIndex]['ques_type'];
+				$correct_options = "";
+				$selected_answer = "";
+				
+				if($question_type == CConfig::QT_MATRIX)
+				{
+						
+					$correct_options = implode(",", $ansValAry);
+					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);						
+				}
+				
+				else if($question_type == CConfig::QT_INT)
+				{
+						
+					$correct_options = implode(",", $ansValAry);
+					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+					if($selected_answer == "1") // Correct Ans Selected
+					{
+						$selected_answer = $correct_options;
+					}				
+				
+				}
+				else
+				{
+						
+					$correct_options = implode(",", $ansAry);
+					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+						
+				}
+				
 				$pdf->Ln(2);
-				$ResultAry[$qIndex]['answer'] = implode(",", $ansAry);
-				$selected_answer = "Your Answer : ".implode(",",$ResultAry[$qIndex]['selected']);
+				$ResultAry[$qIndex]['answer'] = $correct_options;//implode(",", $ansAry);
+				$selected_answer = "Your Answer : ".$selected_answer;//implode(",",$ResultAry[$qIndex]['selected']);
 				if(in_array(-1, $ResultAry[$qIndex]['selected']) || in_array(-2, $ResultAry[$qIndex]['selected']) || in_array(-3, $ResultAry[$qIndex]['selected']))
 				{
 					$selected_answer = "You did not attempt this question.";
 				}
 				$pdf->MultiCell(190,5,$selected_answer);
-				$pdf->MultiCell(190,5,"Correct Answer : ".implode(",", $ansAry));
+				$pdf->MultiCell(190,5,"Correct Answer : ".$correct_options);
 				$qIndex++;
 				$secQuesIndex++;
 				$topMargin += 80;
