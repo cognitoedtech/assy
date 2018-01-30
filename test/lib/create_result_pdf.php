@@ -1592,6 +1592,8 @@
 			
 			$correct_count = 0;
 			$unans_count =0;
+			$partial_count = 0;
+			$wrong_count = 0;
 			
 			while($qIndex < count($ResultAry))
 			{
@@ -1604,7 +1606,7 @@
 					//$pdf->MultiCell(190, 5, "Summary: Correct->".$correct_count." Wrong->".$s_no -($correct_count + $unans_count)."Unans->".$unans_count);
 					$pdf->Ln(2);
 					$wrong = $s_no -1 - ($correct_count + $unans_count);
-					$summary = "Summary-> Correct:".$correct_count . " Wrong:".$wrong . " Un Answered:".$unans_count;
+					$summary = "Summary-> Correct:".$correct_count . ", Wrong:".$wrong_count . ", Unanswered:".$unans_count . ", Partial Correct:".$partial_count;
 					$pdf->Cell(190, 5,$summary);
 					
 					$pdf->Ln(10);
@@ -1612,6 +1614,8 @@
 					$secQuesIndex = 0;
 					$correct_count= 0;
 					$unans_count = 0;
+					$partial_count = 0;
+					$wrong_count = 0;
 					$pdf->Ln(5);
 					$pdf->MultiCell(190,5, "Section - ".$sectional_details[++$secIndex]['name']);																				
 				}
@@ -1638,6 +1642,8 @@
 				}
 				$correct_options = "";
 				$selected_answer = "";
+				$correct_array = array();
+				$selected_array = array();
 				
 				//CUtils::LogDataInFile("opans.txt", $ansOptArray, true);
 				
@@ -1647,6 +1653,9 @@
 				{
 					
 					$correct_options = implode(",", $ansOptArray);
+					$correct_array = $ansOptArray;
+					$selected_array = $ResultAry[$qIndex]['selected'];
+					
 					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);				
 					
 				}
@@ -1656,34 +1665,67 @@
 					
 					$correct_options = implode(",", $ansOptArray);
 				    $selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+				    
+				    $correct_array = $ansOptArray;
+				    $selected_array = $ResultAry[$qIndex]['selected'];
+				    
 				    if($selected_answer == "1") // Correct Ans Selected
 				    {
 				    	$selected_answer = $correct_options;
+				    	$selected_array = $correct_array;
 				    }
-				    
 
 				}
 				else
 				{
 					
 					$correct_options = implode(",", $ansAry);
+					$correct_array = $ansAry;
 					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
-					
+					$selected_array = $ResultAry[$qIndex]['selected'];									
 				}
 		
-			
-				$conclusion = "Wrong";
-				if(strcasecmp($correct_options, $selected_answer) == 0)
+				
+				$conclusion = "";
+				
+				if(count( array_diff($selected_array, $correct_array) ) == 0 && count( array_diff($correct_array, $selected_array) ) == 0)
 				{
 					$conclusion = "Correct";
 					$correct_count++;
 				}
-				
-				if(in_array(-1, $ResultAry[$qIndex]['selected']) || in_array(-2, $ResultAry[$qIndex]['selected']) || in_array(-3, $ResultAry[$qIndex]['selected']))
+				else if(count( array_intersect($selected_array, $correct_array) ) > 0)
+				{
+					$crt_cnt = 0;
+					foreach($selected_array as $selected_value) {
+						if(in_array($selected_value, $correct_array)) {
+							$crt_cnt++;
+						}
+						else {
+							$crt_cnt = 0;
+							break;
+						}
+					}
+					
+					if($crt_cnt > 0) {
+						$conclusion = "Partial";
+						$partial_count++;
+					}
+					else {
+						$conclusion = "Wrong";
+						$wrong_count++;
+					}
+				}
+				else if(in_array(-1, $ResultAry[$qIndex]['selected']) || in_array(-2, $ResultAry[$qIndex]['selected']) || in_array(-3, $ResultAry[$qIndex]['selected']))
 				{
 					$selected_answer = "Not Answered";
 					$conclusion = "Not Answered";
 					$unans_count++;
+				}
+				else
+				{
+					$conclusion = "Wrong";
+					$wrong_count++;
+					
 				}
 
 				//$pdf->MultiCell(190,5, "S. No. |    QID     |  CORRECT OPTION  | YOUR SELECTION | CONCLUSION");
@@ -1703,7 +1745,7 @@
 				$pdf->Ln(5);				
 				$this->ImprovedTable($header,$data,$pdf);
 				$wrong = $s_no - ($correct_count + $unans_count);
-				$summary = "Summary-> Correct:".$correct_count . " Wrong:".$wrong . " Un Answered:".$unans_count;
+				$summary = "Summary-> Correct:".$correct_count . ", Wrong:".$wrong_count. ", Unanswered:".$unans_count . ", Partial Correct: ". $partial_count;
 				$pdf->Ln(2);
 				$pdf->Cell(590, 5,$summary);
 				//$pdf->MultiCell(190, 5, "Summary: Correct->".$correct_count." Wrong->".$s_no -($correct_count + $unans_count)."Unans->".$unans_count);

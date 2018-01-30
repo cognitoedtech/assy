@@ -316,7 +316,6 @@
 			$nUnans   = 0;
 			$qCount   = 0;
 			
-			//CUtils::LogDataInFile("qusary.txt", $qusAry, true);
 			foreach ($qusAry as $key => $ques_id)
 			{
 				//CUtils::LogDataInFile("ary_correct_ans.txt", $aryCorrectAns[$ques_id], true, "a");
@@ -378,8 +377,9 @@
 					{
 						if($ques_dtls['mca'] == 1) {
 							$crtCount = 0;
-							foreach($ansAry as $ansKey => $ansVal) {
-								if(in_array($ansVal, $aryCorrectAns)) {
+							
+							foreach($ansAry[$key] as $ansKey => $ansVal) {
+								if(in_array($ansVal, $aryCorrectAns[$ques_id])) {
 									$crtCount++;
 								}
 								else {
