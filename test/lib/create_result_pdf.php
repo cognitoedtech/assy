@@ -1707,7 +1707,7 @@
 					}
 					
 					if($crt_cnt > 0) {
-						$conclusion = "Partial";
+						$conclusion = "Partial Correct";
 						$partial_count++;
 					}
 					else {
