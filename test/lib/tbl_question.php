@@ -266,7 +266,7 @@
 			$query = sprintf("select * from question where subject_id='%s' AND topic_id='%s' AND difficulty_id='%s' AND language='%s' %s AND ques_id not in (%s) limit 1", $SubjectID, $TopicID, $DiffLevel, $language, $tag_cond, implode(",", $existingQID));
 			
 			//echo $query."<br/><br/><br/><br/>";
-			$result = mysql_query($query) or die('Could not connect: ' . mysql_error());
+			$result = mysql_query($query, $this->objDBLink) or die('Could not connect: ' . mysql_error());
 						
 			if(mysql_num_rows($result) > 0)
 			{
@@ -321,7 +321,7 @@
 			{
 				$query = sprintf("select * from question where ques_id='%s'", $QID);
 							
-				$result = mysql_query($query) or die('Could not get question: ' . mysql_error());
+				$result = mysql_query($query, $this->objDBLink) or die('Could not get question: ' . mysql_error());
 				if (!$result) 
 				{
 				   return -1;
@@ -372,7 +372,7 @@
 			
 			$query = sprintf("select * from question where group_title='%s' and language='%s'", mysql_real_escape_string($group_title), $language);
 			
-			$result = mysql_query($query) or die('Get Translated Question error: ' . mysql_error());
+			$result = mysql_query($query, $this->objDBLink) or die('Get Translated Question error: ' . mysql_error());
 			
 			if(mysql_num_rows($result) > 0)
 			{

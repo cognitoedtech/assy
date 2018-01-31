@@ -18,7 +18,7 @@
 		// - - - - - - - - - - - - - - - - - - - - - - - - - -
 		public function ParseSectionDetails($section_details)
 		{
-			$objSecDetails = null;
+			$objSecDetails = array();
 			
 			$secAry = explode(';', $section_details);
 			
@@ -83,12 +83,21 @@
 			{
 				$part = explode('@', $topic);
 				
-				$params_1 = split('[:-]', $part[0]);
+				$params_1 = split('[~:-]', $part[0]);
 				$params_2 = split('[&#]', $part[1]);
 				
-				$objTopicDetails[$i]['section'] = $params_1[0];
-				$objTopicDetails[$i]['subject_id'] = $params_1[1];
-				$objTopicDetails[$i]['topic_id'] = $params_1[2];
+				if(count($params_1) == 4) {
+					$objTopicDetails[$i]['group'] = $params_1[0];
+					$objTopicDetails[$i]['section'] = $params_1[1];
+					$objTopicDetails[$i]['subject_id'] = $params_1[2];
+					$objTopicDetails[$i]['topic_id'] = $params_1[3];
+				}
+				else {
+					$objTopicDetails[$i]['group'] = "";
+					$objTopicDetails[$i]['section'] = $params_1[0];
+					$objTopicDetails[$i]['subject_id'] = $params_1[1];
+					$objTopicDetails[$i]['topic_id'] = $params_1[2];
+				}	 
 				
 				$objTopicDetails[$i]['easy_questions'] = $params_2[1];
 				$objTopicDetails[$i]['modr_questions'] = $params_2[3];

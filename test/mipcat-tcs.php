@@ -931,15 +931,17 @@ body {
 							<?php
 							$secIndex = 0;
 							foreach ( $arySection as $key => $Section ) {
+								$secNamePos = strpos($Section ['name'],"~") ? strpos($Section ['name'],"~")+1 : 0;
+								
 								if (! empty ( $Section ['name'] )) {
 									if ($secIndex == $nSection)
 										printf ( "<li class='active'><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab' index='%s' style='%s'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", 
 												$Section ['name'], $Section ['name'], $secIndex, ($secIndex < $secStop[0] || $secIndex > $secStop[1]) ? "display:none;" : "", 
-												substr($Section ['name'], strpos($Section ['name'],"~")+1, strlen($Section ['name'])) );
+												substr($Section ['name'], $secNamePos, strlen($Section ['name'])) );
 									else
 										printf ( "<li ><a href='#%s_questions' aria-controls='%s_questions' data-toggle='tab' index='%s' style='%s'><b>%s <i class='fa fa-info-circle' aria-hidden='true'></i></b></a></li>\n", 
 												$Section ['name'], $Section ['name'], $secIndex, ($secIndex < $secStop[0] || $secIndex > $secStop[1]) ? "display:none;" : "", 
-												substr($Section ['name'], strpos($Section ['name'],"~")+1, strlen($Section ['name'])) );
+												substr($Section ['name'], $secNamePos, strlen($Section ['name'])) );
 								
 								}
 								$secIndex ++;
