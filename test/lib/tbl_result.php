@@ -150,7 +150,10 @@
 				if ( !isset($objResult[$Group][$Section]['@sec_dtls_ary']) ) {
 					foreach ($objSectionDetails as $nIndex => $arySection)
 					{
-						if(strcasecmp($arySection['name'], $Section) == 0) {
+						$strSecNamePos = strpos($arySection['name'],"~") ? strpos($arySection['name'],"~")+1 : 0;
+						$sSectionName = substr($arySection ['name'], $strSecNamePos, strlen($arySection ['name']));
+						
+						if(strcasecmp($sSectionName, $Section) == 0) {
 							$objResult[$Group][$Section]['@sec_dtls_ary'] = $objSectionDetails[$nIndex];
 							break;
 						}

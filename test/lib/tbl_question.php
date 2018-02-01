@@ -168,7 +168,7 @@
 			/*echo ("<pre>");
 			print_r($objSectionAry);
 			echo ("</pre>");*/
-			$objTopicAry   = $this->objTestDynamic->GetTopicDetails($test_id);
+			$objTopicAry   = $this->objTestDynamic->GetTopicDetails($test_id, false);
 			/*echo ("<pre>");
 			print_r($objTopicAry);
 			echo ("</pre>");*/

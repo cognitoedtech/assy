@@ -198,7 +198,7 @@
 			$this->objIterator  = $this->objTest->LoadTest($user_id, $test_id, $tschd_id, $language, $bNew);
 			
 			/*echo("<pre>");
-			print_r($this->objIterator);
+			printf(count($this->objIterator));
 			echo("</pre>");*/
 			
 			$this->sUserID  = $user_id;
