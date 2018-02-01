@@ -191,6 +191,10 @@
 							}
 						}
 					}
+					else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) == 0 && count(array_diff($CandAnsAry[$QuesID], $Answer)) == 0)
+					{
+						$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 1;
+					}
 					else if($nMCA == 1) {
 						$crtCount = 0;
 						foreach($CandAnsAry[$QuesID] as $ansKey => $ansVal) {
@@ -206,10 +210,6 @@
 						if($crtCount > 0) {
 							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 2;
 						}
-					}
-					else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) == 0 && count(array_diff($CandAnsAry[$QuesID], $Answer)) == 0)
-					{
-						$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 1;
 					}
 					else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) > 0 || count(array_diff($CandAnsAry[$QuesID], $Answer)) > 0)
 					{
