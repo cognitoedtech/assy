@@ -236,7 +236,7 @@
 					
 					foreach($arySectionalMarks as $groupName => $GroupAry) {
 						printf("<tr>");
-						printf("<td rowspan='%d'> %s </td>", $groupName, count($GroupAry[$groupName]));
+						printf("<td rowspan='%d'> %s </td>", count($GroupAry)+1, $groupName );
 						
 						$secIndex = 0;
 						foreach ($GroupAry as $sectionName => $SectionAry) {
