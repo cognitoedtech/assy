@@ -72,7 +72,7 @@
 			return $objSubDetails;
 		}
 		
-		public function ParseTopicDetails($topic_in_subject)
+		public function ParseTopicDetails($topic_in_subject, $parse_group = true)
 		{
 			$objTopicDetails = null;
 			
@@ -83,21 +83,21 @@
 			{
 				$part = explode('@', $topic);
 				
-				$params_1 = split('[~:-]', $part[0]);
+				$params_1 = $parse_group ? split('[~:-]', $part[0]) : split('[:-]', $part[0]);
 				$params_2 = split('[&#]', $part[1]);
 				
-				if(count($params_1) == 4) {
+				if(count($params_1) == 4 && $parse_group) {
 					$objTopicDetails[$i]['group'] = $params_1[0];
 					$objTopicDetails[$i]['section'] = $params_1[1];
 					$objTopicDetails[$i]['subject_id'] = $params_1[2];
 					$objTopicDetails[$i]['topic_id'] = $params_1[3];
 				}
 				else {
-					$objTopicDetails[$i]['group'] = "";
+					$objTopicDetails[$i]['group'] = "-";
 					$objTopicDetails[$i]['section'] = $params_1[0];
 					$objTopicDetails[$i]['subject_id'] = $params_1[1];
 					$objTopicDetails[$i]['topic_id'] = $params_1[2];
-				}	 
+				}
 				
 				$objTopicDetails[$i]['easy_questions'] = $params_2[1];
 				$objTopicDetails[$i]['modr_questions'] = $params_2[3];
@@ -134,7 +134,7 @@
 			return $this->ParseSubjectDetails($row['subject_in_section']);
 		}
 		
-		public function GetTopicDetails($test_id)
+		public function GetTopicDetails($test_id, $parse_group = true)
 		{
 			$query = sprintf("select topic_in_subject from test_dynamic where test_id='%s'", $test_id);
 		
@@ -142,7 +142,7 @@
 			
 			$row = mysql_fetch_array($result);
 			
-			return $this->ParseTopicDetails($row['topic_in_subject']);
+			return $this->ParseTopicDetails($row['topic_in_subject'], $parse_group);
 		}
 
 		public function GetDuration($test_id)
