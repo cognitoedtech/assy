@@ -442,41 +442,18 @@ function PopulateIntegerOptionsWithNumPad($correctOpt, $ansAry)
 		$bAnswered = true;
 	}
 
-	printf("<tr class='info'><td>");
-	printf("<div style='border: 1px solid blue; background-color: #fff;'><span id='int_ans_sel' style='margin-left: 5px;'>%s</span></div>", $answer);
+	printf("<tr><td>");
+	//printf("<div><label>Your Answer: </label><input id='int_ans_input' type='text' onchange='UpdateIntNumPadAnswer(this);' style='margin-left: 5px;' value='%s'</input></div>", $answer);
+	printf("<div class='col-sm-4'>");
+	printf("<label for='int_ans_input'>Your Answer Here:</label>");
+	printf("<div class='input-group'>");
+	printf("<input type='text' id='int_ans_input' class='form-control' placeholder='Enter your answer' aria-describedby='numpadButton-btn' maxlength='4' onchange='UpdateIntNumPadAnswer(this);' value='%s'/>", $answer);
+	printf("<span class='input-group-btn'>");
+	printf("<button class='btn btn-default' id='int_ans_input-btn' type='button'><i class='glyphicon glyphicon-th'></i></button>");
+	printf("</span></div></div>");
+	printf("<div id='numpad_container'></div>");
 	printf("<input type='hidden' name='int_answer' id='text_int_opt' value='%s'>", $bAnswered ? $answer : -1);
-	printf("</td>");
-	for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
-	{
-		$label = pow(10, $digitPos);
-		if(strlen($label) == 1) {
-			$label = "<small>Unit Place</small>";
-		}
-		else {
-			$label = "<small>".$label."<sup>th</sup> Place </small>";
-		}
-		printf("<td style='color:red;'><b>%s</b></td>", $label);
-	}
-	printf("</tr>");
-
-	for ($index = 0; $index < 10; $index++)
-	{
-		printf("<tr>");
-		printf("<td style='color:blue;' class='info'><b>%s</b></td>", $index);
-		for ($digitPos = $numOfDigits-1; $digitPos >=0 ; $digitPos--)
-		{
-			$sel_opt = 0;
-			if(array_key_exists($digitPos, $answer_ary)) {
-				$sel_opt = $answer_ary[$digitPos];
-			}
-			//CUtils::LogDataInFile("ans_ary.txt", $answer_ary, true);
-			printf("<td>");
-			printf("&nbsp; <input type='radio' onclick='UpdateIntAnswer(this, %d, %d);' name='opt_pos_%s' value='%s' %s>",
-					$digitPos, $numOfDigits, $digitPos, $index, $bAnswered && $sel_opt == $index ? "checked": "");
-			printf("</td>");
-		}
-		printf("</tr>");
-	}
+	printf("</td></tr>");
 }
 
 function PopulateIntegerOptions($correctOpt, $ansAry)
@@ -1098,7 +1075,7 @@ body {
 								</tr></thead>
 								<?php
 								if($aryQues['ques_type'] == CConfig::QT_INT) {
-									PopulateIntegerOptions($opt_ary[0], $objAnsAry[$nSection][$nQuestion]);
+									PopulateIntegerOptionsWithNumPad($opt_ary[0], $objAnsAry[$nSection][$nQuestion]);
 								}
 								else if($aryQues['ques_type'] == CConfig::QT_MATRIX) {
 									PopulateMatrixOptions($opt_ary, $objAnsAry[$nSection][$nQuestion]);
@@ -1349,10 +1326,34 @@ body {
 
 		var dir_img_nwidth, dir_img_width;
 		var dir_img_nheight, dir_img_height;
+
+		$.fn.numpad.defaults.gridTpl = '<table class="table modal-content"></table>';
+		$.fn.numpad.defaults.backgroundTpl = '<div class="modal-backdrop in"></div>';
+		$.fn.numpad.defaults.displayTpl = '<input type="text" class="form-control" />';
+		$.fn.numpad.defaults.buttonNumberTpl =  '<button type="button" class="btn btn-default"></button>';
+		$.fn.numpad.defaults.buttonFunctionTpl = '<button type="button" class="btn" style="width: 100%;"></button>';
+		$.fn.numpad.defaults.onKeypadCreate = function(){$(this).find('.done').addClass('btn-primary');};
 		
 		$(window).on("load",function() {
 			TestTimer();
 			HeartBeat();
+
+			// --------------------------------------------------
+			// NumPad for Int Questions
+			if ($('#int_ans_input').length) {
+				$('#int_ans_input').numpad({
+					hidePlusMinusButton: true,
+					hideDecimalButton: true
+				});
+				$('#int_ans_input-btn').numpad({
+					hidePlusMinusButton: true,
+					hideDecimalButton: true,
+					target: $('#int_ans_input')
+				});
+				//$('#int_ans_input').click();
+			}
+			// --------------------------------------------------
+			
 			$("div.mipcat_code_ques").snippet("c",{style:"vim"});
 			$("#submit_ans").removeAttr('disabled');
 			$("#submit_ans_m").removeAttr('disabled');
@@ -1996,6 +1997,11 @@ body {
 			}
 		}
 
+		function UpdateIntNumPadAnswer(obj)
+		{
+			$('#text_int_opt').val($(obj).val());
+		}
+		
 		function UpdateIntAnswer(obj, pos, max_digits)
 		{
 			var sVal = '';

@@ -476,7 +476,7 @@
 		
 		public function IncludeJqueryNumpadJS($include_base_path)
 		{
-			printf("<link rel='stylesheet' type='text/css' href='%s' />\n", $include_base_path.self::JQUERY_NUMPAD_JS);
+			printf("<script type='text/javascript' src='%s'></script>\n", $include_base_path.self::JQUERY_NUMPAD_JS);
 		}
 		
 		public function CommonIncludeCSS($include_base_path)
