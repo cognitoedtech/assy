@@ -1427,6 +1427,8 @@
 				}
 					
 				$ansAry = array();
+				$ansValAry = array();
+				
 				for($opt_idx = 0; $opt_idx < count($ResultAry[$qIndex]['options']); $opt_idx++)
 				{
 					if(CUtils::getMimeType(base64_decode($ResultAry[$qIndex]['options'][$opt_idx]['option'])) != "application/octet-stream")
@@ -1461,17 +1463,53 @@
 					if($ResultAry[$qIndex]['options'][$opt_idx]['answer'] == 1)
 					{
 						array_push($ansAry, ($opt_idx + 1));
+						
+						$right_opt = base64_decode($ResultAry[$qIndex]['options'][$opt_idx]['option']);
+						array_push($ansValAry, $right_opt);						
 					}
+					
+					
 				}
+				
+				$question_type = $ResultAry[$qIndex]['ques_type'];
+				$correct_options = "";
+				$selected_answer = "";
+				
+				if($question_type == CConfig::QT_MATRIX)
+				{
+						
+					$correct_options = implode(",", $ansValAry);
+					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);						
+				}
+				
+				else if($question_type == CConfig::QT_INT)
+				{
+						
+					$correct_options = implode(",", $ansValAry);
+					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+					if($selected_answer == "1") // Correct Ans Selected
+					{
+						$selected_answer = $correct_options;
+					}				
+				
+				}
+				else
+				{
+						
+					$correct_options = implode(",", $ansAry);
+					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+						
+				}
+				
 				$pdf->Ln(2);
-				$ResultAry[$qIndex]['answer'] = implode(",", $ansAry);
-				$selected_answer = "Your Answer : ".implode(",",$ResultAry[$qIndex]['selected']);
+				$ResultAry[$qIndex]['answer'] = $correct_options;//implode(",", $ansAry);
+				$selected_answer = "Your Answer : ".$selected_answer;//implode(",",$ResultAry[$qIndex]['selected']);
 				if(in_array(-1, $ResultAry[$qIndex]['selected']) || in_array(-2, $ResultAry[$qIndex]['selected']) || in_array(-3, $ResultAry[$qIndex]['selected']))
 				{
 					$selected_answer = "You did not attempt this question.";
 				}
 				$pdf->MultiCell(190,5,$selected_answer);
-				$pdf->MultiCell(190,5,"Correct Answer : ".implode(",", $ansAry));
+				$pdf->MultiCell(190,5,"Correct Answer : ".$correct_options);
 				$qIndex++;
 				$secQuesIndex++;
 				$topMargin += 80;
@@ -1554,6 +1592,8 @@
 			
 			$correct_count = 0;
 			$unans_count =0;
+			$partial_count = 0;
+			$wrong_count = 0;
 			
 			while($qIndex < count($ResultAry))
 			{
@@ -1566,7 +1606,7 @@
 					//$pdf->MultiCell(190, 5, "Summary: Correct->".$correct_count." Wrong->".$s_no -($correct_count + $unans_count)."Unans->".$unans_count);
 					$pdf->Ln(2);
 					$wrong = $s_no -1 - ($correct_count + $unans_count);
-					$summary = "Summary-> Correct:".$correct_count . " Wrong:".$wrong . " Un Answered:".$unans_count;
+					$summary = "Summary-> Correct:".$correct_count . ", Wrong:".$wrong_count . ", Unanswered:".$unans_count . ", Partial Correct:".$partial_count;
 					$pdf->Cell(190, 5,$summary);
 					
 					$pdf->Ln(10);
@@ -1574,6 +1614,8 @@
 					$secQuesIndex = 0;
 					$correct_count= 0;
 					$unans_count = 0;
+					$partial_count = 0;
+					$wrong_count = 0;
 					$pdf->Ln(5);
 					$pdf->MultiCell(190,5, "Section - ".$sectional_details[++$secIndex]['name']);																				
 				}
@@ -1584,60 +1626,106 @@
 				$qid = $ResultAry[$qIndex]['ques_id'];
 			 
 				$ansAry = array();
+				$ansOptArray = array();
+				$selectedOptArray = array();
+				
+				
+				for($opt_idx = 0; $opt_idx < count($ResultAry[$qIndex]['options']); $opt_idx++)
+				{ 
+				
+				if($ResultAry[$qIndex]['options'][$opt_idx]['answer'] == 1)
+				{
+				 array_push($ansAry, ($opt_idx + 1));
+				 $right_opt = base64_decode($ResultAry[$qIndex]['options'][$opt_idx]['option']);				 
+				 array_push($ansOptArray, $right_opt);
+				}			
+				}
+				$correct_options = "";
+				$selected_answer = "";
+				$correct_array = array();
+				$selected_array = array();
+				
+				//CUtils::LogDataInFile("opans.txt", $ansOptArray, true);
 				
 				$question_type = $ResultAry[$qIndex]['ques_type'];
 				
 				if($question_type == CConfig::QT_MATRIX)
 				{
 					
-					//$ResultAry[$qIndex]['options']['option'];
+					$correct_options = implode(",", $ansOptArray);
+					$correct_array = $ansOptArray;
+					$selected_array = $ResultAry[$qIndex]['selected'];
 					
+					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);				
 					
 				}
 				
+				else if($question_type == CConfig::QT_INT)
+				{
+					
+					$correct_options = implode(",", $ansOptArray);
+				    $selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+				    
+				    $correct_array = $ansOptArray;
+				    $selected_array = $ResultAry[$qIndex]['selected'];
+				    
+				    if($selected_answer == "1") // Correct Ans Selected
+				    {
+				    	$selected_answer = $correct_options;
+				    	$selected_array = $correct_array;
+				    }
+
+				}
 				else
 				{
 					
-					
-					
+					$correct_options = implode(",", $ansAry);
+					$correct_array = $ansAry;
+					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+					$selected_array = $ResultAry[$qIndex]['selected'];									
 				}
-					
-					
-				
-				
-				
-				
-				
-				for($opt_idx = 0; $opt_idx < count($ResultAry[$qIndex]['options']); $opt_idx++)
-				{
 		
-				if($ResultAry[$qIndex]['options'][$opt_idx]['answer'] == 1)
-				{
-					array_push($ansAry, ($opt_idx + 1));
-				}
-				}
 				
-				$correct_options = implode(",", $ansAry);
-				$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);
+				$conclusion = "";
 				
-				CUtils::LogDataInFile("op.txt", $ResultAry[$qIndex], true);
-				//CUtils::LogDataInFile("selected_op.txt", $ResultAry[$qIndex]['selected'], true);
-				
-				
-				
-				
-				$conclusion = "Wrong";
-				if(strcasecmp($correct_options, $selected_answer) == 0)
+				if(count( array_diff($selected_array, $correct_array) ) == 0 && count( array_diff($correct_array, $selected_array) ) == 0)
 				{
 					$conclusion = "Correct";
 					$correct_count++;
 				}
-				
-				if(in_array(-1, $ResultAry[$qIndex]['selected']) || in_array(-2, $ResultAry[$qIndex]['selected']) || in_array(-3, $ResultAry[$qIndex]['selected']))
+				else if(count( array_intersect($selected_array, $correct_array) ) > 0)
+				{
+					$crt_cnt = 0;
+					foreach($selected_array as $selected_value) {
+						if(in_array($selected_value, $correct_array)) {
+							$crt_cnt++;
+						}
+						else {
+							$crt_cnt = 0;
+							break;
+						}
+					}
+					
+					if($crt_cnt > 0) {
+						$conclusion = "Partial Correct";
+						$partial_count++;
+					}
+					else {
+						$conclusion = "Wrong";
+						$wrong_count++;
+					}
+				}
+				else if(in_array(-1, $ResultAry[$qIndex]['selected']) || in_array(-2, $ResultAry[$qIndex]['selected']) || in_array(-3, $ResultAry[$qIndex]['selected']))
 				{
 					$selected_answer = "Not Answered";
 					$conclusion = "Not Answered";
 					$unans_count++;
+				}
+				else
+				{
+					$conclusion = "Wrong";
+					$wrong_count++;
+					
 				}
 
 				//$pdf->MultiCell(190,5, "S. No. |    QID     |  CORRECT OPTION  | YOUR SELECTION | CONCLUSION");
@@ -1657,7 +1745,7 @@
 				$pdf->Ln(5);				
 				$this->ImprovedTable($header,$data,$pdf);
 				$wrong = $s_no - ($correct_count + $unans_count);
-				$summary = "Summary-> Correct:".$correct_count . " Wrong:".$wrong . " Un Answered:".$unans_count;
+				$summary = "Summary-> Correct:".$correct_count . ", Wrong:".$wrong_count. ", Unanswered:".$unans_count . ", Partial Correct: ". $partial_count;
 				$pdf->Ln(2);
 				$pdf->Cell(590, 5,$summary);
 				//$pdf->MultiCell(190, 5, "Summary: Correct->".$correct_count." Wrong->".$s_no -($correct_count + $unans_count)."Unans->".$unans_count);

@@ -86,6 +86,7 @@
 	
 	$test_type = $objDB->GetTestType($nTestID);
 	$test_pnr = $objTH->EndExam($sUserID, $nTestID, $nTschdID);
+	
 	$res_visibility = $objTH->GetResultVisibility($nTestID);
 	
 	if($test_type == CConfig::TT_DEFAULT)
@@ -142,38 +143,56 @@
 <body>
 	<?php
   		$CorrectAns = 0;
+  		$PartialAns	= 0;
 		$WrongAns   = 0;
 		$Unanswered	= 0;
 		
+		$arySectionalMarks = array();
+		
 		if($test_type == CConfig::TT_DEFAULT)
 		{
-			foreach ($ResultAry as $sectionName => $SectionAry)
+			foreach ($ResultAry as $groupName => $GroupAry)
 			{
-				foreach ($SectionAry as $subjectName => $SubjectAry)
+				foreach ($GroupAry as $sectionName => $SectionAry)
 				{
-					foreach ($SubjectAry as $topicName => $TopicAry)
+					$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] = 0;
+					$arySectionalMarks[$groupName][$sectionName]['section_total_marks'] = 0;
+					
+					foreach ($SectionAry as $subjectName => $SubjectAry)
 					{
-						foreach ($TopicAry as $difficulty => $QuestionAry)
+						foreach ($SubjectAry as $topicName => $TopicAry)
 						{
-							foreach ($QuestionAry as $QuestionIdx => $Answer )
+							foreach ($TopicAry as $difficulty => $QuestionAry)
 							{
-								if($Answer == 0)
+								foreach ($QuestionAry as $QuestionIdx => $Answer )
 								{
-									$WrongAns++;
-								}
-								else if($Answer == 1)
-								{
-									$CorrectAns++;
-								}
-								else if($Answer == -1 || $Answer == -2 || $Answer == -3)
-								{
-									$Unanswered++;
+									if($Answer == 0)
+									{
+										$WrongAns++;
+										$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] -= $SectionAry['@sec_dtls_ary']['mark_for_incorrect'];
+									}
+									else if($Answer == 1)
+									{
+										$CorrectAns++;
+										$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $SectionAry['@sec_dtls_ary']['mark_for_correct'];
+									}
+									else if($Answer == 2)
+									{
+										$PartialAns++;
+										$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $SectionAry['@sec_dtls_ary']['partial_marks'];
+									}
+									else if($Answer == -1 || $Answer == -2 || $Answer == -3)
+									{
+										$Unanswered++;
+									}
+									
+									$arySectionalMarks[$groupName][$sectionName]['section_total_marks'] += $SectionAry['@sec_dtls_ary']['mark_for_correct'];
 								}
 							}
 						}
 					}
 				}
-			}	
+			}
 		}
 		else if($test_type == CConfig::TT_EQ)
 		{
@@ -195,92 +214,57 @@
 			echo ("<span id='span_result_summary'>You attempted ".($CorrectAns+$WrongAns)." questions out of ".($CorrectAns+$WrongAns+$Unanswered).".</span><br />");
 		}
 	?>
-	<div class="row-fluid">
+	<div class="row-fluid"> 
 		<div class="fuelux modal1">
 			<div class="preloader"><i></i><i></i><i></i><i></i></div>
 		</div>
 		<div class="col-lg-4 col-md-4 col-sm-4">
 			<div id="chart1" style="height:250px;" <?php $res_visibility != 0?>></div>
 		</div>
-		<div class="col-lg-6 col-md-6 col-sm-6 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
-			<fieldset id="information_form_fieldset" <?php echo($style);?>>
-				<legend style="color:CornflowerBlue;"><b>Provide information to get detailed result:</b></legend>
-				<div id="response_div" style="text-align: center"></div><br />
-				<div class="col-lg-6 col-md-6 col-sm-6" style="border-right: 1px solid #ddd;">
-					<p style="color:blue;">New User?</p>
-					<form id='free_user_registration' class="form-horizontal">
-						<div class="form-group">
-					      <div class="col-lg-10">
-					        <input class="form-control input-sm" name="name" id="name" placeholder="Name" type="text">
-					      </div>
-					    </div>
-					    <div class="form-group">
-					      <div class="col-lg-10">
-					        <input class="form-control input-sm" name="email" id="email" placeholder="Email" type="text">
-					      </div>
-					    </div>
-					    <div class="form-group">
-					      <div class="col-lg-10">
-					        <input class="form-control input-sm" name="phone" id="phone" placeholder="Phone#" type="text">
-					      </div>
-					    </div>
-					    <div class="form-group">
-					      <div class="col-lg-10">
-					        <input class="form-control input-sm" name="city" id="city" placeholder="City" type="text">
-					      </div>
-					    </div>
-					    <div class="form-group">
-					      <div class="col-lg-8">
-					        <input class="form-control input-sm" name="captch_value" id="captch_value" placeholder="Verification Text" type="text">
-					      </div>
-					      <div class="col-lg-4">
-					      	<img id="captcha_img" src="../3rd_party/captcha/captcha.php">
-					      </div>
-					    </div>
-					    <input type="hidden" name="new_free_user" value='1' />
-					    <div class="form-group">
-					      <div class="col-lg-10">
-					        <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-					      </div>
-					    </div>
-					</form>
-				</div>
-				<div class="col-lg-6 col-md-6 col-sm-6">
-					<p style="color:green;">Already attempted earlier?</p>
-					<form id='email_submit_form' class="form-horizontal">
-						 <div class="form-group">
-					      <div class="col-lg-10">
-					        <input class="form-control input-sm" name="email" id="email" placeholder="Email" type="text">
-					      </div>
-					    </div>
-					    <input type="hidden" name="existing_free_user" value='1' />
-					    <div class="form-group">
-					      <div class="col-lg-10">
-					        <button type="submit" class="btn btn-sm btn-success">Submit</button>
-					      </div>
-					    </div>
-					</form>
-				</div>
-			</fieldset>
+		<div class="col-lg-8 col-md-8 col-sm-8">
+			<div id="final_marks_table"> <!-- style="<?php echo($res_visibility == RV_DETAILED ? "" : "display:none");?>"> --> 
+				<table class="table table-bordered table-striped">
+					<tr>
+						<th> Group </th>
+						<th> Section </th>
+						<th> Marks Obtained </th>
+					</tr>
+					
+					<?php
+					$scored_marks = 0;
+					$total_marks = 0;
+					
+					foreach($arySectionalMarks as $groupName => $GroupAry) {
+						printf("<tr>");
+						printf("<td rowspan='%d'> %s </td>", count($GroupAry)+1, $groupName );
+										
+						$secIndex = 0;
+						foreach ($GroupAry as $sectionName => $SectionAry) {
+							if($secIndex > 0) {
+								printf("<tr>");
+							}
+							
+							printf("<td> %s </td>", $sectionName);
+							printf("<td> %s out of %s </td>", $SectionAry['section_scored_marks'], $SectionAry['section_total_marks']);
+							
+							printf("</tr>");
+							
+							$scored_marks += $SectionAry['section_scored_marks'];
+							$total_marks += $SectionAry['section_total_marks'];
+							
+							$secIndex++;
+						}
+					}
+					
+					printf("<tr>");
+						printf("<td> <b>Total</b> </td>");
+						printf("<td> <b>%s out of %s</b> </td>", $scored_marks, $total_marks);
+					printf("</tr>");
+					?>
+				</table>
+				
+			</div>
 		</div>
-		
-		<div class="modal" id="dlg_rate_test" data-backdrop="static" data-keyboard="false">
-		  	<div class="modal-dialog">
-		    	<div class="modal-content">
-		      		<div class="modal-header">
-		       		 	<button type="button" class="close rate_test_close" disabled='disabled' data-dismiss="modal" aria-hidden="true">&times;</button>
-		        		<h4 class="modal-title" id="test_rating_heading">Rate This Test</h4>
-		      		</div>
-			      	<div class="modal-body" id="options_body">
-			      		<div id="test_ratings"></div>
-			      	</div>
-		      		<div class="modal-footer">
-			        	<button type="button" class="btn btn-default rate_test_close" disabled='disabled' data-dismiss="modal">Close</button>
-		      		</div>
-		    	</div>
-		  	</div>
-		</div>
-		
 	</div>
     <script class="code" type="text/javascript">
 
@@ -421,6 +405,7 @@
 				[//colorSet Array
 
 				 	"#4bb2c5",
+				 	"#4bb205",
 	                "#eaa228",
 	                "#c5b47f"               
 	            ]);
@@ -440,6 +425,7 @@
 		         type: "column",
 		         dataPoints: [
 		         { label: "Correct", y: <?php echo($CorrectAns);?>},
+		         { label: "Partial", y: <?php echo($PartialAns);?>},
 		         { label: "Wrong", y: <?php echo($WrongAns);?>},
 		         { label: "Unanswered", y: <?php echo($Unanswered);?>}
 		         ]

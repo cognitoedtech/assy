@@ -22,7 +22,7 @@
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		// Private Functions
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		private function GetSectionName($QuesID, $objTopicDetails)
+		private function GetSectionName($QuesID, $objTopicDetails, &$sGroupName)
 		{
 			$sSection = "";
 			
@@ -34,11 +34,13 @@
 			{
 				$row = mysql_fetch_array($result);
 				
+				//CUtils::LogDataInFile("obj_topic_dtls.txt", $objTopicDetails, true, "a");
 				foreach ($objTopicDetails as $objTopic)
 				{
 					if($objTopic['topic_id'] == $row['topic_id'])
 					{
 						$sSection = $objTopic['section'];
+						$sGroupName = empty($objTopic['group']) ? " - " : $objTopic['group'];
 						break;
 					}
 				}
@@ -119,9 +121,10 @@
 			$objQus = new CQuestion($this->objDBLink);
 			
 			$objTopicDetails = $objTD->GetTopicDetails($test_id);
+			$objSectionDetails = $objTD->GetSectionDetails($test_id);
 			
 			/*echo("<pre>");
-			print_r($objTopicDetails);
+			print_r($objSectionDetails);
 			echo("</pre>");*/
 			
 			$aryParticulars  = array();
@@ -133,12 +136,30 @@
 			$arySecIndex = array();
 			foreach ($aryCorrectAns as $QuesID => $Answer)
 			{
-				$Section 	= $this->GetSectionName($QuesID, $objTopicDetails);
+				$QuesAry 	= $objQus->GetQuestionByID($QuesID);
+				
+				$QuesType	= $QuesAry['ques_type'];
+				$nMCA		= $QuesAry['mca'];
+				
+				$Group		= "-";
+				$Section 	= $this->GetSectionName($QuesID, $objTopicDetails, $Group);
+				
 				$Subject 	= $aryParticulars[$QuesID]['subject_id'];//$objTD->GetSubjectName($aryParticulars[$QuesID]['subject_id']);
 				$Topic 		= $aryParticulars[$QuesID]['topic_id'];//$objTD->GetTopicName($aryParticulars[$QuesID]['topic_id']);
-
-				
 				$Difficulty = $aryParticulars[$QuesID]['difficulty_id'];
+				
+				if ( !isset($objResult[$Group][$Section]['@sec_dtls_ary']) ) {
+					foreach ($objSectionDetails as $nIndex => $arySection)
+					{
+						$strSecNamePos = strpos($arySection['name'],"~") ? strpos($arySection['name'],"~")+1 : 0;
+						$sSectionName = substr($arySection ['name'], $strSecNamePos, strlen($arySection ['name']));
+						
+						if(strcasecmp($sSectionName, $Section) == 0) {
+							$objResult[$Group][$Section]['@sec_dtls_ary'] = $objSectionDetails[$nIndex];
+							break;
+						}
+					}
+				}
 				
 				if(!isset($arySecIndex[$Section]))
 				{
@@ -149,23 +170,52 @@
 				
 				if(count($CandAnsAry[$QuesID]) == 1 && in_array(-1, $CandAnsAry[$QuesID]))
 				{
-					$objResult[$Section][$Subject][$Topic][$Difficulty][$Question] = -1;
+					$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = -1;
 				}
 				else if(count($CandAnsAry[$QuesID]) == 1 && in_array(-2, $CandAnsAry[$QuesID]))
 				{
-					$objResult[$Section][$Subject][$Topic][$Difficulty][$Question] = -2;
+					$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = -2;
 				}
 				else if(count($CandAnsAry[$QuesID]) == 1 && in_array(-3, $CandAnsAry[$QuesID]))
 				{
-					$objResult[$Section][$Subject][$Topic][$Difficulty][$Question] = -3;
+					$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = -3;
 				}
-				else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) == 0 && count(array_diff($CandAnsAry[$QuesID], $Answer)) == 0)
+				else
 				{
-					$objResult[$Section][$Subject][$Topic][$Difficulty][$Question] = 1;
-				}
-				else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) > 0 || count(array_diff($CandAnsAry[$QuesID], $Answer)) > 0)
-				{
-					$objResult[$Section][$Subject][$Topic][$Difficulty][$Question] = 0;
+					if($QuesType == CConfig::QT_MATRIX) {
+						foreach($Answer as $opt => $correct) {
+							if(in_array($correct == $CandAnsAry[$QuesID])) {
+								$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 2;
+							}
+							else {
+								$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 0;
+							}
+						}
+					}
+					else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) == 0 && count(array_diff($CandAnsAry[$QuesID], $Answer)) == 0)
+					{
+						$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 1;
+					}
+					else if($nMCA == 1) {
+						$crtCount = 0;
+						foreach($CandAnsAry[$QuesID] as $ansKey => $ansVal) {
+							if(in_array($ansVal, $Answer)) {
+								$crtCount++;
+							}
+							else {
+								$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 0;
+								break;
+							}
+						}
+							
+						if($crtCount > 0) {
+							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 2;
+						}
+					}
+					else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) > 0 || count(array_diff($CandAnsAry[$QuesID], $Answer)) > 0)
+					{
+						$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 0;
+					}
 				}
 				
 				$arySecIndex[$Section]++;

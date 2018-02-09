@@ -47,7 +47,18 @@
   	<link rel="stylesheet" type="text/css" href="../3rd_party/bootstrap/css/bootstrap.css" />
   	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/ddaccordion.js"></script>
-  	</head>
+  	<script type="text/javascript">
+		var _gaq = _gaq || [];
+	  	_gaq.push(['_setAccount', 'UA-2246912-13']);
+	  	_gaq.push(['_trackPageview']);
+	
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+	</head>
 	<body>
 		<h3>Sections</h3><hr/>
 		
