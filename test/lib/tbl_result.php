@@ -202,6 +202,7 @@
 								$crtCount++;
 							}
 							else {
+								$crtCount = 0;
 								$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 0;
 								break;
 							}
