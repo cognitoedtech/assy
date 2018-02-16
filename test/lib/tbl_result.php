@@ -946,7 +946,7 @@
 						$NameAry = $this->GetUserName($row['user_id']);
 						
 						if($row['tschd_id'] < 0) {
-							$ResultAry[$test_pnr]['result'] = sprintf("%s %s (Time: %s)",$NameAry['firstname'], $NameAry['lastname'],$testDtime->format("[H:i:s]"));
+							$ResultAry[$test_pnr]['result'] = sprintf("%s %s (Time: %s)",$NameAry['firstname'], $NameAry['lastname'],$testDtime->format("[d-m-y H:i:s]"));
 						}
 						else {
 							$ResultAry[$test_pnr]['result'] = sprintf("%s %s",$NameAry['firstname'], $NameAry['lastname']);
