@@ -176,14 +176,14 @@
 										$CorrectAns++;
 										$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $SectionAry['@sec_dtls_ary']['mark_for_correct'];
 									}
-									else if($Answer == 2)
-									{
-										$PartialAns++;
-										$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $SectionAry['@sec_dtls_ary']['partial_marks'];
-									}
 									else if($Answer == -1 || $Answer == -2 || $Answer == -3)
 									{
 										$Unanswered++;
+									}
+									else if(intval(substr($Answer, 0, 1)) == 2)
+									{
+										$PartialAns += intval(substr($Answer, 2));
+										$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $SectionAry['@sec_dtls_ary']['partial_marks'];
 									}
 									
 									$arySectionalMarks[$groupName][$sectionName]['section_total_marks'] += $SectionAry['@sec_dtls_ary']['mark_for_correct'];

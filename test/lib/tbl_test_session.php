@@ -390,7 +390,7 @@
 							}
 							
 							if($crtCount > 0) {
-								$nPartial++;
+								$nPartial += $crtCount;
 							}
 						}
 						else

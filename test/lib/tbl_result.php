@@ -209,7 +209,7 @@
 						}
 							
 						if($crtCount > 0) {
-							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 2;
+							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = "2-".$crtCount;
 						}
 					}
 					else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) > 0 || count(array_diff($CandAnsAry[$QuesID], $Answer)) > 0)
