@@ -182,10 +182,15 @@
 									}
 									else if(intval(substr($Answer, 0, 1)) == 2)
 									{
-										$partially_correct = intval(substr($Answer, 2));
-										
-										$PartialAns += $partially_correct;
-										$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $partially_correct* $SectionAry['@sec_dtls_ary']['partial_marks'];
+										if($SectionAry['@sec_dtls_ary']['partial_marks'] == 0) {
+											$WrongAns++;
+											$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] -= $SectionAry['@sec_dtls_ary']['mark_for_incorrect'];
+										} else {
+											$partially_correct = intval(substr($Answer, 2));
+											
+											$PartialAns += $partially_correct;
+											$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $partially_correct* $SectionAry['@sec_dtls_ary']['partial_marks'];
+										}										
 									}
 									
 									$arySectionalMarks[$groupName][$sectionName]['section_total_marks'] += $SectionAry['@sec_dtls_ary']['mark_for_correct'];

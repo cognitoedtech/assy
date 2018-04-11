@@ -1595,6 +1595,8 @@
 			$partial_count = 0;
 			$wrong_count = 0;
 			
+			
+			
 			while($qIndex < count($ResultAry))
 			{
 				$s_no = $secQuesIndex + 1;
@@ -1606,7 +1608,12 @@
 					//$pdf->MultiCell(190, 5, "Summary: Correct->".$correct_count." Wrong->".$s_no -($correct_count + $unans_count)."Unans->".$unans_count);
 					$pdf->Ln(2);
 					$wrong = $s_no -1 - ($correct_count + $unans_count);
-					$summary = "Summary-> Correct:".$correct_count . ", Wrong:".$wrong_count . ", Unanswered:".$unans_count . ", Partial Correct:".$partial_count;
+					
+					if($question_type != CConfig::QT_MATRIX)
+					{
+						$summary = "Summary-> Correct:".$correct_count . ", Wrong:".$wrong_count . ", Unanswered:".$unans_count . ", Partial Correct:".$partial_count;
+					}
+					
 					$pdf->Cell(190, 5,$summary);
 					
 					$pdf->Ln(10);
@@ -1630,13 +1637,23 @@
 				$selectedOptArray = array();
 				
 				
+				$question_type = $ResultAry[$qIndex]['ques_type'];
+				
+				
+				
 				for($opt_idx = 0; $opt_idx < count($ResultAry[$qIndex]['options']); $opt_idx++)
 				{ 
 				
-				if($ResultAry[$qIndex]['options'][$opt_idx]['answer'] == 1)
+				if($ResultAry[$qIndex]['options'][$opt_idx]['answer'] == 1 || $question_type == CConfig::QT_MATRIX) // For Matrix ans is stored in option
 				{
 				 array_push($ansAry, ($opt_idx + 1));
-				 $right_opt = base64_decode($ResultAry[$qIndex]['options'][$opt_idx]['option']);				 
+				 $right_opt = base64_decode($ResultAry[$qIndex]['options'][$opt_idx]['option']);
+				 		
+				 if($question_type == CConfig::QT_MATRIX)
+				 {
+				 	$right_opt = "[". $right_opt . "]"; // Just to distinguish
+				 }	
+				 
 				 array_push($ansOptArray, $right_opt);
 				}			
 				}
@@ -1647,7 +1664,7 @@
 				
 				//CUtils::LogDataInFile("opans.txt", $ansOptArray, true);
 				
-				$question_type = $ResultAry[$qIndex]['ques_type'];
+				//$question_type = $ResultAry[$qIndex]['ques_type'];
 				
 				if($question_type == CConfig::QT_MATRIX)
 				{
@@ -1655,9 +1672,17 @@
 					$correct_options = implode(",", $ansOptArray);
 					$correct_array = $ansOptArray;
 					$selected_array = $ResultAry[$qIndex]['selected'];
+					foreach ($selected_array as $key=>$val)
+					{
+						$selected_answer .= "[".$val. "],";						
+					}
+					$selected_answer = substr($selected_answer, 0, strlen($selected_answer)-1); // remove last comma
 					
-					$selected_answer = implode(",",$ResultAry[$qIndex]['selected']);				
+					//$selected_answer = implode("|",$ResultAry[$qIndex]['selected']);	
+
 					
+					//CUtils::LogDataInFile("selcted_ans_matrx.txt", $selected_array, true,"a");
+					//CUtils::LogDataInFile("correct_ans_matrx.txt", $correct_options, true,"a");
 				}
 				
 				else if($question_type == CConfig::QT_INT)
@@ -1688,7 +1713,37 @@
 				
 				$conclusion = "";
 				
-				if(count( array_diff($selected_array, $correct_array) ) == 0 && count( array_diff($correct_array, $selected_array) ) == 0)
+				
+				if($question_type == CConfig::QT_MATRIX) // Handle Matrix differently
+				{
+					
+					$correct_ans_arr = $ansOptArray;
+					$user_selection_arr = $ResultAry[$qIndex]['selected'];
+					//CUtils::LogDataInFile("selcted_ans_matrx.txt", $user_selection_arr, true,"a");
+					//CUtils::LogDataInFile("correct_ans_matrx.txt", $correct_ans_arr, true,"a");
+					
+					foreach ($correct_ans_arr as $key => $val)
+					{
+						$corrval = str_replace("[", "", $val);
+						$corrval = str_replace("]", "", $corrval);						
+						$sel_ans = $user_selection_arr[$key]; // fetch value from same index
+						
+						if(strcasecmp($corrval, $sel_ans) == 0)
+						{
+						  $conclusion .= $key+1 . "" . ":R,";	
+						}
+						else
+						{
+							$conclusion .= $key+1 . "" . ":W,";
+						}
+						
+						
+					}
+					
+					
+				}
+				
+				else if(count( array_diff($selected_array, $correct_array) ) == 0 && count( array_diff($correct_array, $selected_array) ) == 0)
 				{
 					$conclusion = "Correct";
 					$correct_count++;
@@ -1740,12 +1795,15 @@
 				//$pdf->Ln(5);
 			}
 			
-			if($secIndex > 0 && !empty($data))
+			if($secIndex >= 0 && !empty($data))
 			{
 				$pdf->Ln(5);				
 				$this->ImprovedTable($header,$data,$pdf);
 				$wrong = $s_no - ($correct_count + $unans_count);
+				if($question_type != CConfig::QT_MATRIX)
+				{
 				$summary = "Summary-> Correct:".$correct_count . ", Wrong:".$wrong_count. ", Unanswered:".$unans_count . ", Partial Correct: ". $partial_count;
+				}
 				$pdf->Ln(2);
 				$pdf->Cell(590, 5,$summary);
 				//$pdf->MultiCell(190, 5, "Summary: Correct->".$correct_count." Wrong->".$s_no -($correct_count + $unans_count)."Unans->".$unans_count);

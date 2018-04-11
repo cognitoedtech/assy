@@ -369,7 +369,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 				    	
 				    	$.each(data, function (qIndex, qInfoAry){
 							//alert(dump(qInfoAry));
-							//console.log(qInfoAry);
+							//console.log("qInfoAry : " + JSON.stringify(qInfoAry));
 							//console.log(qInfoAry['selected']);
 							//console.log(qInfoAry['answer']);
 							tColor = "";
@@ -488,15 +488,16 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 							}
 							
 							var actualAns = "";
-							if (Array.isArray(qInfoAry['answer']) && qInfoAry['ques_type'] == <?php echo(CConfig::QT_MATRIX);?>) {
-								$.map( qInfoAry['answer'], function( val, i ) {
-									val = val ? val : "-" ;
-									actualAns = actualAns + "(" + val + "), ";  
+							if (Array.isArray(qInfoAry['options']) && qInfoAry['ques_type'] == <?php echo(CConfig::QT_MATRIX);?>) {
+								$.map( qInfoAry['options'], function( val, i ) {
+									//val = val['option'] ? val['option'] : "-" ;
+									actualAns = actualAns + "(" + val['option'] + "), ";  
 								});
 							}
 							else {
 								actualAns = qInfoAry['answer'];
 							}
+							//console.log("Answer: " + JSON.stringify(qInfoAry['answer']));
 							// ------------------------------------------
 							
 							if(qInfoAry['selected'] == -1 || qInfoAry['selected'] == -2 || qInfoAry['selected'] == -3)
@@ -509,7 +510,7 @@ $objIncludeJsCSS->IncludeMathJAXJS( "../../" );
 							}
 							sPara += "</b>";
 							
-							sPara += "<br/><br/>"+"<span class='label label-warning'>Correct Answer: "+qInfoAry['answer']+"</span><br /><br /></div></div>";
+							sPara += "<br/><br/>"+"<span class='label label-warning'>Correct Answer: "+actualAns+"</span><br /><br /></div></div>";
 							$('#result_inspection').append(sPara);
 							$('#result_inspection').show();
 						});
