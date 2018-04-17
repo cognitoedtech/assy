@@ -1530,7 +1530,7 @@
 			if($unpreparedResultAry['tschd_id'] != -100 && $unpreparedResultAry['tschd_id'] != CConfig::FEUC_TEST_SCHEDULE_ID)
 			{
 				$scheduled_test_ary = $objDB->GetScheduledTest($unpreparedResultAry['tschd_id']);
-				$org_id = $objDB->GetOrgIdByUserId($scheduled_test_ary['scheduler_id']);
+				$org_id = "";//$objDB->GetOrgIdByUserId($scheduled_test_ary['scheduler_id']);
 			}
 			else
 			{

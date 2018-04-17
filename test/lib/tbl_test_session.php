@@ -330,16 +330,16 @@
 						//CUtils::LogDataInFile("ary_correct_ans.txt", $correct."\r\n", false, "a");
 						//CUtils::LogDataInFile("ary_mapping.txt", "< ".$ansAry[$key][$opt]." > - < ".$correct." >\r\n", false, "a");
 						
-						if($correct == $ansAry[$key][$opt]) {
+						if(strcasecmp($correct, $ansAry[$key][$opt]) == 0) {
 							$bPartial = true;
 							$nPartial++;
 						}
-						else if (empty($ansAry[$key][$opt]) || $ansAry[$key][$opt] <= -1  ) {
+						else { //if (empty($ansAry[$key][$opt]) || $ansAry[$key][$opt] <= -1  ) {
 							$nUnans++;
 						}
-						else {
+						/*else {
 							$nWrong++;
-						}
+						}*/
 					}
 					$qCount++;
 					

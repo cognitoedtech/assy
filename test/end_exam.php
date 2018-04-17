@@ -151,6 +151,10 @@
 		
 		if($test_type == CConfig::TT_DEFAULT)
 		{
+			/*echo "<pre>";
+			print_r($ResultAry);
+			echo "</pre>";*/
+			
 			foreach ($ResultAry as $groupName => $GroupAry)
 			{
 				foreach ($GroupAry as $sectionName => $SectionAry)
@@ -268,6 +272,11 @@
 						printf("<td> <b>%s out of %s</b> </td>", $scored_marks, $total_marks);
 					printf("</tr>");
 					?>
+				</table>
+				<table>
+				<tr>
+				<td><a href="ajax/generate_omr.php?test_pnr=<?php echo $test_pnr?>&inspect_result=1" target="_blank" >Download OMR</a></td>
+				</tr>
 				</table>
 				
 			</div>
