@@ -53,7 +53,6 @@
 		$remainingSessionAry =  $objDB->GetUnfinishedTestSessions();
 		
 		$bTestStartedByAdmin = $objDB->IsTestStartedByAdmin();
-		//print_r($remainingSessionAry);
 		
 		if(empty($remainingSessionAry) && $bTestStartedByAdmin == 1)
 		{
@@ -65,8 +64,6 @@
 			$exportedDataArray['users'] = $objDB->GetFinishedUsersData();
 			$exportedDataArray['user_cv'] = $objDB->GetFinishedUserCVData();
 			
-			
-			
 			unset($objDB);
 			
 			if(!empty($exportedDataArray['result']))
@@ -75,17 +72,17 @@
 				
 				$file = tempnam("tmp", "zip");
 				$zip = new ZipArchive();
-				$zip->open($file, ZipArchive::OVERWRITE);
-				
+				$zip->open($file, ZipArchive::OVERWRITE);			
 				// Stuff with content
-				$zip->addFromString($active_test_name."_results.json", json_encode($exportedDataArray));
-				
+				$zip->addFromString($active_test_name."_results.json", json_encode($exportedDataArray));				
 				// Close and send to users
 				$zip->close();
+				
 				header('Content-Type: application/zip');
 				header('Content-Length: ' . filesize($file));
 				header('Content-Disposition: attachment; filename="'.$active_test_name.'_results.zip"');
 				readfile($file);
+				
 				unlink($file);
 				
 				$objImportNewTest = new CImportNewTest();

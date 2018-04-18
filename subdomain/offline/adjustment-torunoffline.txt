@@ -46,3 +46,28 @@ Disable GetSubjectName and GetTopicName call
 $Subject 	= $aryParticulars[$QuesID]['subject_id'];//$objTD->GetSubjectName($aryParticulars[$QuesID]['subject_id']);
 				$Topic 		= $aryParticulars[$QuesID]['topic_id'];//$objTD->GetTopicName($aryParticulars[$QuesID]['topic_id']);
 
+4). copy css and woff files C:\wamp\www\offline\3rd_party\Metro-UI-CSS-master\Metro-UI-CSS-master\css
+
+5). copy this js file C:\wamp\www\offline\3rd_party\MathJax-2.7\config\TeX-AMS_HTML.js
+
+
+6. test/lib/create_result.php
+
+1. Comment out all calls to 
+
+$org_id = $objDB->GetOrgIdByUserId(..)
+
+2. Comment out org_logo code and initialize variable to empty following code
+
+
+	//$org_logo = $objDB->GetOrgLogoImage($org_id);
+			$org_logo = "";
+			/*if(empty($org_logo))
+			{
+				//$org_logo = $objDB->GetOrganizationName($org_id);
+			} */
+
+
+
+
+

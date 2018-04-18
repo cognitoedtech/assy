@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS `test_session` (
   `attempts_remaining` int(11) NOT NULL,
   `forced_kill` tinyint(4) NOT NULL DEFAULT '0',
   `session_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `attempt_history` text NOT NULL,
+  `attempt_history` text NULL,
   PRIMARY KEY (`tsession_id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;

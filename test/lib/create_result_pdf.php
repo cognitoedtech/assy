@@ -1671,6 +1671,11 @@
 					
 					$correct_options = implode(",", $ansOptArray);
 					$correct_array = $ansOptArray;
+					foreach ($ResultAry[$qIndex]['selected'] as $k => $ans) {
+						if(is_int($ans) && $ans == 0) {
+							$ResultAry[$qIndex]['selected'][$k] = '';
+						}
+					}
 					$selected_array = $ResultAry[$qIndex]['selected'];
 					foreach ($selected_array as $key=>$val)
 					{
@@ -1718,6 +1723,11 @@
 				{
 					
 					$correct_ans_arr = $ansOptArray;
+					foreach ($ResultAry[$qIndex]['selected'] as $k => $ans) {
+						if(is_int($ans) && $ans == 0) {
+							$ResultAry[$qIndex]['selected'][$k] = '';
+						}
+					}
 					$user_selection_arr = $ResultAry[$qIndex]['selected'];
 					//CUtils::LogDataInFile("selcted_ans_matrx.txt", $user_selection_arr, true,"a");
 					//CUtils::LogDataInFile("correct_ans_matrx.txt", $correct_ans_arr, true,"a");
@@ -1732,6 +1742,10 @@
 						{
 						  $conclusion .= $key+1 . "" . ":R,";	
 						}
+						else if(trim($sel_ans,",")  == "")
+						{
+							$conclusion .= $key+1 . "" . ":Na,";
+						}
 						else
 						{
 							$conclusion .= $key+1 . "" . ":W,";
@@ -1739,6 +1753,17 @@
 						
 						
 					}
+					
+					$find = array("A","B","C","D","E","F","G");
+					$replace = array("P","Q","R","S","T","U","V");
+					
+					$correct_options = str_replace($find, $replace, $correct_options);//, $multiplier)
+					$selected_answer = str_replace($find, $replace, $selected_answer);//, $multiplier)
+					
+					
+					//$correct_ans_arr = str_replace($find, $replace, $correct_ans_arr);//, $multiplier)
+					//$user_selection_arr = str_replace($find, $replace, $user_selection_arr);//, $multiplier)
+					
 					
 					
 				}

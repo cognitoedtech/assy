@@ -239,7 +239,7 @@ if ($qry [0] == "test_id") {
 		}
 		if($bMatStr) {
 			foreach($nAns as $key => $ans_row) {
-				$nAns[$key] = ($ans_row < 0) ? 0 : $ans_row;
+				$nAns[$key] = ($ans_row < 0) ? '' : $ans_row;
 			}
 		}
 	}
@@ -1203,13 +1203,13 @@ body {
 							$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
 							
 							if(in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_UNANSWERED;
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;//QUES_FLAG_UNANSWERED;
 							}
 							else if(in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;
+								$flag_val = QUES_FLAG_VISITED;//QUES_FLAG_MARKED_FOR_REVIEW;
 							}
 							else if(in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_VISITED;
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;//QUES_FLAG_VISITED;
 							}
 							
 							//$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ?  : QUES_FLAG_MARKED_FOR_REVIEW;
@@ -1235,16 +1235,16 @@ body {
 				<div class="col-xs-12 border" style="padding: 5px;">
 					<?php
 						if ((count ( $objAnsAry [$nSection] [$nQuestion] ) == 1 && (in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] ) || in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )  || in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] ))) || $objMCPAParams ['mcpa_lock_ques'] == 0) {
-							$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
+							$flag_btn_val = in_array ( -2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
 							
-							if(in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_UNANSWERED;
+							if(in_array ( -1, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;//QUES_FLAG_UNANSWERED;
 							}
-							else if(in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;
+							else if(in_array ( -2, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_VISITED;//QUES_FLAG_MARKED_FOR_REVIEW;
 							}
-							else if(in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_VISITED;
+							else if(in_array ( -3, $objAnsAry [$nSection] [$nQuestion] )) {
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;//QUES_FLAG_VISITED;
 							}
 							//$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
 							echo ('<input type="reset" class="btn btn-default btn-sm pull-left" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');

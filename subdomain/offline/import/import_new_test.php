@@ -41,7 +41,7 @@
 		
 		private function DeleteTestInstructionsData()
 		{
-			$query = sprintf("delete from test_schedule");
+			$query = sprintf("delete from test_instructions");
 			
 			$result = mysql_query($query, $this->db_link) or die('Delete Test Instructions Data error : ' . mysql_error());
 		}

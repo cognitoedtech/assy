@@ -113,7 +113,7 @@
 			return $retAry;
 		}
 		
-		private function PrepareResult($test_id, $ques_map)
+	private function PrepareResult($test_id, $ques_map)
 		{
 			$objResult = array();
 			
@@ -143,9 +143,9 @@
 				
 				$Group		= "-";
 				$Section 	= $this->GetSectionName($QuesID, $objTopicDetails, $Group);
-				
 				$Subject 	= $aryParticulars[$QuesID]['subject_id'];//$objTD->GetSubjectName($aryParticulars[$QuesID]['subject_id']);
 				$Topic 		= $aryParticulars[$QuesID]['topic_id'];//$objTD->GetTopicName($aryParticulars[$QuesID]['topic_id']);
+			
 				$Difficulty = $aryParticulars[$QuesID]['difficulty_id'];
 				
 				if ( !isset($objResult[$Group][$Section]['@sec_dtls_ary']) ) {
@@ -183,13 +183,25 @@
 				else
 				{
 					if($QuesType == CConfig::QT_MATRIX) {
+						//CUtils::LogDataInFile("answer.txt",$Answer, true, "a");
+						$crtCount = 0;
+						$wrgCount = 0;
 						foreach($Answer as $opt => $correct) {
-							if(in_array($correct == $CandAnsAry[$QuesID])) {
-								$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 2;
+							//CUtils::LogDataInFile("match.txt",$correct." - ".$CandAnsAry[$QuesID][$opt]."\r\n", false, "a");
+							if(strcasecmp($correct, $CandAnsAry[$QuesID][$opt]) == 0) {
+								$crtCount++;
+								//$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 2;
 							}
 							else {
-								$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 0;
+								if($CandAnsAry[$QuesID][$opt]){
+									$wrgCount++;
+								}
+								//$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 0;
 							}
+						}
+						
+						if($crtCount > 0) {
+							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = "2-".$crtCount;
 						}
 					}
 					else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) == 0 && count(array_diff($CandAnsAry[$QuesID], $Answer)) == 0)
@@ -203,13 +215,14 @@
 								$crtCount++;
 							}
 							else {
+								$crtCount = 0;
 								$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 0;
 								break;
 							}
 						}
 							
 						if($crtCount > 0) {
-							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 2;
+							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = "2-".$crtCount;
 						}
 					}
 					else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) > 0 || count(array_diff($CandAnsAry[$QuesID], $Answer)) > 0)
@@ -946,7 +959,7 @@
 						$NameAry = $this->GetUserName($row['user_id']);
 						
 						if($row['tschd_id'] < 0) {
-							$ResultAry[$test_pnr]['result'] = sprintf("%s %s (Time: %s)",$NameAry['firstname'], $NameAry['lastname'],$testDtime->format("[H:i:s]"));
+							$ResultAry[$test_pnr]['result'] = sprintf("%s %s (Time: %s)",$NameAry['firstname'], $NameAry['lastname'],$testDtime->format("[d-m-y H:i:s]"));
 						}
 						else {
 							$ResultAry[$test_pnr]['result'] = sprintf("%s %s",$NameAry['firstname'], $NameAry['lastname']);

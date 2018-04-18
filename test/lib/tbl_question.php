@@ -69,7 +69,7 @@
 					}
 				}
 				
-				$this->MIpAsort($objIter[$sIndex], "linked_to");
+				//$this->MIpAsort($objIter[$sIndex], "linked_to");
 			}
 		}
 		

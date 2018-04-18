@@ -151,6 +151,10 @@
 		
 		if($test_type == CConfig::TT_DEFAULT)
 		{
+			/*echo "<pre>";
+			print_r($ResultAry);
+			echo "</pre>";*/
+			
 			foreach ($ResultAry as $groupName => $GroupAry)
 			{
 				foreach ($GroupAry as $sectionName => $SectionAry)
@@ -176,14 +180,21 @@
 										$CorrectAns++;
 										$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $SectionAry['@sec_dtls_ary']['mark_for_correct'];
 									}
-									else if($Answer == 2)
-									{
-										$PartialAns++;
-										$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $SectionAry['@sec_dtls_ary']['partial_marks'];
-									}
 									else if($Answer == -1 || $Answer == -2 || $Answer == -3)
 									{
 										$Unanswered++;
+									}
+									else if(intval(substr($Answer, 0, 1)) == 2)
+									{
+										if($SectionAry['@sec_dtls_ary']['partial_marks'] == 0) {
+											$WrongAns++;
+											$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] -= $SectionAry['@sec_dtls_ary']['mark_for_incorrect'];
+										} else {
+											$partially_correct = intval(substr($Answer, 2));
+											
+											$PartialAns += $partially_correct;
+											$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $partially_correct* $SectionAry['@sec_dtls_ary']['partial_marks'];
+										}										
 									}
 									
 									$arySectionalMarks[$groupName][$sectionName]['section_total_marks'] += $SectionAry['@sec_dtls_ary']['mark_for_correct'];
@@ -261,6 +272,11 @@
 						printf("<td> <b>%s out of %s</b> </td>", $scored_marks, $total_marks);
 					printf("</tr>");
 					?>
+				</table>
+				<table>
+				<tr>
+				<td><a href="ajax/generate_omr.php?test_pnr=<?php echo $test_pnr?>&inspect_result=1" target="_blank" >Download OMR</a></td>
+				</tr>
 				</table>
 				
 			</div>

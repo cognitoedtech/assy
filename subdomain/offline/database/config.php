@@ -11,6 +11,10 @@
 		//const PAYPAL_URL				= "https://www.sandbox.paypal.com/cgi-bin/webscr";
 		const PAYPAL_URL				= "https://www.paypal.com/cgi-bin/webscr";
 		
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		// Debug mode on (true) or off (false)
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		const DEBUG_APP = true;
 		
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		// Site Name Configuration
@@ -32,14 +36,24 @@
         const SPT_BASIC     		= 0;
         const SPT_PROFESSIONAL		= 1;
         const SPT_ENTERPRISE 		= 2;
+        const SPT_PPU				= 3; // Pay Per Use (Pay as you go!)
         // - - - - - - - - - - - - - - - - - - - - - - - - - - -
         
         // - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        // Subscription Plan Rates
+        // Subscription Plan Rates (Per Tests)
         // - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        const SPR_BASIC     		= 0.25;
-        const SPR_PROFESSIONAL		= 0.45;
-        const SPR_ENTERPRISE 		= 1.6;
+        const SPR_MINIMUM_TESTS		= 500;
+        const SPR_MINIMUM_PPU_TESTS	= 50;
+        
+        const SPR_BASIC     		= 0.16; // In USD
+        const SPR_PROFESSIONAL		= 0.26; // In USD
+        const SPR_ENTERPRISE 		= 3.0;  // In USD
+        const SPR_PPU		 		= 0.35;  // In USD
+        
+		const SPR_BASIC_INR			= 10;	// In INR
+		const SPR_PROFESSIONAL_INR	= 16;	// In INR
+		const SPR_ENTERPRISE_INR	= 200;	// In INR
+		const SPR_PPU_INR			= 22;	// In INR
         // - - - - - - - - - - - - - - - - - - - - - - - - - - -
         
         // - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -68,7 +82,7 @@
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		// Official Email-IDs
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		const OEI_FINANCE		= "finance@ezeeassess.com";
+		const OEI_FINANCE		= "support@ezeeassess.com";
 		const OEI_SALES			= "sales@ezeeassess.com";
 		const OEI_SUPPORT		= "support@ezeeassess.com";
 		const OEI_BUSI_ASSOC	= "business_associate@ezeeassess.com";
@@ -136,8 +150,10 @@
 		// - - - - - - - - - - - - - - - - - -
 		// Test Schedule Type
 		// - - - - - - - - - - - - - - - - - -
-		const TST_ONLINE	= 0;
-		const TST_OFFLINE	= 1;
+		const TST_ONLINE		= 0;
+		const TST_OFFLINE		= 1;
+		const TST_OTFA_EMAIL 	= 2;
+		const TST_OTFA_TPIN		= 3;
 		// - - - - - - - - - - - - - - - - - -
         
 		// - - - - - - - - - - - - - - - - - -
@@ -146,6 +162,8 @@
         const QT_NORMAL				= 0;
 		const QT_READ_COMP			= 1;
         const QT_DIRECTIONS			= 2;
+        const QT_INT				= 3;
+        const QT_MATRIX				= 4;
         // - - - - - - - - - - - - - - - - - -
 		
         // - - - - - - - - - - - - - - - - - -
@@ -227,6 +245,7 @@
 		// - - - - - - - - - - - - - - - - - -
 		// Payment Modes
 		// - - - - - - - - - - - - - - - - - -
+		const PAYMENT_MODE_RESET_ACCOUNT	= -2;
 		const PAYMENT_MODE_FREE				= -1;
 		const PAYMENT_MODE_CHEQUE			= 0;
 		const PAYMENT_MODE_DD				= 1;
@@ -234,7 +253,8 @@
 		const PAYMENT_MODE_NET_BANKING		= 3;
 		const PAYMENT_MODE_GATEWAY			= 4;
 		
-		static $PAYMENT_MODE_TEXT_ARY = array(self::PAYMENT_MODE_FREE => "Free",
+		static $PAYMENT_MODE_TEXT_ARY = array(self::PAYMENT_MODE_RESET_ACCOUNT => "Monthly Account Reset",
+											self::PAYMENT_MODE_FREE => "Free",
 											self::PAYMENT_MODE_CHEQUE => "Cheque",
 											self::PAYMENT_MODE_DD => "Demand Draft",
 											self::PAYMENT_MODE_NEFT => "National Electronic Funds Transfer",
@@ -245,7 +265,7 @@
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		// Tax Applied on Business Associate (In Percent)
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		static $BA_TAX_APPLIED_ARY = array("Service Tax" => 12.36,
+		static $BA_TAX_APPLIED_ARY = array("Service Tax" => 15.36,
 										   "Tax Deduction at Source (TDS)" => 10);
 										   
 		const TDS_MIN_BRACKET = 20000;
@@ -272,8 +292,8 @@
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		// Excel Upload : Column Count & Other Settings.
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		const EU_CAND_SHEET_COL_CNT = 9;
-		const EU_QUES_SHEET_COL_CNT = 11;
+		const EU_CAND_SHEET_COL_CNT 		=9;
+		const EU_QUES_SHEET_COL_CNT 		= 11;
 		const EU_EQ_RANGE_ANALYSIS_COL_CNT 	= 5;
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		
@@ -551,12 +571,24 @@
         const OPER_XLS_EMPTY 	= "#@MIPCAT_EMPTY";
         const OPER_CODE_START 	= "#@MIPCAT_CODE_START";
         const OPER_CODE_END 	= "#@MIPCAT_CODE_END";
+        const OPER_IMG			= "#@MIPCAT_IMG";
+        const OPER_QT_MATRIX	= "#@MIPCAT_QT_MAT";
         
-        const EA_OPER_XLS_COPY  	= "#@EZEEASSES_COPY";
-        const EA_OPER_XLS_NA     	= "#@EZEEASSES_NA";
-        const EA_OPER_XLS_EMPTY 	= "#@EZEEASSES_EMPTY";
-        const EA_OPER_CODE_START 	= "#@EZEEASSES_CODE_START";
-        const EA_OPER_CODE_END 		= "#@EZEEASSES_CODE_END";
+        const EA_OPER_XLS_COPY  	= "#@EZEEASSESS_COPY";
+        const EA_OPER_XLS_NA     	= "#@EZEEASSESS_NA";
+        const EA_OPER_XLS_EMPTY 	= "#@EZEEASSESS_EMPTY";
+        const EA_OPER_CODE_START 	= "#@EZEEASSESS_CODE_START";
+        const EA_OPER_CODE_END 		= "#@EZEEASSESS_CODE_END";
+        const EA_OPER_IMG			= "#@EZEEASSESS_IMG";
+        const EA_OPER_QT_MATRIX		= "#@EZEEASSESS_QT_MAT";
+        
+        const QU_OPER_XLS_COPY  	= "#@QUIZUS_COPY";
+        const QU_OPER_XLS_NA     	= "#@QUIZUS_NA";
+        const QU_OPER_XLS_EMPTY 	= "#@QUIZUS_EMPTY";
+        const QU_OPER_CODE_START 	= "#@QUIZUS_CODE_START";
+        const QU_OPER_CODE_END 		= "#@QUIZUS_CODE_END";
+        const QU_OPER_IMG			= "#@QUIZUS_IMG";
+        const QU_OPER_QT_MATRIX		= "#@QUIZUS_QT_MAT";
        
         static $QUES_XLS_HEADING_ARY  = array("S No"=>'A',
         									  "Para Description"=>'B', 

@@ -240,7 +240,7 @@ if ($qry [0] == "test_id") {
 		}
 		if($bMatStr) {
 			foreach($nAns as $key => $ans_row) {
-				$nAns[$key] = ($ans_row < 0) ? 0 : $ans_row;
+				$nAns[$key] = ($ans_row < 0) ? '' : $ans_row;
 			}
 		}
 	}
@@ -515,21 +515,24 @@ function PopulateIntegerOptions($correctOpt, $ansAry)
 
 function PopulateMatrixOptions($optAry, $ansAry)
 {
-	$highestAlpha	  = '';
-	$highestAlphaPos  = 0;
+	$highestAlpha	  = 'E';
+	$highestAlphaPos  = 4;
 	$alphabets 		  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$new_alphabets	  = 'PQRSTUVWXYZABCDEFGHIJKLMNO';
 	$romans			  = array("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
 							 "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
 							 "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX");
+	$new_romans		  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	
 	$num_options = $GLOBALS['aryQues']['opt_count'];
 	
 	$bEmptyAnsAry = (count($ansAry) > 0 ) ? false : true;
+	
 	foreach ($optAry as $key => $val) {
 		if($bEmptyAnsAry) {
 			array_push($ansAry, -1);
 		}
-		foreach( explode(",", $val['option']) as  $opt_part) {
+		foreach( explode(",", $val) as  $opt_part) {
 			$pos = strpos($alphabets, $opt_part);
 			
 			$highestAlphaPos 	= ($highestAlphaPos < $pos) ? $pos : $highestAlphaPos;
@@ -538,8 +541,8 @@ function PopulateMatrixOptions($optAry, $ansAry)
 	}
 	
 	printf("<tr><td><input type='hidden' name='mat_rows' value='%s'/></td>", $num_options);
-	for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
-		printf("<td><b>%s</b></td>", $alphabets[$opt_col]);
+	for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col++) {
+		printf("<td><b>%s</b></td>", $new_alphabets[$opt_col]);
 	}
 	printf("</tr>");
 	
@@ -547,7 +550,7 @@ function PopulateMatrixOptions($optAry, $ansAry)
 	for($opt_row = 0; $opt_row < $num_options; $opt_row ++) {
 		printf("<tr>");
 		printf("<td><b>%s</b><input type='hidden' id='mat_opt_%s' name='answer[]' value='$ansAry[$opt_row]'/></td>", 
-				$romans[$opt_row], $opt_row, $opt_row);
+				$new_romans[$opt_row], $opt_row, $opt_row);
 		for($opt_col = 0; $opt_col <= $highestAlphaPos; $opt_col ++) {
 			printf("<td><input type='checkbox' onclick='UpdateMatrixAnswer(this, %d, %d, %d, %d);' name='mat_row_%s' value='%s' %s/></td>", 
 					$opt_row, $opt_col, $num_options, $highestAlphaPos, $opt_row, $alphabets[$opt_col], in_array($alphabets[$opt_col], explode(",", $ansAry[$opt_row])) ? "checked": "");
@@ -1201,13 +1204,13 @@ body {
 							$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
 							
 							if(in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_UNANSWERED;
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;//QUES_FLAG_UNANSWERED;
 							}
 							else if(in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;
+								$flag_val = QUES_FLAG_VISITED;//QUES_FLAG_MARKED_FOR_REVIEW;
 							}
 							else if(in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_VISITED;
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;//QUES_FLAG_VISITED;
 							}
 							
 							//$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ?  : QUES_FLAG_MARKED_FOR_REVIEW;
@@ -1236,13 +1239,13 @@ body {
 							$flag_btn_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? "Unflag" : "Mark for Review & Next";
 							
 							if(in_array ( - 1, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_UNANSWERED;
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;//QUES_FLAG_UNANSWERED;
 							}
 							else if(in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;
+								$flag_val = QUES_FLAG_VISITED;//QUES_FLAG_MARKED_FOR_REVIEW;
 							}
 							else if(in_array ( - 3, $objAnsAry [$nSection] [$nQuestion] )) {
-								$flag_val = QUES_FLAG_VISITED;
+								$flag_val = QUES_FLAG_MARKED_FOR_REVIEW;//QUES_FLAG_VISITED;
 							}
 							//$flag_val = in_array ( - 2, $objAnsAry [$nSection] [$nQuestion] ) ? 2 : 1;
 							echo ('<input type="reset" class="btn btn-default btn-sm pull-left" value="Clear Response"/>&nbsp;&nbsp;&nbsp;&nbsp;');
