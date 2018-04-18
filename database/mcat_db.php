@@ -579,9 +579,9 @@
 			else
 			{
 				$ques_ary = explode(" ",$question);
-				if(count($ques_ary) > 10)
+				if(count($ques_ary) > 5)
 				{
-					for($word_index = 0; $word_index < 10; $word_index++)
+					for($word_index = 0; $word_index < 5; $word_index++)
 					{
 						$title .= $ques_ary[$word_index]." ";
 					}
@@ -664,7 +664,7 @@
 		public function UpdateQuesGrpTitle($ques_id, $group_title)
 		{
 			$query = sprintf("update question set group_title='%s' where ques_id='%s'", $group_title, $ques_id);
-			 
+			 		
 			$result =  mysql_query($query, $this->db_link) or die('Update Ques Grp Title error : ' . mysql_error());
 			 
 			return $result;
