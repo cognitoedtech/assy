@@ -117,16 +117,19 @@ if ($qry [0] == "test_id") {
 	}
 	
 	$session_time = CSessionManager::Get ( CSessionManager::INT_TEST_TIMER );
+	$elapsedTime = $objTH->GetElapsedTime ( $sUserID, $nTestID, $nTSchdID );
+	//CUtils::LogDataInFile("timer.txt", ($bNewTest?"New":"Old")." - ".$session_time." - ".$qry [9]." - ".$elapsedTime."\n", false, "a");
+	
 	$nCurTime = null;
 	if ($qry [8] == "curtime" && $qry [9] != $session_time) {
-		$nCurTime = $qry [9];
+		$nCurTime = ($elapsedTime < $session_time) ? $elapsedTime : $session_time;
 		
 		if (empty ( $nCurTime )) {
-			$nCurTime = $objTH->GetElapsedTime ( $sUserID, $nTestID, $nTSchdID );
+			$nCurTime = $elapsedTime;
 		}
 	} else {
 		if ($bNewTest == false) {
-			$nCurTime = $objTH->GetElapsedTime ( $sUserID, $nTestID, $nTSchdID );
+			$nCurTime = $elapsedTime;//$objTH->GetElapsedTime ( $sUserID, $nTestID, $nTSchdID );
 		} else {
 			$nCurTime = $objTestParams ['test_duration'] * 60;
 		}
@@ -212,16 +215,17 @@ if ($qry [0] == "test_id") {
 	
 	if($nLastQuesType== CConfig::QT_INT && !is_array($nAns) && $nAns != -1) {
 		$tempAns = base64_decode($objTH->GetIntQuesAns($nSection, $nQuestion));
-		
-		//CUtils::LogDataInFile("temp_act_answer.txt", $tempAns." : ".$nAns);
-		
+					
 		if($tempAns == $nAns)
 		{
 			// Mark the first option correct if answer matches 
 			$nAns = array(1);
 		}
 		else {
-			// Record the wrong answer
+			if(strcasecmp($nAns, "1") == 0) {		
+				$nAns = "01";
+			}
+			
 			$nAns = array($nAns);
 		}
 	}
@@ -434,12 +438,10 @@ function PopulateIntegerOptionsWithNumPad($correctOpt, $ansAry)
 	$numOfDigits = ($correct_opt_len < $min_cols) ? $min_cols : $correct_opt_len;
 
 	$answer = 0;
-	$answer_ary = array();
 	$bAnswered = false;
 	if(count(array_intersect(array(-1,-2,-3), $ansAry)) == 0)
 	{
-		$answer = ($ansAry[0] == 1) ? $correctOpt : $ansAry[0];
-		$answer_ary = str_split(strrev($answer));
+		$answer = (is_int($ansAry[0]) && $ansAry[0] == 1) ? $correctOpt : $ansAry[0];
 		$bAnswered = true;
 	}
 
@@ -448,7 +450,7 @@ function PopulateIntegerOptionsWithNumPad($correctOpt, $ansAry)
 	printf("<div class='col-sm-4'>");
 	printf("<label for='int_ans_input'>Your Answer Here:</label>");
 	printf("<div class='input-group'>");
-	printf("<input type='text' id='int_ans_input' class='form-control' placeholder='Enter your answer' aria-describedby='numpadButton-btn' maxlength='4' onchange='UpdateIntNumPadAnswer(this);' value='%s'/>", $answer);
+	printf("<input type='text' id='int_ans_input' class='form-control' placeholder='Enter your answer' aria-describedby='numpadButton-btn' maxlength='4' onchange='UpdateIntNumPadAnswer(this);' value='%s'/>", ( strcasecmp($answer,"01")==0 ) ? "1" : $answer);
 	printf("<span class='input-group-btn'>");
 	printf("<button class='btn btn-default' id='int_ans_input-btn' type='button'><i class='glyphicon glyphicon-th'></i></button>");
 	printf("</span></div></div>");
@@ -459,9 +461,6 @@ function PopulateIntegerOptionsWithNumPad($correctOpt, $ansAry)
 
 function PopulateIntegerOptions($correctOpt, $ansAry)
 {
-	//CUtils::LogDataInFile("populate_int_opts.txt", $correctOpt, false, "a");
-	//CUtils::LogDataInFile("populate_int_opts.txt", $ansAry, true, "a");
-	
 	$min_cols = 4;
 	$correct_opt_len = strlen($correctOpt);
 	$numOfDigits = ($correct_opt_len < $min_cols) ? $min_cols : $correct_opt_len;
@@ -502,8 +501,7 @@ function PopulateIntegerOptions($correctOpt, $ansAry)
 			$sel_opt = 0;
 			if(array_key_exists($digitPos, $answer_ary)) {
 				$sel_opt = $answer_ary[$digitPos];
-			}
-			//CUtils::LogDataInFile("ans_ary.txt", $answer_ary, true);
+			}			
 			printf("<td>");
 			printf("&nbsp; <input type='radio' onclick='UpdateIntAnswer(this, %d, %d);' name='opt_pos_%s' value='%s' %s>", 
 					$digitPos, $numOfDigits, $digitPos, $index, $bAnswered && $sel_opt == $index ? "checked": "");
@@ -1337,6 +1335,7 @@ body {
 		$.fn.numpad.defaults.buttonNumberTpl =  '<button type="button" class="btn btn-default"></button>';
 		$.fn.numpad.defaults.buttonFunctionTpl = '<button type="button" class="btn" style="width: 100%;"></button>';
 		$.fn.numpad.defaults.onKeypadCreate = function(){$(this).find('.done').addClass('btn-primary');};
+
 		
 		$(window).on("load",function() {
 			TestTimer();
@@ -1354,8 +1353,14 @@ body {
 					hideDecimalButton: true,
 					target: $('#int_ans_input')
 				});
+
+				
+				
 				//$('#int_ans_input').click();
 			}
+
+
+			
 			// --------------------------------------------------
 			
 			$("div.mipcat_code_ques").snippet("c",{style:"vim"});

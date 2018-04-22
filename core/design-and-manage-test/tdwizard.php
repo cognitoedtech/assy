@@ -736,7 +736,7 @@ $objIncludeJsCSS->IncludeUtilsJS("../../");
 			}, rules: {
 				'test_name':		{required: true, 'TestNameExists': true},
 				'duration':			{required:true, digits: true, 'NegetiveNumber' : true},
-				'max_ques':			{required:true, max:200, 'NegetiveNumber' : true},
+				'max_ques':			{required:true, max:300, 'NegetiveNumber' : true},
 				'cutoff_min':		{required:true, digits: true, 'MinCutoffGreater': true},
 				'cutoff_max':		{required:true, digits: true},
 				'top':				{required:true, digits: true},

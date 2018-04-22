@@ -1693,8 +1693,8 @@
 				    
 				    $correct_array = $ansOptArray;
 				    $selected_array = $ResultAry[$qIndex]['selected'];
-				    
-				    if($selected_answer == "1") // Correct Ans Selected
+				    				    
+				    if(strcasecmp($selected_answer, "1") == 0  ) // Correct Ans Selected always make string comparision and 01 is wrong while 1 is right
 				    {
 				    	$selected_answer = $correct_options;
 				    	$selected_array = $correct_array;
