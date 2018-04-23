@@ -1671,6 +1671,11 @@
 					
 					$correct_options = implode(",", $ansOptArray);
 					$correct_array = $ansOptArray;
+					foreach ($ResultAry[$qIndex]['selected'] as $k => $ans) {
+						if(is_int($ans) && $ans == 0) {
+							$ResultAry[$qIndex]['selected'][$k] = '';
+						}
+					}
 					$selected_array = $ResultAry[$qIndex]['selected'];
 					foreach ($selected_array as $key=>$val)
 					{
@@ -1718,6 +1723,11 @@
 				{
 					
 					$correct_ans_arr = $ansOptArray;
+					foreach ($ResultAry[$qIndex]['selected'] as $k => $ans) {
+						if(is_int($ans) && $ans == 0) {
+							$ResultAry[$qIndex]['selected'][$k] = '';
+						}
+					}
 					$user_selection_arr = $ResultAry[$qIndex]['selected'];
 					//CUtils::LogDataInFile("selcted_ans_matrx.txt", $user_selection_arr, true,"a");
 					//CUtils::LogDataInFile("correct_ans_matrx.txt", $correct_ans_arr, true,"a");
@@ -1744,8 +1754,8 @@
 						
 					}
 					
-					$find = array("A","B", "C", "D","E");
-					$replace = array("P","Q","R","S","T");
+					$find = array("A","B","C","D","E","F","G","H","I");
+					$replace = array("P","Q","R","S","T","U","V","W","X");
 						
 					$correct_options = str_replace($find, $replace, $correct_options);//, $multiplier)
 					$selected_answer = str_replace($find, $replace, $selected_answer);//, $multiplier)
@@ -1793,6 +1803,12 @@
 					$wrong_count++;
 					
 				}
+				
+				if($question_type == CConfig::QT_INT && strcasecmp($selected_answer, "01") ==0)// replace 01 to 1 again. 
+				{
+					
+					$selected_answer = "1";
+				}				
 
 				//$pdf->MultiCell(190,5, "S. No. |    QID     |  CORRECT OPTION  | YOUR SELECTION | CONCLUSION");
 				//$pdf_line = $s_no . "       |   ". $qid."       |  ".$correct_options."            | ".$selected_answer."               |  ".$conclusion;

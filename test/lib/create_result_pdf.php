@@ -1699,7 +1699,7 @@
 				    $correct_array = $ansOptArray;
 				    $selected_array = $ResultAry[$qIndex]['selected'];
 				    
-				    if($selected_answer == "1") // Correct Ans Selected
+				    if(strcasecmp($selected_answer, "1") == 0  ) // Correct Ans Selected always make string comparision and 01 is wrong while 1 is right
 				    {
 				    	$selected_answer = $correct_options;
 				    	$selected_array = $correct_array;
@@ -1752,18 +1752,14 @@
 						}
 						
 						
-					}
+					}					
+					$find = array("A","B","C","D","E","F","G","H","I");
+					$replace = array("P","Q","R","S","T","U","V","W","X");
 					
-					$find = array("A","B","C","D","E","F","G");
-					$replace = array("P","Q","R","S","T","U","V");
 					
 					$correct_options = str_replace($find, $replace, $correct_options);//, $multiplier)
 					$selected_answer = str_replace($find, $replace, $selected_answer);//, $multiplier)
-					
-					
-					//$correct_ans_arr = str_replace($find, $replace, $correct_ans_arr);//, $multiplier)
-					//$user_selection_arr = str_replace($find, $replace, $user_selection_arr);//, $multiplier)
-					
+				
 					
 					
 				}
@@ -1807,6 +1803,11 @@
 					$wrong_count++;
 					
 				}
+				if($question_type == CConfig::QT_INT && strcasecmp($selected_answer, "01") ==0)// replace 01 to 1 again. 
+				{
+					
+					$selected_answer = "1";
+				}				
 
 				//$pdf->MultiCell(190,5, "S. No. |    QID     |  CORRECT OPTION  | YOUR SELECTION | CONCLUSION");
 				//$pdf_line = $s_no . "       |   ". $qid."       |  ".$correct_options."            | ".$selected_answer."               |  ".$conclusion;

@@ -220,7 +220,9 @@ if ($qry [0] == "test_id") {
 			$nAns = array(1);
 		}
 		else {
-			// Record the wrong answer
+				if(strcasecmp($nAns, "1") == 0) {		
+				$nAns = "01";
+			}
 			$nAns = array($nAns);
 		}
 	}
@@ -432,13 +434,11 @@ function PopulateIntegerOptionsWithNumPad($correctOpt, $ansAry)
 	$correct_opt_len = strlen($correctOpt);
 	$numOfDigits = ($correct_opt_len < $min_cols) ? $min_cols : $correct_opt_len;
 
-	$answer = 0;
-	$answer_ary = array();
+	$answer = 0;	
 	$bAnswered = false;
 	if(count(array_intersect(array(-1,-2,-3), $ansAry)) == 0)
 	{
-		$answer = ($ansAry[0] == 1) ? $correctOpt : $ansAry[0];
-		$answer_ary = str_split(strrev($answer));
+		$answer = (is_int($ansAry[0]) && $ansAry[0] == 1) ? $correctOpt : $ansAry[0];
 		$bAnswered = true;
 	}
 
@@ -447,7 +447,7 @@ function PopulateIntegerOptionsWithNumPad($correctOpt, $ansAry)
 	printf("<div class='col-sm-4'>");
 	printf("<label for='int_ans_input'>Your Answer Here:</label>");
 	printf("<div class='input-group'>");
-	printf("<input type='text' id='int_ans_input' class='form-control' placeholder='Enter your answer' aria-describedby='numpadButton-btn' maxlength='4' onchange='UpdateIntNumPadAnswer(this);' value='%s'/>", $answer);
+	printf("<input type='text' id='int_ans_input' class='form-control' placeholder='Enter your answer' aria-describedby='numpadButton-btn' maxlength='4' onchange='UpdateIntNumPadAnswer(this);' value='%s'/>", ( strcasecmp($answer,"01")==0 ) ? "1" : $answer);
 	printf("<span class='input-group-btn'>");
 	printf("<button class='btn btn-default' id='int_ans_input-btn' type='button'><i class='glyphicon glyphicon-th'></i></button>");
 	printf("</span></div></div>");
