@@ -601,12 +601,12 @@
 					$org_id = $objDB->GetOrgIdByTestId($unpreparedResultAry['test_id']);
 				}
 				
-				$org_logo = $objDB->GetOrgLogoImage($org_id);
+				$org_logo = "";//$objDB->GetOrgLogoImage($org_id);
 				
-				if(empty($org_logo))
+				/*if(empty($org_logo))
 				{
 					$org_logo = $objDB->GetOrganizationName($org_id);
-				}
+				}*/
 				
 				$dtzone = new DateTimeZone($this->objResult->tzOffsetToName($time_zone));
 				

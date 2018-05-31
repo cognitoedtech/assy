@@ -447,7 +447,7 @@ function PopulateIntegerOptionsWithNumPad($correctOpt, $ansAry)
 	printf("<div class='col-sm-4'>");
 	printf("<label for='int_ans_input'>Your Answer Here:</label>");
 	printf("<div class='input-group'>");
-	printf("<input type='text' id='int_ans_input' class='form-control' placeholder='Enter your answer' aria-describedby='numpadButton-btn' maxlength='4' onchange='UpdateIntNumPadAnswer(this);' value='%s'/>", ( strcasecmp($answer,"01")==0 ) ? "1" : $answer);
+	printf("<input type='text' id='int_ans_input' class='form-control' placeholder='Enter your answer' aria-describedby='numpadButton-btn' maxlength='7' onchange='UpdateIntNumPadAnswer(this);' value='%s'/>", ( strcasecmp($answer,"01")==0 ) ? "1" : $answer);
 	printf("<span class='input-group-btn'>");
 	printf("<button class='btn btn-default' id='int_ans_input-btn' type='button'><i class='glyphicon glyphicon-th'></i></button>");
 	printf("</span></div></div>");
@@ -1345,12 +1345,14 @@ body {
 			// NumPad for Int Questions
 			if ($('#int_ans_input').length) {
 				$('#int_ans_input').numpad({
-					hidePlusMinusButton: true,
-					hideDecimalButton: true
+					decimalSeparator :'.'
+					/*hidePlusMinusButton: true,
+					hideDecimalButton: false*/
 				});
 				$('#int_ans_input-btn').numpad({
-					hidePlusMinusButton: true,
-					hideDecimalButton: true,
+					/*hidePlusMinusButton: true,
+					hideDecimalButton: false,*/
+					decimalSeparator :'.',
 					target: $('#int_ans_input')
 				});
 				//$('#int_ans_input').click();
