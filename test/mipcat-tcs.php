@@ -1669,7 +1669,7 @@ body {
 		{
 			$("#ModalMsgStr").html(mgs);
 			$("#MessageModal").modal('show');
-			if(bClose = 1)
+			if(bClose == 1)
 			{
 				OnEndExam();
 			}
@@ -1795,7 +1795,7 @@ body {
 						}
 					} ).fail(function() { 
 						connection_error_count++;
-						if(connection_error_count >= 6)
+						if(connection_error_count >= 9)
 						{
 							connection_error_count = 0;
 							clearTimeout(TestTimer.hTimer);

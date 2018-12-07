@@ -4063,7 +4063,7 @@
                 printf("<tr>");
                 printf("<td id='name%s'>%s (%s)</td>", $row['user_id'], $this->GetUserName($row['user_id']), $this->GetUserEmail($row['user_id']));
                 printf("<td>%s</td>", $this->GetTestName($row['test_id']));
-                printf("<td>%s (xID: %s)</td>", date("F j, Y", strtotime($row['scheduled_on'])), $row['tschd_id']);
+                //printf("<td>%s (xID: %s)</td>", date("F j, Y", strtotime($row['scheduled_on'])), $row['tschd_id']);
                 
                 $dtime  = new DateTime($row['session_created']);
                 $dtime->setTimezone($dtzone);
