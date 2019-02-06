@@ -200,7 +200,8 @@
 							}
 						}
 						
-						if($crtCount > 0) {
+						//if($crtCount > 0) 
+						{
 							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = "2-".$crtCount;
 						}
 					}
@@ -221,7 +222,8 @@
 							}
 						}
 							
-						if($crtCount > 0) {
+						//if($crtCount > 0)
+						{
 							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = "2-".$crtCount;
 						}
 					}

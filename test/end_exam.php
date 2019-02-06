@@ -146,7 +146,7 @@
   		$PartialAns	= 0;
 		$WrongAns   = 0;
 		$Unanswered	= 0;
-		
+		$questionaddon = 0; // this is to add partial question in total
 		$arySectionalMarks = array();
 		
 		if($test_type == CConfig::TT_DEFAULT)
@@ -194,6 +194,7 @@
 											
 											$PartialAns += $partially_correct;
 											$arySectionalMarks[$groupName][$sectionName]['section_scored_marks'] += $partially_correct* $SectionAry['@sec_dtls_ary']['partial_marks'];
+											$questionaddon++;
 										}										
 									}
 									
@@ -218,7 +219,7 @@
 		$total_questions = $CorrectAns+$WrongAns+$Unanswered;
 		if($res_visibility != CConfig::RV_NONE)
 		{
-			echo ("<span id='span_result_summary'>You answered ".$CorrectAns." correct answers and ".$WrongAns." wrong answers out of ".($CorrectAns+$WrongAns+$Unanswered).".</span><br />");
+			echo ("<span id='span_result_summary'>You answered ".$CorrectAns." correct answers and ".$WrongAns." wrong answers out of ".($CorrectAns+$WrongAns+$Unanswered + $questionaddon).".</span><br />");
 		}
 		else
 		{

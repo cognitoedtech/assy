@@ -181,7 +181,8 @@
 				}
 				else
 				{
-					if($QuesType == CConfig::QT_MATRIX) {
+					if($QuesType == CConfig::QT_MATRIX) 
+					{
 						//CUtils::LogDataInFile("answer.txt",$Answer, true, "a");
 						$crtCount = 0;
 						$wrgCount = 0;
@@ -192,16 +193,21 @@
 								//$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 2;
 							}
 							else {
+								
+								
 								if($CandAnsAry[$QuesID][$opt]){
+									//CUtils::LogDataInFile("cadans.txt",$CandAnsAry, true, "a");
 									$wrgCount++;
 								}
 								//$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = 0;
 							}
 						}
 						
-						if($crtCount > 0) {
+						//if($crtCount > 0) 
+						{
 							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = "2-".$crtCount;
 						}
+						CUtils::LogDataInFile("res.txt",$objResult, true, "a");
 					}
 					else if(count(array_diff($Answer, $CandAnsAry[$QuesID])) == 0 && count(array_diff($CandAnsAry[$QuesID], $Answer)) == 0)
 					{
@@ -220,7 +226,8 @@
 							}
 						}
 							
-						if($crtCount > 0) {
+						//if($crtCount > 0) 
+						{
 							$objResult[$Group][$Section][$Subject][$Topic][$Difficulty][$Question] = "2-".$crtCount;
 						}
 					}
