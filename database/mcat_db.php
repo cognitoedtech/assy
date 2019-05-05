@@ -729,6 +729,8 @@
 				$query = sprintf("select * from topic join question on topic.topic_id = question.topic_id where topic.topic_name='%s' and question.user_id='%s' %s",ucwords(strtolower($topic)), $user_id, $ques_type_cond);
 			}
 			
+			
+			//CUtils::LogDataInFile("topicexist.txt", $query, true);
 			//echo $query;
 			
 			$result = mysql_query($query, $this->db_link) or die('Is Topic Exists Error : ' . mysql_error());
@@ -4164,6 +4166,8 @@
         	//$fp = fopen('insert_options.txt', 'a');
 			//fwrite($fp, print_r($row, true));
 			
+        	//CUtils::LogDataInFile("insert_options.txt", $row, true);
+			
             $option_ary = array();
             $answers    = "";
             $index      = 0;
@@ -4194,6 +4198,22 @@
 
                     $cur_opt = base64_encode($row[$opt_index]);
                     
+                    // If it is integer then there is only one option. Change option to int e.g. it is 000.20 then change it to 2.
+                    
+                    
+                    if($ques_type == CConfig::QT_INT) 
+                    {
+                      $int_opt = $row[$opt_index];
+                      
+                      $abs_intvalue = intval($int_opt,10);
+                      if($abs_intvalue == $int_opt)
+                      {
+                      	$cur_opt = base64_encode($abs_intvalue);
+                      }
+                      
+                    }
+                    
+                    
                     if (!empty($cur_opt)) {
                     	$option_ary[$index]['option'] = $cur_opt ;
                     }
@@ -4220,6 +4240,7 @@
             $query = sprintf("update question set options = '%s' where ques_id = '%s'", json_encode($option_ary), $ques_id);
             //fwrite($fp, $query."\r\n");
             //fclose($fp);
+            //CUtils::LogDataInFile("insert_optionsary.txt", $option_ary, true);
 
             $result =  mysql_query($query, $this->db_link) or die('Insert Options error : ' . mysql_error());
 
